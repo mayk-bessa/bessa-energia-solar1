@@ -237,7 +237,7 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-orange-400" />
-                  <span className="text-lg">(31) 99888-9901</span>
+                  <span className="text-lg">(31) 99102-9003</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-orange-400" />
@@ -313,7 +313,7 @@ export default function Home() {
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-orange-500" />
-                  <span>(31) 9 XXXX-XXXX</span>
+                  <span>(31) 9 9102-9003</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-orange-500" />
@@ -321,7 +321,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-orange-500 mt-0.5" />
-                  <span>Rua Vaga 241 Bairro Itaúna, Pará</span>
+                  <span>Rua Vaga 241 Bairro Savassi, Belo Horizonte</span>
                 </div>
               </div>
             </div>
