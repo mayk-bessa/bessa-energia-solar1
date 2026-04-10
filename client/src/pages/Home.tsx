@@ -175,7 +175,7 @@ export default function Home() {
 
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white shadow-2xl">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
-                <p className="text-sm text-orange-100 mb-2">RIVFALE ROTIA BILIES DES</p>
+                <p className="text-sm text-orange-100 mb-2">Simulador de Geração</p>
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="text-4xl font-bold">R$ 520</p>
