@@ -1,15 +1,21 @@
 import { useState } from 'react';
+import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, ArrowRight, Check } from 'lucide-react';
+import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, Trash2 } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { getLoginUrl } from '@/const';
 import VirtualConsultant from '@/components/VirtualConsultant';
 
 export default function Home() {
+  const { user, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     cemiValue: '',
     message: ''
   });
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; url: string }>>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -18,9 +24,43 @@ export default function Home() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
     alert(`Obrigado ${formData.name}! Entraremos em contato em breve!`);
     setFormData({ name: '', phone: '', cemiValue: '', message: '' });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files;
+    if (!files || !isAuthenticated) return;
+
+    setIsUploading(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/trpc/files.upload', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.result?.data) {
+            setUploadedFiles(prev => [...prev, {
+              name: file.name,
+              url: data.result.data.url
+            }]);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Erro ao fazer upload do arquivo');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -35,9 +75,16 @@ export default function Home() {
               className="h-20 w-auto"
             />
           </div>
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-            Solicitar Orçamento
-          </Button>
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="text-sm text-gray-600">
+                Olá, {user?.name || 'Usuário'}
+              </div>
+            ) : null}
+            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+              Solicitar Orçamento
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -88,7 +135,6 @@ export default function Home() {
               </p>
 
               <div className="space-y-6">
-                {/* Benefit 1 */}
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
                     <Sun className="w-6 h-6 text-white" />
@@ -101,7 +147,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Benefit 2 */}
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
                     <Shield className="w-6 h-6 text-white" />
@@ -114,7 +159,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Benefit 3 */}
                 <div className="flex gap-4">
                   <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
                     <HomeIcon className="w-6 h-6 text-white" />
@@ -129,7 +173,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Simulation Card */}
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white shadow-2xl">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
                 <p className="text-sm text-orange-100 mb-2">RIVFALE ROTIA BILIES DES</p>
@@ -167,7 +210,6 @@ export default function Home() {
           </h2>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Card 1 */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp"
@@ -182,7 +224,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Card 2 */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp"
@@ -197,7 +238,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Card 3 */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
                 src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp"
@@ -215,9 +255,77 @@ export default function Home() {
         </div>
       </section>
 
+      {/* File Upload Section (Only for authenticated users) */}
+      {isAuthenticated && (
+        <section className="py-20 bg-blue-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-4xl font-bold text-gray-900 mb-8">
+              Gerenciador de Arquivos
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Upload Area */}
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Fazer Upload</h3>
+                
+                <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-orange-400 rounded-lg cursor-pointer bg-orange-50 hover:bg-orange-100 transition-colors">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-12 h-12 text-orange-500 mb-2" />
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Clique para fazer upload</span> ou arraste arquivos
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">PDF, DOC, IMG até 10MB</p>
+                  </div>
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    multiple
+                    onChange={handleFileUpload}
+                    disabled={isUploading}
+                  />
+                </label>
+
+                {isUploading && (
+                  <div className="mt-4 text-center text-orange-600">
+                    Enviando arquivos...
+                  </div>
+                )}
+              </div>
+
+              {/* Files List */}
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Arquivos Enviados</h3>
+                
+                {uploadedFiles.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">Nenhum arquivo enviado ainda</p>
+                ) : (
+                  <div className="space-y-3">
+                    {uploadedFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <FileText className="w-5 h-5 text-orange-500" />
+                          <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                        </div>
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-orange-600 hover:text-orange-700 text-sm font-semibold"
+                        >
+                          Abrir
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Contact Form Section */}
       <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden">
-        {/* Animated background elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-400 rounded-full blur-3xl"></div>
@@ -225,7 +333,6 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
             <div className="text-white">
               <h2 className="text-4xl font-bold mb-6">
                 Solicite o seu Projeto <span className="text-orange-400">Grátis</span>
@@ -246,7 +353,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleFormSubmit} className="bg-white rounded-2xl p-8 shadow-2xl">
               <div className="space-y-4">
                 <input
@@ -299,7 +405,6 @@ export default function Home() {
       <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {/* Company Info */}
             <div>
               <h3 className="text-white font-bold text-lg mb-4">A Empresa</h3>
               <p className="text-sm leading-relaxed">
@@ -307,7 +412,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Contact Info */}
             <div>
               <h3 className="text-white font-bold text-lg mb-4">Contato</h3>
               <div className="space-y-3 text-sm">
@@ -326,17 +430,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Legal */}
             <div>
               <h3 className="text-white font-bold text-lg mb-4">Legal</h3>
               <p className="text-sm">
-                IC 3838, Situs Cia 07 / Frazzado 986. <br />
-                Cia Hoches Caia, Alagão
+                Todos os direitos reservados Bessa Tecnologia & Energia.
               </p>
             </div>
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-700 pt-8">
             <p className="text-center text-sm text-gray-400">
               © 2024 Bessa Energia. Todos os direitos reservados.
@@ -345,7 +446,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Virtual Consultant */}
       <VirtualConsultant />
     </div>
   );
