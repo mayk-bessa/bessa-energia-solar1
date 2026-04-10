@@ -27,13 +27,12 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* Navigation */}
       <nav className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img 
-              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/IMG_1594_19e162d0.PNG" 
-              alt="Bessa Energia Logo"
-              className="h-16 w-auto"
-            />
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+              <Sun className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">Bessa Energia</h1>
           </div>
           <Button className="bg-orange-500 hover:bg-orange-600 text-white">
             Solicitar Orçamento
