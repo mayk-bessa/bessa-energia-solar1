@@ -114,7 +114,7 @@ export default function Home() {
                   Solicitar Orçamento
                 </Button>
                 <Button className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
-                  Tenha Dúvidas Como?
+                  Tire suas Dúvidas.
                 </Button>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function Home() {
                 Veja quanto você pode economizar
               </h2>
               <p className="text-gray-600 mb-8 text-lg">
-                Rei / us, banastre com quense sendo consumo x tabos av ciemos, vetor energia em contrat econômique teos-quiche-na.
+                Nossos especialistas vão analisar o seu cenário e o seu consumo para criar a melhor configuração.
               </p>
 
               <div className="space-y-6">
@@ -142,7 +142,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Economia Real</h3>
                     <p className="text-gray-600">
-                      Mogul lobo intímicos munche fies e agora ocommentum com seu econômenta.
+                      "Pague apenas a taxa mínima da Cemig e use o que poupa para realizar os seus sonhos."
                     </p>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Financiamento Fácil</h3>
                     <p className="text-gray-600">
-                      Amortização onilich, disponibilivele na subscrição - ao mancamento-prito ao pacto o banccomecida nepriticidos.
+                      "A prestação substitui a sua conta de luz. Em poucos anos o sistema está pago e o lucro é seu."
                     </p>
                   </div>
                 </div>
@@ -166,7 +166,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Valorização Imobiliária</h3>
                     <p className="text-gray-600">
-                      Udia ni comim e vicancação atgon antiolamentia - Prato laraze na imobilia.
+                      "Um imóvel com energia solar valoriza-se instantaneamente no mercado."
                     </p>
                   </div>
                 </div>
@@ -408,7 +408,7 @@ export default function Home() {
             <div>
               <h3 className="text-white font-bold text-lg mb-4">A Empresa</h3>
               <p className="text-sm leading-relaxed">
-                Líderprofissional comercial para todas categorias. Especialização em energia solar, tecnologia renovável, sustentabilidade e consultoria energética.
+                Líder profissional comercial para todas categorias. Especialização em energia solar, tecnologia renovável, sustentabilidade e consultoria energética.
               </p>
             </div>
 
