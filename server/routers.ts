@@ -5,7 +5,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest, createTechnicalVisit, getTechnicalVisitsByBudgetId } from "./db";
 import { storagePut } from "./storage";
-import nodemailer from "nodemailer";
+import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 
 export const appRouter = router({
   system: systemRouter,
@@ -30,33 +30,31 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         try {
-          const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT || '465'),
-            secure: true,
-            auth: {
-              user: process.env.SMTP_USER,
-              pass: process.env.SMTP_PASSWORD,
-            },
+          // Save budget request to database
+          const budgetRequest = await createBudgetRequest({
+            clientName: input.fullName,
+            clientEmail: input.email,
+            clientPhone: input.phone,
+            status: 'new',
           });
 
-          const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: input.recipientEmail,
-            subject: `Nova Solicitação de Orçamento - ${input.fullName}`,
-            html: `
-              <h2>Nova Solicitação de Orçamento</h2>
-              <p><strong>Nome:</strong> ${input.fullName}</p>
-              <p><strong>Email:</strong> ${input.email}</p>
-              <p><strong>Telefone:</strong> ${input.phone}</p>
-              <hr />
-              <p>Este é um email automático da solicitação de orçamento no site Bessa Energia.</p>
-            `,
-          };
+          // Send confirmation email to customer
+          await sendCustomerConfirmationEmail(
+            input.fullName,
+            input.email,
+            input.phone
+          );
 
-          await transporter.sendMail(mailOptions);
+          // Send notification to sales team
+          await sendSalesTeamNotification(
+            input.fullName,
+            input.email,
+            input.phone,
+            undefined,
+            input.recipientEmail
+          );
 
-          return { success: true, message: 'Solicitação enviada com sucesso' };
+          return { success: true, message: 'Solicitação enviada com sucesso', budgetRequestId: budgetRequest?.id };
         } catch (error) {
           console.error('Email send error:', error);
           throw new Error('Falha ao enviar email');

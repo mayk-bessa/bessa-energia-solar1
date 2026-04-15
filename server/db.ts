@@ -131,7 +131,9 @@ export async function createBudgetRequest(request: InsertBudgetRequest) {
 
   try {
     const result = await db.insert(budgetRequests).values(request);
-    return result;
+    // Get the inserted ID from the result
+    const insertedId = (result as any).insertId || (result as any)[0]?.id;
+    return { id: insertedId };
   } catch (error) {
     console.error("[Database] Failed to create budget request:", error);
     throw error;
