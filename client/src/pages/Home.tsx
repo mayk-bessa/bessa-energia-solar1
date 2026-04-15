@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, Trash2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { getLoginUrl } from '@/const';
+import { Link } from 'wouter';
 import VirtualConsultant, { VirtualConsultantHandle } from '@/components/VirtualConsultant';
 import BudgetRequestModal from '@/components/BudgetRequestModal';
 import SolarCalculatorModal from '@/components/SolarCalculatorModal';
@@ -121,6 +122,11 @@ export default function Home() {
                 <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
                   Tire suas Dúvidas.
                 </Button>
+                <Link href="/calculadora-avancada">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg">
+                    Calculadora Avançada
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
