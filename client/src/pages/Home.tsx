@@ -6,11 +6,13 @@ import { trpc } from '@/lib/trpc';
 import { getLoginUrl } from '@/const';
 import VirtualConsultant, { VirtualConsultantHandle } from '@/components/VirtualConsultant';
 import BudgetRequestModal from '@/components/BudgetRequestModal';
+import SolarCalculatorModal from '@/components/SolarCalculatorModal';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const consultantRef = useRef<VirtualConsultantHandle>(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -197,7 +199,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <Button className="w-full bg-white text-orange-600 hover:bg-gray-100 font-bold py-3">
+              <Button onClick={() => setIsCalculatorModalOpen(true)} className="w-full bg-white text-orange-600 hover:bg-gray-100 font-bold py-3">
                 Ver Detalhes do Projeto
               </Button>
             </div>
@@ -452,6 +454,10 @@ export default function Home() {
       <BudgetRequestModal 
         isOpen={isBudgetModalOpen} 
         onClose={() => setIsBudgetModalOpen(false)} 
+      />
+      <SolarCalculatorModal
+        isOpen={isCalculatorModalOpen}
+        onClose={() => setIsCalculatorModalOpen(false)}
       />
       <VirtualConsultant ref={consultantRef} />
     </div>
