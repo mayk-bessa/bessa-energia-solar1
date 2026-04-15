@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
+import { MessageCircle, X, Send, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Message {
@@ -173,6 +173,32 @@ const VirtualConsultant = forwardRef<VirtualConsultantHandle>(function VirtualCo
                   </button>
                 ))}
               </div>
+              
+              {/* WhatsApp Button */}
+              <a
+                href="https://wa.me/5531991029003?text=Olá%20Bessa%20Energia%2C%20gostaria%20de%20saber%20mais%20sobre%20energia%20solar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white transition-colors text-sm font-semibold mt-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Conversar no WhatsApp
+              </a>
+            </div>
+          )}
+
+          {/* WhatsApp Button (Always visible) */}
+          {messages.length > 2 && (
+            <div className="border-t border-gray-200 p-3">
+              <a
+                href="https://wa.me/5531991029003?text=Olá%20Bessa%20Energia%2C%20gostaria%20de%20saber%20mais%20sobre%20energia%20solar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white transition-colors text-sm font-semibold"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Conversar no WhatsApp
+              </a>
             </div>
           )}
 
