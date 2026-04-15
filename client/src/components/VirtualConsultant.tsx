@@ -29,9 +29,9 @@ export default function VirtualConsultant() {
   const botResponses: { [key: string]: string } = {
     'quanto': 'Você pode economizar até 95% na sua conta de energia! Solicite um orçamento gratuito para saber exatamente quanto você pode poupar.',
     'financiamento': 'Oferecemos financiamento fácil e acessível. Você pode parcelar o investimento em sua usina solar sem comprometer seu orçamento.',
-    'orçamento': 'Perfeito! Você pode preencher nosso formulário ou ligar para (31) 99888-9901. Nossos especialistas entrarão em contato em breve!',
-    'especialista': 'Vou conectar você com um de nossos especialistas. Por favor, deixe seu telefone: (31) 99888-9901 ou preencha o formulário de contato.',
-    'default': 'Obrigado pela sua pergunta! Para mais informações detalhadas, entre em contato conosco através do formulário ou ligue para (31) 99888-9901.'
+    'orçamento': 'Perfeito! Você pode preencher nosso formulário ou ligar para (31) 99102-9003. Nossos especialistas entrarão em contato em breve!',
+    'especialista': 'Vou conectar você com um de nossos especialistas. Por favor, deixe seu telefone: (31) 99102-9003 ou preencha o formulário de contato.',
+    'default': 'Obrigado pela sua pergunta! Para mais informações detalhadas, entre em contato conosco através do formulário ou ligue para (31) 99102-9003.'
   };
 
   const handleSendMessage = () => {
