@@ -42,3 +42,38 @@ export const files = mysqlTable("files", {
 
 export type File = typeof files.$inferSelect;
 export type InsertFile = typeof files.$inferInsert;
+
+/**
+ * Budget requests table for storing client budget requests
+ */
+export const budgetRequests = mysqlTable("budgetRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  clientEmail: varchar("clientEmail", { length: 320 }).notNull(),
+  clientPhone: varchar("clientPhone", { length: 20 }).notNull(),
+  status: mysqlEnum("status", ["new", "contacted", "proposal_sent", "closed", "rejected"]).default("new").notNull(),
+  estimatedMonthlySpend: int("estimatedMonthlySpend"),
+  notes: text("notes"),
+  source: varchar("source", { length: 50 }).default("website"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BudgetRequest = typeof budgetRequests.$inferSelect;
+export type InsertBudgetRequest = typeof budgetRequests.$inferInsert;
+
+/**
+ * Technical visits table for scheduling visits
+ */
+export const technicalVisits = mysqlTable("technicalVisits", {
+  id: int("id").autoincrement().primaryKey(),
+  budgetRequestId: int("budgetRequestId").notNull().references(() => budgetRequests.id),
+  scheduledDate: timestamp("scheduledDate").notNull(),
+  status: mysqlEnum("status", ["scheduled", "completed", "cancelled", "rescheduled"]).default("scheduled").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TechnicalVisit = typeof technicalVisits.$inferSelect;
+export type InsertTechnicalVisit = typeof technicalVisits.$inferInsert;

@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
-import { saveFileMetadata, getUserFiles } from "./db";
+import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest } from "./db";
 import { storagePut } from "./storage";
 import nodemailer from "nodemailer";
 
@@ -62,6 +62,53 @@ export const appRouter = router({
           throw new Error('Falha ao enviar email');
         }
       }),
+  }),
+
+  admin: router({
+    budgets: router({
+      list: protectedProcedure
+        .input(z.object({
+          status: z.string().optional(),
+          limit: z.number().optional(),
+          offset: z.number().optional(),
+        }))
+        .query(async ({ input, ctx }) => {
+          // Only admins can view all budgets
+          if (ctx.user?.role !== 'admin') {
+            throw new Error('Unauthorized');
+          }
+          return await getBudgetRequests({
+            status: input.status,
+            limit: input.limit || 50,
+            offset: input.offset || 0,
+          });
+        }),
+      
+      getById: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ input, ctx }) => {
+          if (ctx.user?.role !== 'admin') {
+            throw new Error('Unauthorized');
+          }
+          return await getBudgetRequestById(input.id);
+        }),
+      
+      updateStatus: protectedProcedure
+        .input(z.object({
+          id: z.number(),
+          status: z.enum(['new', 'contacted', 'proposal_sent', 'closed', 'rejected']),
+          notes: z.string().optional(),
+        }))
+        .mutation(async ({ input, ctx }) => {
+          if (ctx.user?.role !== 'admin') {
+            throw new Error('Unauthorized');
+          }
+          return await updateBudgetRequest(input.id, {
+            status: input.status,
+            notes: input.notes,
+          });
+        }),
+    }),
   }),
 
   files: router({

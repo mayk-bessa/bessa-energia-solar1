@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -117,6 +117,133 @@ export async function getUserFiles(userId: number) {
     return result;
   } catch (error) {
     console.error("[Database] Failed to get user files:", error);
+    return [];
+  }
+}
+
+// Budget requests functions
+export async function createBudgetRequest(request: InsertBudgetRequest) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create budget request: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(budgetRequests).values(request);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create budget request:", error);
+    throw error;
+  }
+}
+
+export async function getBudgetRequests(filters?: {
+  status?: string;
+  startDate?: Date;
+  endDate?: Date;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get budget requests: database not available");
+    return [];
+  }
+
+  try {
+    const conditions: any[] = [];
+
+    if (filters?.status) {
+      conditions.push(eq(budgetRequests.status, filters.status as any));
+    }
+    if (filters?.startDate) {
+      conditions.push(gte(budgetRequests.createdAt, filters.startDate));
+    }
+    if (filters?.endDate) {
+      conditions.push(lte(budgetRequests.createdAt, filters.endDate));
+    }
+
+    let query = db.select().from(budgetRequests).orderBy(desc(budgetRequests.createdAt));
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+
+    if (filters?.limit) {
+      query = query.limit(filters.limit) as any;
+    }
+    if (filters?.offset) {
+      query = query.offset(filters.offset) as any;
+    }
+
+    return await query;
+  } catch (error) {
+    console.error("[Database] Failed to get budget requests:", error);
+    return [];
+  }
+}
+
+export async function getBudgetRequestById(id: number): Promise<BudgetRequest | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get budget request: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.select().from(budgetRequests).where(eq(budgetRequests.id, id)).limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  } catch (error) {
+    console.error("[Database] Failed to get budget request:", error);
+    return undefined;
+  }
+}
+
+export async function updateBudgetRequest(id: number, updates: Partial<InsertBudgetRequest>) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update budget request: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.update(budgetRequests).set(updates).where(eq(budgetRequests.id, id));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to update budget request:", error);
+    throw error;
+  }
+}
+
+export async function createTechnicalVisit(visit: InsertTechnicalVisit) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create technical visit: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(technicalVisits).values(visit);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create technical visit:", error);
+    throw error;
+  }
+}
+
+export async function getTechnicalVisitsByBudgetId(budgetRequestId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get technical visits: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db.select().from(technicalVisits).where(eq(technicalVisits.budgetRequestId, budgetRequestId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get technical visits:", error);
     return [];
   }
 }
