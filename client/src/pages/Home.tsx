@@ -5,9 +5,11 @@ import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, T
 import { trpc } from '@/lib/trpc';
 import { getLoginUrl } from '@/const';
 import VirtualConsultant from '@/components/VirtualConsultant';
+import BudgetRequestModal from '@/components/BudgetRequestModal';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -81,7 +83,7 @@ export default function Home() {
                 Olá, {user?.name || 'Usuário'}
               </div>
             ) : null}
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
               Solicitar Orçamento
             </Button>
           </div>
@@ -110,7 +112,7 @@ export default function Home() {
                 Tecnologia de ponta em energia fotovoltaica para a sua casa ou empresa. Solicite um orçamento gratuito e faça parte da energia solar!
               </p>
               <div className="flex gap-4 flex-wrap">
-                <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
+                <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
                   Solicitar Orçamento
                 </Button>
                 <Button className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
@@ -446,6 +448,10 @@ export default function Home() {
         </div>
       </footer>
 
+      <BudgetRequestModal 
+        isOpen={isBudgetModalOpen} 
+        onClose={() => setIsBudgetModalOpen(false)} 
+      />
       <VirtualConsultant />
     </div>
   );

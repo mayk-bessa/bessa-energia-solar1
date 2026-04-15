@@ -5,6 +5,7 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { saveFileMetadata, getUserFiles } from "./db";
 import { storagePut } from "./storage";
+import nodemailer from "nodemailer";
 
 export const appRouter = router({
   system: systemRouter,
@@ -17,6 +18,50 @@ export const appRouter = router({
         success: true,
       } as const;
     }),
+  }),
+
+  budget: router({
+    sendRequest: publicProcedure
+      .input(z.object({
+        fullName: z.string(),
+        email: z.string().email(),
+        phone: z.string(),
+        recipientEmail: z.string().email(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT || '465'),
+            secure: true,
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASSWORD,
+            },
+          });
+
+          const mailOptions = {
+            from: process.env.SMTP_USER,
+            to: input.recipientEmail,
+            subject: `Nova Solicitação de Orçamento - ${input.fullName}`,
+            html: `
+              <h2>Nova Solicitação de Orçamento</h2>
+              <p><strong>Nome:</strong> ${input.fullName}</p>
+              <p><strong>Email:</strong> ${input.email}</p>
+              <p><strong>Telefone:</strong> ${input.phone}</p>
+              <hr />
+              <p>Este é um email automático da solicitação de orçamento no site Bessa Energia.</p>
+            `,
+          };
+
+          await transporter.sendMail(mailOptions);
+
+          return { success: true, message: 'Solicitação enviada com sucesso' };
+        } catch (error) {
+          console.error('Email send error:', error);
+          throw new Error('Falha ao enviar email');
+        }
+      }),
   }),
 
   files: router({
