@@ -139,3 +139,47 @@ export async function sendBulkEmail(
 
   return results;
 }
+
+export async function sendPDFReportEmail(
+  clientName: string,
+  clientEmail: string,
+  pdfBuffer: Buffer
+): Promise<boolean> {
+  try {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: clientEmail,
+      subject: "Seu Relatório de Análise Solar - Bessa Energia",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #FF6B35;">Olá ${clientName},</h2>
+          <p>Segue em anexo seu relatório de análise solar personalizado com os cálculos de economia e produção de energia.</p>
+          <p>Este relatório contém:</p>
+          <ul>
+            <li>Análise de economia mensal e anual</li>
+            <li>Estimativa de produção de energia</li>
+            <li>Tempo de retorno do investimento</li>
+            <li>Benefícios da energia solar</li>
+          </ul>
+          <p>Para dúvidas ou para agendar uma visita técnica, entre em contato conosco:</p>
+          <p><strong>(31) 99102-9003</strong><br>vendas@bessaenergia.com.br</p>
+          <p style="margin-top: 30px; color: #666; font-size: 12px;">© 2026 Bessa Energia - Painéis e Usina Solar</p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: `relatorio-solar-${new Date().getTime()}.pdf`,
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    await getTransporter().sendMail(mailOptions);
+    console.log(`[Email] PDF report sent to ${clientEmail}`);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send PDF report:", error);
+    return false;
+  }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { trpc } from '@/lib/trpc';
 
 interface SolarCalculatorModalProps {
   isOpen: boolean;
@@ -16,12 +17,13 @@ export default function SolarCalculatorModal({ isOpen, onClose }: SolarCalculato
     annualEconomy: number;
     paybackYears: number;
   } | null>(null);
+  const [clientName, setClientName] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportMessage, setExportMessage] = useState('');
 
-  // Dados baseados em estudos de energia solar no Brasil
-  // Média de economia: 95% da conta de luz
-  // Custo médio do kWh no Brasil: ~R$ 0,70
-  // Produção média de usina solar: 1 kW produz ~120 kWh/mês
-  // Investimento médio: ~R$ 3.000 por kW instalado
+  const generateReportMutation = trpc.budget.generateReport.useMutation();
 
   const calculateEconomy = () => {
     const spend = parseFloat(monthlySpend);
@@ -61,6 +63,45 @@ export default function SolarCalculatorModal({ isOpen, onClose }: SolarCalculato
       annualEconomy: monthlyEconomy * 12,
       paybackYears: paybackYears,
     });
+  };
+
+  const handleExportPDF = async () => {
+    if (!results) return;
+
+    setIsExporting(true);
+    try {
+      const response = await generateReportMutation.mutateAsync({
+        monthlySpend: results.monthlySpend,
+        monthlyEconomy: results.monthlyEconomy,
+        annualEconomy: results.annualEconomy,
+        monthlyProduction: results.monthlyProduction,
+        annualProduction: results.monthlyProduction * 12,
+        paybackYears: results.paybackYears,
+        systemSize: `${(results.monthlyProduction / 120).toFixed(1)} kW`,
+        clientName: clientName || undefined,
+        clientEmail: clientEmail || undefined,
+        clientPhone: clientPhone || undefined,
+      });
+
+      if (response.success) {
+        // Download PDF
+        const link = document.createElement('a');
+        link.href = `data:application/pdf;base64,${response.pdf}`;
+        link.download = response.filename;
+        link.click();
+
+        if (clientEmail) {
+          setExportMessage('✓ Relatório gerado e enviado para seu email!');
+        } else {
+          setExportMessage('✓ Relatório baixado com sucesso!');
+        }
+      }
+    } catch (error) {
+      setExportMessage('Erro ao gerar relatório. Tente novamente.');
+      console.error('Export error:', error);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -143,23 +184,64 @@ export default function SolarCalculatorModal({ isOpen, onClose }: SolarCalculato
                 </div>
               </div>
 
+              <div className="space-y-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <p className="text-sm font-semibold text-gray-900">Exportar Relatório (Opcional)</p>
+                <input
+                  type="text"
+                  placeholder="Seu nome"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                <input
+                  type="email"
+                  placeholder="Seu email"
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                <input
+                  type="tel"
+                  placeholder="Seu telefone"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                {exportMessage && (
+                  <p className="text-sm text-green-600 bg-green-50 p-2 rounded">{exportMessage}</p>
+                )}
+              </div>
+
               <div className="flex gap-2">
                 <Button
                   onClick={() => {
                     setResults(null);
                     setMonthlySpend('');
+                    setClientName('');
+                    setClientEmail('');
+                    setClientPhone('');
+                    setExportMessage('');
                   }}
                   className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-900 font-semibold py-2"
                 >
                   Novo Cálculo
                 </Button>
                 <Button
-                  onClick={onClose}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2"
+                  onClick={handleExportPDF}
+                  disabled={isExporting}
+                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 flex items-center justify-center gap-2"
                 >
-                  Fechar
+                  <Download className="w-4 h-4" />
+                  {isExporting ? 'Gerando...' : 'Exportar PDF'}
                 </Button>
               </div>
+
+              <Button
+                onClick={onClose}
+                className="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2"
+              >
+                Fechar
+              </Button>
             </>
           )}
         </div>

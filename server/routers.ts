@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
+import { sendPDFReportEmail } from "./emailService";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
@@ -6,6 +7,7 @@ import { z } from "zod";
 import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest, createTechnicalVisit, getTechnicalVisitsByBudgetId } from "./db";
 import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
+import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
 
 export const appRouter = router({
   system: systemRouter,
@@ -89,6 +91,45 @@ export const appRouter = router({
           throw new Error('Unauthorized');
         }
         return await getTechnicalVisitsByBudgetId(input.budgetRequestId);
+      }),
+
+    generateReport: publicProcedure
+      .input(z.object({
+        monthlySpend: z.number(),
+        monthlyEconomy: z.number(),
+        annualEconomy: z.number(),
+        monthlyProduction: z.number(),
+        annualProduction: z.number(),
+        paybackYears: z.number(),
+        systemSize: z.string(),
+        clientName: z.string().optional(),
+        clientEmail: z.string().email().optional(),
+        clientPhone: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const pdfBuffer = await generateSolarReportPDF(input as SolarCalculationData);
+          
+          // If client email provided, send PDF via email
+          if (input.clientEmail && input.clientName) {
+            await sendPDFReportEmail(
+              input.clientName,
+              input.clientEmail,
+              pdfBuffer
+            );
+          }
+
+          // Return base64 encoded PDF for download
+          const base64 = pdfBuffer.toString('base64');
+          return {
+            success: true,
+            pdf: base64,
+            filename: `relatorio-solar-${new Date().getTime()}.pdf`,
+          };
+        } catch (error) {
+          console.error('PDF generation error:', error);
+          throw new Error('Falha ao gerar relatório PDF');
+        }
       }),
   }),
 
