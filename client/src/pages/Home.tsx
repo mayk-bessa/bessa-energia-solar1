@@ -246,7 +246,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">Usina Solar em IH</h3>
+                  <h3 className="text-xl font-bold text-white mb-1">Usina Solar em BH</h3>
                   <p className="text-sm text-orange-300">Tecnologia de ponta em energia limpa</p>
                 </div>
               </div>
