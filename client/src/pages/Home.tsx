@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from '@/components/ui/button';
 import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, Trash2 } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { getLoginUrl } from '@/const';
-import VirtualConsultant from '@/components/VirtualConsultant';
+import VirtualConsultant, { VirtualConsultantHandle } from '@/components/VirtualConsultant';
 import BudgetRequestModal from '@/components/BudgetRequestModal';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const consultantRef = useRef<VirtualConsultantHandle>(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -115,7 +116,7 @@ export default function Home() {
                 <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
                   Solicitar Orçamento
                 </Button>
-                <Button className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
+                <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
                   Tire suas Dúvidas.
                 </Button>
               </div>
@@ -452,7 +453,7 @@ export default function Home() {
         isOpen={isBudgetModalOpen} 
         onClose={() => setIsBudgetModalOpen(false)} 
       />
-      <VirtualConsultant />
+      <VirtualConsultant ref={consultantRef} />
     </div>
   );
 }

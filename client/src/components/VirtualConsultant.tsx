@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef, useImperativeHandle } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -8,8 +8,18 @@ interface Message {
   text: string;
 }
 
-export default function VirtualConsultant() {
+export interface VirtualConsultantHandle {
+  open: () => void;
+  close: () => void;
+}
+
+const VirtualConsultant = forwardRef<VirtualConsultantHandle>(function VirtualConsultant(_, ref) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+    close: () => setIsOpen(false),
+  }));
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -188,4 +198,6 @@ export default function VirtualConsultant() {
       )}
     </>
   );
-}
+});
+
+export default VirtualConsultant;
