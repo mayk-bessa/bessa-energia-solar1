@@ -13,7 +13,8 @@ export default function BudgetRequestModal({ isOpen, onClose }: BudgetRequestMod
     fullName: '',
     email: '',
     phone: '',
-    ddd: '31'
+    ddd: '31',
+    visitDate: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -31,7 +32,7 @@ export default function BudgetRequestModal({ isOpen, onClose }: BudgetRequestMod
     }
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -67,10 +68,22 @@ export default function BudgetRequestModal({ isOpen, onClose }: BudgetRequestMod
   };
 
   const handleClose = () => {
-    setFormData({ fullName: '', email: '', phone: '', ddd: '31' });
+    setFormData({ fullName: '', email: '', phone: '', ddd: '31', visitDate: '' });
     setIsSuccess(false);
     setIsSubmitting(false);
     onClose();
+  };
+
+  const getMinDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
+  const getMaxDate = () => {
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 90);
+    return maxDate.toISOString().split('T')[0];
   };
 
   if (!isOpen) return null;
@@ -165,6 +178,26 @@ export default function BudgetRequestModal({ isOpen, onClose }: BudgetRequestMod
                     disabled={isSubmitting}
                   />
                 </div>
+              </div>
+
+              {/* Data de Visita Técnica */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Agendar Visita Técnica (Opcional)
+                </label>
+                <input
+                  type="date"
+                  name="visitDate"
+                  value={formData.visitDate}
+                  onChange={handleChange}
+                  min={getMinDate()}
+                  max={getMaxDate()}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  disabled={isSubmitting}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Disponível para os próximos 90 dias. Deixe em branco para não agendar agora.
+                </p>
               </div>
 
               {/* Submit Button */}

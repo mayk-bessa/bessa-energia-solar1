@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
-import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest } from "./db";
+import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest, createTechnicalVisit, getTechnicalVisitsByBudgetId } from "./db";
 import { storagePut } from "./storage";
 import nodemailer from "nodemailer";
 
@@ -61,6 +61,36 @@ export const appRouter = router({
           console.error('Email send error:', error);
           throw new Error('Falha ao enviar email');
         }
+      }),
+
+    scheduleVisit: publicProcedure
+      .input(z.object({
+        budgetRequestId: z.number(),
+        visitDate: z.string(),
+        notes: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const result = await createTechnicalVisit({
+            budgetRequestId: input.budgetRequestId,
+            scheduledDate: new Date(input.visitDate),
+            status: 'scheduled',
+            notes: input.notes || null,
+          });
+          return { success: true, message: 'Visita agendada com sucesso', result };
+        } catch (error) {
+          console.error('Schedule visit error:', error);
+          throw new Error('Falha ao agendar visita');
+        }
+      }),
+
+    getVisits: protectedProcedure
+      .input(z.object({ budgetRequestId: z.number() }))
+      .query(async ({ input, ctx }) => {
+        if (ctx.user?.role !== 'admin') {
+          throw new Error('Unauthorized');
+        }
+        return await getTechnicalVisitsByBudgetId(input.budgetRequestId);
       }),
   }),
 
