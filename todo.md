@@ -30,17 +30,32 @@
   - [x] Adicionar link na página Home para calculadora avançada
   - [x] Fórmula de cálculo corrigida: Economia = kWh produzidos * custo do kWh * taxa de economia
 
+## Fases Concluídas (Continuação)
+
+- [x] **Fase 6 - Dashboard Avançado**:
+  - [x] Componente EconomyChart: Gráfico de economia acumulada + economia líquida (com manutenção)
+  - [x] Componente ROIChart: Gráfico de ROI em percentual ao longo de 25 anos
+  - [x] Componente PaybackChart: Gráfico de barras com tempo de retorno para 3 cenários
+  - [x] Página Dashboard: Integra todos os gráficos + métricas-chave
+  - [x] Seletor de cenários: 3kW, 5kW, 10kW com atualização em tempo real
+  - [x] Cartões de métricas: Economia mensal, investimento, tempo de retorno
+  - [x] Seção informativa: Explicação dos gráficos e cálculos
+  - [ ] Testes vitest para componentes de gráficos (próxima tarefa)
+  - [ ] Integração com dados reais da calculadora avançada (próxima tarefa)
+
 ## Fases Futuras
 
-- [ ] **Fase 6 - Dashboard Avançado**: Gráficos de economia ao longo do tempo, ROI, e histórico de orçamentos
-- [ ] **Fase 7 - Integração com Google Maps**: Mostrar localização das usinas e áreas de cobertura
-- [ ] **Fase 8 - Sistema de Avaliações**: Depoimentos de clientes e avaliações de projetos
+- [ ] **Fase 7 - Testes para Dashboard**: Testes vitest para EconomyChart, ROIChart, PaybackChart e Dashboard
+- [ ] **Fase 8 - Integração com Google Maps**: Mostrar localização das usinas e áreas de cobertura
+- [ ] **Fase 9 - Sistema de Avaliações**: Depoimentos de clientes e avaliações de projetos
 
 ## Tarefas Gerais
 
 - [ ] Configurar DNS para solarbh.com (usuário precisa adicionar domínio no painel Manus)
 - [x] Implementação completa de exportação de PDF com testes
 - [x] Implementação da Calculadora Avançada com sliders e comparativo
+- [x] Implementação do Dashboard com gráficos de economia e ROI
 - [ ] Testar fluxo completo de exportação de PDF no navegador (validação manual)
 - [ ] Validar envio de email com PDF anexado (validação manual)
 - [ ] Testar sliders da calculadora avançada no navegador (validação manual)
+- [ ] Testar gráficos do Dashboard no navegador (validação manual)
