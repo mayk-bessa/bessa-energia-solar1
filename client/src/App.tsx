@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CalculatorProvider } from "./contexts/CalculatorContext";
 import Home from "./pages/Home";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdvancedCalculator from "./components/AdvancedCalculator";
@@ -33,10 +34,12 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <CalculatorProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </CalculatorProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

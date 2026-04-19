@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useCalculatorParams } from '@/contexts/CalculatorContext';
 
 interface ScenarioResult {
   systemSize: number;
@@ -14,9 +15,10 @@ interface ScenarioResult {
 }
 
 export default function AdvancedCalculator() {
-  const [monthlySpend, setMonthlySpend] = useState(500);
-  const [economyRate, setEconomyRate] = useState(0.95);
-  const [kwhCost, setKwhCost] = useState(0.70);
+  const { params, setParams } = useCalculatorParams();
+  const [monthlySpend, setMonthlySpend] = useState(params.monthlySpend);
+  const [economyRate, setEconomyRate] = useState(params.economyRate);
+  const [kwhCost, setKwhCost] = useState(params.kwhCost);
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -25,7 +27,16 @@ export default function AdvancedCalculator() {
 
   const generateReportMutation = trpc.budget.generateReport.useMutation();
 
-  // Cenários predefinidos: 3kW, 5kW, 10kW
+  // Sincronizar parâmetros com o contexto em tempo real
+  useEffect(() => {
+    setParams({
+      monthlySpend,
+      economyRate,
+      kwhCost,
+    });
+  }, [monthlySpend, economyRate, kwhCost, setParams]);
+
+  // Cenários predefiníos: 3kW, 5kW, 10kW
   const scenarios = [3, 5, 10];
 
   const calculateScenario = (systemSizeKw: number): ScenarioResult => {
@@ -34,7 +45,7 @@ export default function AdvancedCalculator() {
 
     // Economia mensal: baseada no consumo estimado e custo do kWh
     // Economia = kWh produzidos * custo do kWh * taxa de economia
-    const monthlyEconomy = monthlyProduction * kwhCost * economyRate;
+    const monthlyEconomy = monthlyProduction * (kwhCost || params.kwhCost) * (economyRate || params.economyRate);
 
     // Investimento médio: ~R$ 3.000 por kW
     const investmentPerKw = 3000;

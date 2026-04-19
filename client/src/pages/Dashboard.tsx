@@ -6,13 +6,30 @@ import EconomyChart from '@/components/EconomyChart';
 import ROIChart from '@/components/ROIChart';
 import PaybackChart from '@/components/PaybackChart';
 import { ArrowLeft } from 'lucide-react';
+import { useCalculatorParams } from '@/contexts/CalculatorContext';
 
 export default function Dashboard() {
   const [selectedScenario, setSelectedScenario] = useState(5);
+  const { params: calculatorParams } = useCalculatorParams();
   
-  // Valores padrão para demonstração
-  const monthlyEconomy = selectedScenario * 120 * 0.70 * 0.95;
-  const paybackYears = (selectedScenario * 3000) / (monthlyEconomy * 12);
+  // Cálculos baseados nos parâmetros da calculadora
+  const calculateScenario = (systemSizeKw: number) => {
+    const monthlyProduction = systemSizeKw * 120;
+    const monthlyEconomy = monthlyProduction * calculatorParams.kwhCost * calculatorParams.economyRate;
+    const investmentEstimate = systemSizeKw * 3000;
+    const paybackMonths = monthlyEconomy > 0 ? investmentEstimate / monthlyEconomy : 0;
+    const paybackYears = paybackMonths / 12;
+    
+    return {
+      monthlyEconomy,
+      paybackYears,
+      investmentEstimate,
+    };
+  };
+  
+  const scenario = calculateScenario(selectedScenario);
+  const monthlyEconomy = scenario.monthlyEconomy;
+  const paybackYears = scenario.paybackYears;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
@@ -113,10 +130,17 @@ export default function Dashboard() {
         </Card>
 
         {/* CTA */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center space-y-4">
+          <p className="text-sm text-slate-600">
+            💡 Dica: Os valores acima são calculados com base em:
+            <br />
+            Taxa de economia: {(calculatorParams.economyRate * 100).toFixed(0)}% | Custo do kWh: R$ {calculatorParams.kwhCost.toFixed(2)}
+            <br />
+            <span className="text-xs text-slate-500">Ajuste estes parâmetros na Calculadora Avançada para ver os valores atualizados aqui</span>
+          </p>
           <Link href="/calculadora-avancada">
             <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg">
-              Usar Calculadora Avançada
+              Ajustar Parâmetros na Calculadora Avançada
             </Button>
           </Link>
         </div>
