@@ -41,13 +41,12 @@
   - [x] Cartões de métricas: Economia mensal, investimento, tempo de retorno
   - [x] Seção informativa: Explicação dos gráficos e cálculos
   - [x] Testes vitest para componentes de gráficos (30 testes novos, todos passando)
-  - [ ] Integração com dados reais da calculadora avançada (próxima tarefa)
+  - [x] Dashboard funcional com cálculos em tempo real para cada cenário (valores demo)
 
 ## Fases Futuras
 
-- [ ] **Fase 7 - Testes para Dashboard**: Testes vitest para EconomyChart, ROIChart, PaybackChart e Dashboard
-- [ ] **Fase 8 - Integração com Google Maps**: Mostrar localização das usinas e áreas de cobertura
-- [ ] **Fase 9 - Sistema de Avaliações**: Depoimentos de clientes e avaliações de projetos
+- [ ] **Fase 7 - Integração com Google Maps**: Mostrar localização das usinas e áreas de cobertura
+- [ ] **Fase 8 - Sistema de Avaliações**: Depoimentos de clientes e avaliações de projetos
 
 ## Tarefas Gerais
 
@@ -55,6 +54,8 @@
 - [x] Implementação completa de exportação de PDF com testes
 - [x] Implementação da Calculadora Avançada com sliders e comparativo
 - [x] Implementação do Dashboard com gráficos de economia e ROI
+- [ ] Implementação completa de Fase 4, 5 e 6 com testes (em progresso)
+- [ ] Integrar Dashboard com dados reais da calculadora avançada (remover valores demo)
 - [ ] Testar fluxo completo de exportação de PDF no navegador (validação manual)
 - [ ] Validar envio de email com PDF anexado (validação manual)
 - [ ] Testar sliders da calculadora avançada no navegador (validação manual)
