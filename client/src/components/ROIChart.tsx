@@ -10,10 +10,11 @@ import {
   Legend,
   ChartOptions,
   TooltipItem,
+  LineController,
 } from 'chart.js';
 import { Card } from '@/components/ui/card';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface ROIChartProps {
   monthlyEconomy: number;

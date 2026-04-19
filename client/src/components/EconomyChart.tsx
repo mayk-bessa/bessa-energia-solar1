@@ -11,10 +11,11 @@ import {
   Filler,
   ChartOptions,
   TooltipItem,
+  LineController,
 } from 'chart.js';
 import { Card } from '@/components/ui/card';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 interface EconomyChartProps {
   monthlyEconomy: number;

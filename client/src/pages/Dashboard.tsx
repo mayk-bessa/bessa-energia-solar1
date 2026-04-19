@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -11,6 +11,10 @@ import { useCalculatorParams } from '@/contexts/CalculatorContext';
 export default function Dashboard() {
   const [selectedScenario, setSelectedScenario] = useState(5);
   const { params: calculatorParams } = useCalculatorParams();
+  
+  useEffect(() => {
+    console.log('[Dashboard] Contexto recebido:', calculatorParams);
+  }, [calculatorParams]);
   
   // Cálculos baseados nos parâmetros da calculadora
   const calculateScenario = (systemSizeKw: number) => {
@@ -27,7 +31,8 @@ export default function Dashboard() {
     };
   };
   
-  const scenario = calculateScenario(selectedScenario);
+  // Usar useMemo para garantir que os cálculos sejam atualizados quando o contexto muda
+  const scenario = useMemo(() => calculateScenario(selectedScenario), [selectedScenario, calculatorParams]);
   const monthlyEconomy = scenario.monthlyEconomy;
   const paybackYears = scenario.paybackYears;
 

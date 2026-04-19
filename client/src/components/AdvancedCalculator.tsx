@@ -29,12 +29,17 @@ export default function AdvancedCalculator() {
 
   // Sincronizar parâmetros com o contexto em tempo real
   useEffect(() => {
+    console.log('[AdvancedCalculator] Atualizando contexto:', { monthlySpend, economyRate, kwhCost });
     setParams({
       monthlySpend,
       economyRate,
       kwhCost,
     });
   }, [monthlySpend, economyRate, kwhCost, setParams]);
+
+  useEffect(() => {
+    console.log('[AdvancedCalculator] Contexto atual:', params);
+  }, [params]);
 
   // Cenários predefiníos: 3kW, 5kW, 10kW
   const scenarios = [3, 5, 10];

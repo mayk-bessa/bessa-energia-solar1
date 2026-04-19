@@ -9,10 +9,11 @@ import {
   Legend,
   ChartOptions,
   TooltipItem,
+  BarController,
 } from 'chart.js';
 import { Card } from '@/components/ui/card';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 interface PaybackChartProps {
   paybackYears: number;
