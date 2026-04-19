@@ -40,7 +40,7 @@
   - [x] Seletor de cenários: 3kW, 5kW, 10kW com atualização em tempo real
   - [x] Cartões de métricas: Economia mensal, investimento, tempo de retorno
   - [x] Seção informativa: Explicação dos gráficos e cálculos
-  - [ ] Testes vitest para componentes de gráficos (próxima tarefa)
+  - [x] Testes vitest para componentes de gráficos (30 testes novos, todos passando)
   - [ ] Integração com dados reais da calculadora avançada (próxima tarefa)
 
 ## Fases Futuras
