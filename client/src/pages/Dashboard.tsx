@@ -12,10 +12,6 @@ export default function Dashboard() {
   const [selectedScenario, setSelectedScenario] = useState(5);
   const { params: calculatorParams } = useCalculatorParams();
   
-  useEffect(() => {
-    console.log('[Dashboard] Contexto recebido:', calculatorParams);
-  }, [calculatorParams]);
-  
   // Cálculos baseados nos parâmetros da calculadora
   const calculateScenario = (systemSizeKw: number) => {
     const monthlyProduction = systemSizeKw * 120;
