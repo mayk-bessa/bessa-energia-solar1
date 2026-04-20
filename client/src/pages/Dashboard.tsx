@@ -112,39 +112,57 @@ export default function Dashboard() {
         </div>
 
         {/* Info Section */}
-        <Card className="p-6 bg-blue-50 border border-blue-200 rounded-lg mt-8">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">💡 Sobre os Gráficos</h3>
-          <ul className="space-y-2 text-blue-800 text-sm">
-            <li>
-              <strong>Economia Acumulada:</strong> Mostra quanto você economiza em reais ao longo de 25 anos
+        <Card className="p-6 bg-blue-50 border border-blue-200 rounded-lg mt-8 max-h-96 overflow-y-auto">
+          <h3 className="text-lg font-semibold text-blue-900 mb-3 sticky top-0 bg-blue-50">💡 Sobre os Gráficos</h3>
+          <ul className="space-y-3 text-blue-800 text-sm">
+            <li className="pb-2 border-b border-blue-200 last:border-b-0">
+              <strong className="block text-blue-900 mb-1">Economia Acumulada:</strong>
+              <span className="text-blue-700">Mostra quanto você economiza em reais ao longo de 25 anos, considerando a produção de energia do seu sistema solar.</span>
             </li>
-            <li>
-              <strong>Economia Líquida:</strong> Desconta custos de manutenção (1% ao ano após 5 anos)
+            <li className="pb-2 border-b border-blue-200 last:border-b-0">
+              <strong className="block text-blue-900 mb-1">Economia Líquida:</strong>
+              <span className="text-blue-700">Desconta custos de manutenção (1% ao ano após 5 anos) da economia bruta para dar uma visão mais realista.</span>
             </li>
-            <li>
-              <strong>ROI:</strong> Retorno sobre investimento em percentual - quando atinge 0%, você recupera o investimento
+            <li className="pb-2 border-b border-blue-200 last:border-b-0">
+              <strong className="block text-blue-900 mb-1">ROI (Retorno sobre Investimento):</strong>
+              <span className="text-blue-700">Retorno em percentual - quando atinge 0%, você recupera completamente o investimento inicial. Valores positivos indicam lucro.</span>
             </li>
-            <li>
-              <strong>Payback:</strong> Tempo necessário para recuperar o investimento inicial
+            <li className="pb-2">
+              <strong className="block text-blue-900 mb-1">Payback:</strong>
+              <span className="text-blue-700">Tempo necessário (em anos e meses) para recuperar o investimento inicial através da economia gerada.</span>
             </li>
           </ul>
         </Card>
 
         {/* CTA */}
-        <div className="mt-8 text-center space-y-4">
-          <p className="text-sm text-slate-600">
-            💡 Dica: Os valores acima são calculados com base em:
-            <br />
-            Taxa de economia: {(calculatorParams.economyRate * 100).toFixed(0)}% | Custo do kWh: R$ {calculatorParams.kwhCost.toFixed(2)}
-            <br />
-            <span className="text-xs text-slate-500">Ajuste estes parâmetros na Calculadora Avançada para ver os valores atualizados aqui</span>
-          </p>
-          <Link href="/calculadora-avancada">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg">
-              Ajustar Parâmetros na Calculadora Avançada
-            </Button>
-          </Link>
-        </div>
+        <Card className="p-6 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg mt-8">
+          <div className="text-center space-y-4">
+            <h3 className="text-lg font-semibold text-orange-900">💡 Dica: Ajuste os Parâmetros</h3>
+            <div className="bg-white/50 p-4 rounded-lg">
+              <p className="text-sm text-slate-700 mb-2">
+                Os valores acima são calculados com base em:
+              </p>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="bg-green-50 p-3 rounded">
+                  <p className="text-xs text-green-600 font-semibold">Taxa de Economia</p>
+                  <p className="text-lg font-bold text-green-700">{(calculatorParams.economyRate * 100).toFixed(0)}%</p>
+                </div>
+                <div className="bg-blue-50 p-3 rounded">
+                  <p className="text-xs text-blue-600 font-semibold">Custo do kWh</p>
+                  <p className="text-lg font-bold text-blue-700">R$ {calculatorParams.kwhCost.toFixed(2)}</p>
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 mt-3">
+                ✏️ Ajuste estes parâmetros na Calculadora Avançada para ver os valores atualizados aqui em tempo real
+              </p>
+            </div>
+            <Link href="/calculadora-avancada">
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg w-full">
+                Ajustar Parâmetros na Calculadora Avançada →
+              </Button>
+            </Link>
+          </div>
+        </Card>
       </div>
     </div>
   );
