@@ -189,7 +189,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white shadow-2xl">
+            <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 text-white shadow-2xl" style={{opacity: '0.9'}}>
               <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 mb-6">
                 <p className="text-sm text-orange-100 mb-2">Simulador de Geração</p>
                 <div className="flex justify-between items-end">
@@ -407,7 +407,7 @@ export default function Home() {
                 />
                 <Button
                   type="submit"
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 text-lg"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 text-lg" style={{backgroundColor: '#ff6900'}}
                 >
                   Receber Orçamento
                 </Button>
