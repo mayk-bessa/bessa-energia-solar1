@@ -119,16 +119,16 @@ export default function Home() {
                 <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
                   Solicitar Orçamento
                 </Button>
-                <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg">
+                <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg" style={{width: '234px'}}>
                   Tire suas Dúvidas.
                 </Button>
                 <Link href="/calculadora-avancada">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg">
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg" style={{backgroundColor: '#253c7e'}} style={{width: '234px'}}>
                     Calculadora Avançada
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg">
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg" style={{width: '234px'}}>
                     Dashboard
                   </Button>
                 </Link>
