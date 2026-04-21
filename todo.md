@@ -41,19 +41,40 @@
 
 ## Próximas Tarefas
 
-- [ ] **Configurar Servidor SMTP** (EM PROGRESSO)
+- [ ] **Configurar Servidor SMTP** (PARCIALMENTE CONCLUÍDO)
   - [x] Variáveis de ambiente SMTP configuradas (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
   - [x] Porta 587 (TLS) configurada para melhor compatibilidade
   - [x] Testes vitest validando configuração
   - [x] emailService.ts atualizado com nova porta
-  - [ ] Testar envio real de email com PDF (firewall pode estar bloqueando na porta 587)
+  - [ ] Testar envio real de email com PDF em ambiente de produção (firewall do sandbox bloqueia TLS)
   - [ ] Validar no navegador o fluxo completo de exportação com envio por email
 
-- [ ] **Configurar DNS Customizado** (EM PROGRESSO)
+- [ ] **Configurar DNS Customizado** (PARCIALMENTE CONCLUÍDO)
   - [x] Domínio automático disponível: bessa-solar-3wees8ow.manus.space
-  - [ ] Adicionar domínio solarbh.com no painel Manus
-  - [ ] Configurar registros DNS de solarbh.com
-  - [ ] Validar acesso funcional via domínio customizado solarbh.com
+  - [ ] Adicionar domínio customizado bessaenergia.com.br no painel Manus
+  - [ ] Configurar registros DNS de bessaenergia.com.br
+  - [ ] Validar acesso funcional via domínio customizado
+
+- [x] **Organizar Dashboard** (CONCLUÍDO)
+  - [x] Caixas de texto com barra de rolagem (max-h-96 overflow-y-auto)
+  - [x] Descrições expandidas e mais claras
+  - [x] Seção CTA reorganizada com cards de parâmetros visíveis
+  - [x] Melhor contraste e legibilidade
+
+- [x] **Integrar Gráficos com Dados Reais** (CONCLUÍDO)
+  - [x] Dashboard consome calculatorParams do CalculatorContext
+  - [x] Cálculos usam economyRate e kwhCost
+  - [x] Sincronização via localStorage funciona perfeitamente
+  - [x] Gráficos recebem dados atualizados em tempo real
+
+## Tarefas Finais
+
+- [x] **Organizar Dashboard com Visibilidade Melhorada** (CONCLUÍDO)
+- [x] **Integrar Gráficos com Dados Reais da Calculadora** (CONCLUÍDO)
+- [x] **Salvar Checkpoint Final** (CONCLUÍDO - versão 0f9eb263)
+- [ ] **Renomear Projeto para "Bessa Energia Solar"** (PRÓXIMA TAREFA)
+- [ ] **Testar Email em Produção** (PENDENTE - firewall do sandbox bloqueia TLS)
+- [ ] **Configurar Domínio Customizado** (PENDENTE - usuário deve fazer no painel Manus)
 
 ## Fases Futuras
 
@@ -69,7 +90,9 @@
 | Gráficos Dashboard | ✅ PASSOU | 3 gráficos renderizando |
 | Chart.js Correção | ✅ PASSOU | BarController e LineController registrados |
 | Sincronização Contexto | ✅ PASSOU | localStorage implementado com sucesso |
-| Email SMTP | ⏳ PENDENTE | Servidor não configurado |
+| Dashboard Organizado | ✅ PASSOU | Barra de rolagem, descrições expandidas |
+| Email SMTP | ⛳ PENDENTE | Firewall do sandbox bloqueia TLS na porta 587 |
+| DNS Customizado | ⛳ PENDENTE | Usuário deve configurar no painel Manus |
 
 ## Estatísticas Finais
 
