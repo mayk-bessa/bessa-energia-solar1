@@ -76,7 +76,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <div className="flex items-center">
             <img 
-              src="/manus-storage/Logotransparente_bessaenergia_cores_fb0c0e97.png" 
+              src="/Logotransparente_bessaenergia_cores.png" 
               alt="Bessa Energia Logo"
               className="h-20 w-auto"
             />
