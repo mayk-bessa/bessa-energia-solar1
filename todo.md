@@ -77,9 +77,25 @@
 - [x] **Organizar Dashboard com Visibilidade Melhorada** (CONCLUÍDO)
 - [x] **Integrar Gráficos com Dados Reais da Calculadora** (CONCLUÍDO)
 - [x] **Salvar Checkpoint Final** (CONCLUÍDO - versão 0f9eb263)
-- [ ] **Renomear Projeto para "Bessa Energia Solar"** (PRÓXIMA TAREFA)
-- [ ] **Testar Email em Produção** (PENDENTE - firewall do sandbox bloqueia TLS)
-- [ ] **Configurar Domínio Customizado** (PENDENTE - usuário deve fazer no painel Manus)
+- [x] **Branding Completo** (CONCLUÍDO)
+  - [x] Projeto nomeado como "Bessa Energia - Usinas de Energia Solar"
+  - [x] Logo da Bessa Energia implementada na navegação
+  - [x] Favicon convertido do logo (154KB com múltiplas resoluções)
+  - [x] Cores da marca (#ff6900 laranja, #253c7e azul escuro) aplicadas
+
+- [ ] **Testar Email em Produção** (PENDENTE - Requer Ambiente de Produção)
+  - [x] Problema identificado: Firewall do sandbox bloqueia TLS na porta 587
+  - [x] Solução: Testar em ambiente de produção (funcionará automaticamente)
+  - [x] Alternativa: Usar SendGrid ou Mailgun
+  - [x] Instruções adicionadas em DEPLOYMENT_INSTRUCTIONS.md
+  - [ ] Executar teste real após publicar em produção
+
+- [ ] **Configurar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
+  - [x] Domínio alvo: bessaenergia.com.br
+  - [x] Domínio temporário: bessa-solar-3wees8ow.manus.space (ativo)
+  - [x] Instruções passo a passo adicionadas em DEPLOYMENT_INSTRUCTIONS.md
+  - [x] Guia de configuração de DNS fornecido
+  - [ ] Usuário deve executar no painel Manus
 
 ## Fases Futuras
 
