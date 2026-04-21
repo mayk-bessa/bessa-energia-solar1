@@ -87,7 +87,7 @@ export default function Home() {
                 Olá, {user?.name || 'Usuário'}
               </div>
             ) : null}
-            <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white" style={{backgroundColor: '#ff6900'}}>
               Solicitar Orçamento
             </Button>
           </div>
@@ -119,7 +119,7 @@ export default function Home() {
                 <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
                   Solicitar Orçamento
                 </Button>
-                <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg" style={{width: '234px'}}>
+                <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg" style={{width: '234px', backgroundColor: '#253c7e'}}>
                   Tire suas Dúvidas.
                 </Button>
                 <Link href="/calculadora-avancada">
@@ -128,7 +128,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg" style={{width: '234px'}}>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg" style={{width: '234px', backgroundColor: '#253c7e'}}>
                     Dashboard
                   </Button>
                 </Link>
