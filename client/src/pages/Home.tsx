@@ -123,7 +123,7 @@ export default function Home() {
                   Tire suas Dúvidas.
                 </Button>
                 <Link href="/calculadora-avancada">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg" style={{backgroundColor: '#253c7e'}} style={{width: '234px'}}>
+                  <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg" style={{backgroundColor: '#253c7e', width: '234px'}}>
                     Calculadora Avançada
                   </Button>
                 </Link>

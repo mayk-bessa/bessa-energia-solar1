@@ -41,6 +41,11 @@
 
 ## Próximas Tarefas
 
+- [x] **Substituir Favicon** (CONCLUÍDO)
+  - [x] Logo da Bessa Energia convertida para favicon.ico
+  - [x] Múltiplas resoluções incluídas (256x256 até 16x16)
+  - [x] Favicon exibido corretamente no navegador
+
 - [ ] **Configurar Servidor SMTP** (PARCIALMENTE CONCLUÍDO)
   - [x] Variáveis de ambiente SMTP configuradas (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
   - [x] Porta 587 (TLS) configurada para melhor compatibilidade
