@@ -270,18 +270,65 @@ export default function Home() {
           </div>
 
           {/* WallBox Section */}
-          <div className="mt-12">
-            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
-              <img
-                src="/manus-storage/carport_ed5d0423.jpeg"
-                alt="WallBox - Carregador Inteligente"
-                className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1">WallBox - Carregador Inteligente</h3>
-                  <p className="text-sm text-orange-300">Carregue seu carro com energia 100% limpa e renovável.</p>
+          <div className="mt-16 pt-12 border-t border-gray-200">
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
+              WallBox - Carregador Inteligente
+            </h2>
+            <p className="text-center text-gray-600 max-w-2xl mx-auto mb-8">
+              Um wallbox é um carregador de veículos elétricos inteligente e de alta potência que se instala na parede de sua casa ou empresa. Quando integrado a um sistema solar, permite que você carregue seu carro com energia 100% limpa e renovável, reduzindo custos e impacto ambiental.
+            </p>
+
+            {/* Advantages Grid */}
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 shadow-md">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg">⚡</div>
                 </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Carregamento Rápido</h3>
+                <p className="text-sm text-gray-700">Carregue seu veículo em poucas horas com potências de até 22kW</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-md">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">🌱</div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">100% Limpo</h3>
+                <p className="text-sm text-gray-700">Energia renovável dos painéis solares, zero emissões de carbono</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-md">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">💰</div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Economia Garantida</h3>
+                <p className="text-sm text-gray-700">Reduza seus gastos com combustível e energia elétrica</p>
+              </div>
+            </div>
+
+            {/* Images Grid */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+                <img
+                  src="/manus-storage/M1dCwD3znTi9_c5254851.jpg"
+                  alt="Wallbox na parede com painéis solares"
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+                <img
+                  src="/manus-storage/MwUF5dZootzv_41d81ef7.png"
+                  alt="Wallbox Pulsar Plus"
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+                <img
+                  src="/manus-storage/Udy7cfQuAh7N_b63b45f2.png"
+                  alt="Sistema de carregamento solar"
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
               </div>
             </div>
           </div>
