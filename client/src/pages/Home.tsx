@@ -78,7 +78,7 @@ export default function Home() {
             <img 
               src="/Logotransparente_bessaenergia_cores.png" 
               alt="Bessa Energia Logo"
-              className="h-20 w-auto"
+              className="h-20 w-auto" style={{width: '251px', height: '116px'}}
             />
           </div>
           <div className="flex items-center gap-4">
