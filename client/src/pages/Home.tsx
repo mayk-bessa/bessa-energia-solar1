@@ -271,41 +271,10 @@ export default function Home() {
 
           {/* WallBox Section */}
           <div className="mt-16 pt-12 border-t border-gray-200">
-            <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
+            <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
               WallBox - Carregador Inteligente
             </h2>
-            <p className="text-center text-gray-600 max-w-2xl mx-auto mb-8">
-              Um wallbox é um carregador de veículos elétricos inteligente e de alta potência que se instala na parede de sua casa ou empresa. Quando integrado a um sistema solar, permite que você carregue seu carro com energia 100% limpa e renovável, reduzindo custos e impacto ambiental.
-            </p>
 
-            {/* Advantages Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg">⚡</div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Carregamento Rápido</h3>
-                <p className="text-sm text-gray-700">Carregue seu veículo em poucas horas com potências de até 22kW</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">🌱</div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">100% Limpo</h3>
-                <p className="text-sm text-gray-700">Energia renovável dos painéis solares, zero emissões de carbono</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 shadow-md">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">💰</div>
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Economia Garantida</h3>
-                <p className="text-sm text-gray-700">Reduza seus gastos com combustível e energia elétrica</p>
-              </div>
-            </div>
-
-            {/* Images Grid */}
             <div className="grid md:grid-cols-3 gap-6">
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
@@ -313,6 +282,12 @@ export default function Home() {
                   alt="Wallbox na parede com painéis solares"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Instalação Residencial</h3>
+                    <p className="text-sm text-orange-300">Carregador inteligente para sua casa</p>
+                  </div>
+                </div>
               </div>
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
@@ -321,6 +296,12 @@ export default function Home() {
                   alt="Wallbox Pulsar Plus"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Wallbox Pulsar Plus</h3>
+                    <p className="text-sm text-orange-300">Carregamento rápido até 22kW</p>
+                  </div>
+                </div>
               </div>
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
@@ -329,6 +310,12 @@ export default function Home() {
                   alt="Sistema de carregamento solar"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Sistema Solar Completo</h3>
+                    <p className="text-sm text-orange-300">Energia 100% limpa e renovável</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
