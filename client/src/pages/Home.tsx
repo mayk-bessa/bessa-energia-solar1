@@ -309,42 +309,42 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp"
-                  alt="Instalação Residencial"
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-1">Instalação Residencial</h3>
-                    <p className="text-sm text-orange-300">Carregador inteligente para sua casa</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp"
+                  src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
                   alt="Wallbox Pulsar Plus"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
                     <h3 className="text-xl font-bold text-white mb-1">Wallbox Pulsar Plus</h3>
-                    <p className="text-sm text-orange-300">Carregamento rápido até 22kW</p>
+                    <p className="text-sm text-orange-300">Carregador inteligente de alta potência</p>
                   </div>
                 </div>
               </div>
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp"
-                  alt="Sistema Solar Completo"
+                  src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
+                  alt="Wallbox com Painéis Solares"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-1">Sistema Solar Completo</h3>
-                    <p className="text-sm text-orange-300">Energia 100% limpa e renovável</p>
+                    <h3 className="text-xl font-bold text-white mb-1">Integração Solar</h3>
+                    <p className="text-sm text-orange-300">Wallbox conectado ao sistema solar</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+                <img
+                  src="/manus-storage/M3W7ro9VGiw4_09c26695.webp"
+                  alt="Carport Solar com Carro Elétrico"
+                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Carport Solar</h3>
+                    <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
                   </div>
                 </div>
               </div>
@@ -353,14 +353,14 @@ export default function Home() {
             {/* Carport Section */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
-                src="/manus-storage/carport_1f994891.jpeg"
-                alt="Carport com WallBox"
+                src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
+                alt="Carport Solar Profissional"
                 className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-1">Carport com WallBox</h3>
-                  <p className="text-sm text-orange-300">Estacionamento inteligente com carregamento solar</p>
+                  <h3 className="text-xl font-bold text-white mb-1">Carport Solar Profissional</h3>
+                  <p className="text-sm text-orange-300">Sistema completo de carregamento solar</p>
                 </div>
               </div>
             </div>
