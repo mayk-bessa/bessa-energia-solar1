@@ -268,6 +268,23 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* WallBox Section */}
+          <div className="mt-12">
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
+              <img
+                src="/manus-storage/carport_ed5d0423.jpeg"
+                alt="WallBox - Carregador Inteligente"
+                className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">WallBox - Carregador Inteligente</h3>
+                  <p className="text-sm text-orange-300">Carregue seu carro com energia 100% limpa e renovável.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
