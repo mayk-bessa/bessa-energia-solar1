@@ -309,7 +309,7 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-pulsar-plus-JgKmL9pQ2nF.jpg"
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp"
                   alt="Wallbox Pulsar Plus"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -322,7 +322,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-solar-integration-nKmL9pQ2nF.jpg"
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp"
                   alt="Wallbox com Painéis Solares"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -335,7 +335,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/carport-solar-charging-pKmL9pQ2nF.jpg"
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp"
                   alt="Carport Solar com Carro Elétrico"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -350,7 +350,7 @@ export default function Home() {
             {/* Carport Section */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/carport-solar-professional-qKmL9pQ2nF.jpg"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/hero-solar-panels-P8T8FYmLny5gbdJnA7NAeq.webp"
                 alt="Carport Solar Profissional"
                 className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
               />
