@@ -309,7 +309,7 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp"
+                  src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
                   alt="Wallbox Pulsar Plus"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -322,7 +322,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp"
+                  src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
                   alt="Wallbox com Painéis Solares"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -335,7 +335,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp"
+                  src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
                   alt="Carport Solar com Carro Elétrico"
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
