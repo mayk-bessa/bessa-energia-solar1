@@ -311,7 +311,7 @@ export default function Home() {
                 <img
                   src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
                   alt="Wallbox Pulsar Plus"
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
@@ -324,7 +324,7 @@ export default function Home() {
                 <img
                   src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
                   alt="Wallbox com Painéis Solares"
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
@@ -337,7 +337,7 @@ export default function Home() {
                 <img
                   src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
                   alt="Carport Solar com Carro Elétrico"
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
@@ -347,12 +347,28 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Estacionamento com carregamento solar - Full Width */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
+              <img
+                src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
+                alt="Estacionamento com Carregamento Solar"
+                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                style={{ height: '384px' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                <div>
+                  <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
+                </div>
+              </div>
+            </div>
+
             {/* Carport Section */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
                 src="/manus-storage/carport_ddb7d756.jpeg"
                 alt="Carport Solar Profissional"
-                className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
+                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                style={{ height: '384px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
