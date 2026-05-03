@@ -335,7 +335,7 @@ export default function Home() {
 
               <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
                 <img
-                  src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
+                  src="/manus-storage/Udy7cfQuAh7N_b63b45f2.png"
                   alt="Carport Solar com Carro Elétrico"
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
                 />
