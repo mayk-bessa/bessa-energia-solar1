@@ -350,7 +350,7 @@ export default function Home() {
             {/* Carport Section */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/hero-solar-panels-P8T8FYmLny5gbdJnA7NAeq.webp"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/carport_1f994891.jpeg"
                 alt="Carport Solar Profissional"
                 className="w-full h-96 object-cover group-hover:scale-110 transition-transform duration-300"
               />
