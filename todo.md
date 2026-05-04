@@ -179,3 +179,30 @@
   - [x] Imagem 3: Udy7cfQuAh7N_b63b45f2.png
   - [x] Imagem 4: M3W7ro9VGiw4_09c26695.jpg
   - [x] Manter imagem 5 inalterada
+
+## Alterações de Imagens - Galeria WallBox (Concluído)
+
+- [x] **Substituir Imagens da Galeria WallBox**
+  - [x] Imagem 1: Jg2RMUES7eYD_61169483.jpg (substituída de carport_ddb7d756.jpeg)
+  - [x] Imagem 2: lxYPE647fL7H_0da93c84.jpg (mantida)
+  - [x] Imagem 3: Udy7cfQuAh7N_b63b45f2.png (mantida)
+  - [x] Imagem 4: oLceu0RoRFBv_7837a09a.jpg (substituída de M3W7ro9VGiw4_09c26695.jpg)
+  - [x] Imagem 5: M3W7ro9VGiw4_09c26695.jpg (mantida)
+  - [x] Todas as URLs usando storage proxy (/manus-storage/)
+  - [x] Legendas com descrição exibidas na visualização em tela cheia
+  - [x] 97 testes vitest passando
+  - [x] Verificação visual: todas as imagens carregando corretamente
+
+
+## Alterações de Imagens - Galeria WallBox (Concluído)
+
+- [x] **Substituir Imagens da Galeria WallBox**
+  - [x] Imagem 1: Jg2RMUES7eYD_61169483.jpg (substituída de carport_ddb7d756.jpeg)
+  - [x] Imagem 2: lxYPE647fL7H_0da93c84.jpg (mantida)
+  - [x] Imagem 3: Udy7cfQuAh7N_b63b45f2.png (mantida)
+  - [x] Imagem 4: oLceu0RoRFBv_7837a09a.jpg (substituída de M3W7ro9VGiw4_09c26695.jpg)
+  - [x] Imagem 5: M3W7ro9VGiw4_09c26695.jpg (mantida)
+  - [x] Todas as URLs usando storage proxy (/manus-storage/)
+  - [x] Legendas com descrição exibidas na visualização em tela cheia
+  - [x] 97 testes vitest passando
+  - [x] Verificação visual: todas as imagens carregando corretamente

@@ -7,7 +7,7 @@ export default function GaleriaWallBox() {
 
   const images = [
     {
-      src: '/manus-storage/carport_ddb7d756.jpeg',
+      src: '/manus-storage/Jg2RMUES7eYD_61169483.jpg',
       alt: 'Carport Solar',
       title: 'Carport Solar',
       description: 'Estacionamento com carregamento solar'
@@ -25,13 +25,13 @@ export default function GaleriaWallBox() {
       description: 'Sistema completo de carregamento solar'
     },
     {
-      src: '/manus-storage/M3W7ro9VGiw4_09c26695.jpg',
+      src: '/manus-storage/oLceu0RoRFBv_7837a09a.jpg',
       alt: 'Ponto de Recarga de VE Solar',
       title: 'Ponto de Recarga de VE Solar',
       description: 'Infraestrutura de carregamento solar'
     },
     {
-      src: '/manus-storage/carport_ddb7d756.jpeg',
+      src: '/manus-storage/M3W7ro9VGiw4_09c26695.jpg',
       alt: 'Carport Solar Profissional',
       title: 'Carport Solar Profissional',
       description: 'Sistema completo de carregamento solar'
