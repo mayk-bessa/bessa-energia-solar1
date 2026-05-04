@@ -242,3 +242,14 @@
   - [x] Z-index correto (sempre à frente)
   - [x] 97 testes vitest passando
   - [x] Verificação visual: lightbox funcionando perfeitamente
+
+
+## Redimensionamento - Seção WallBox (Concluído)
+
+- [x] **Redimensionar Imagem da Seção WallBox**
+  - [x] Ajustar altura das imagens para exibição integral (object-contain + maxHeight 500px)
+  - [x] Manter proporção original das imagens (aspect ratio preservado)
+  - [x] Garantir visualização completa em todos os tamanhos de tela (height: auto)
+  - [x] Manter restante da seção inalterado (legenda, espaçamento, efeitos hover)
+  - [x] Testar responsividade em diferentes resoluções (verificado em desktop)
+  - [x] 97 testes vitest passando

@@ -319,8 +319,8 @@ export default function Home() {
               <img
                 src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
                 alt="Wallbox Pulsar Plus"
-                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                style={{ height: '384px' }}
+                className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
+                style={{ height: 'auto', maxHeight: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
@@ -335,8 +335,8 @@ export default function Home() {
               <img
                 src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
                 alt="Wallbox com Painéis Solares"
-                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                style={{ height: '384px' }}
+                className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
+                style={{ height: 'auto', maxHeight: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
@@ -351,8 +351,8 @@ export default function Home() {
               <img
                 src="/manus-storage/Udy7cfQuAh7N_b63b45f2.png"
                 alt="Carport Solar com Carro Elétrico"
-                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                style={{ height: '384px' }}
+                className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
+                style={{ height: 'auto', maxHeight: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
@@ -367,8 +367,8 @@ export default function Home() {
               <img
                 src="/manus-storage/oLceu0RoRFBv_7837a09a.jpg"
                 alt="Estacionamento com Carregamento Solar"
-                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                style={{ height: '384px' }}
+                className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
+                style={{ height: 'auto', maxHeight: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
@@ -383,8 +383,8 @@ export default function Home() {
               <img
                 src="/manus-storage/carport_ddb7d756.jpeg"
                 alt="Carport Solar Profissional"
-                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                style={{ height: '384px' }}
+                className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
+                style={{ height: 'auto', maxHeight: '500px' }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
