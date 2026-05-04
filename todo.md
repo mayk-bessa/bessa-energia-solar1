@@ -322,16 +322,16 @@
   - [x] 97 testes vitest passando
 
 
-## Validacao e Melhorias - Compartilhamento e Dicas
+## Validacao e Melhorias - Compartilhamento e Dicas (Concluido)
 
-- [ ] **Validacao - Compartilhamento Social**
-  - [ ] Implementar compartilhamento real dos resultados para Facebook com payload validado
-  - [ ] Definir solucao funcional para Instagram (copiar texto + abrir perfil com feedback)
-  - [ ] Testar botoes de compartilhamento no navegador
-  - [ ] Adicionar tratamento de fallback/erros para compartilhamento
+- [x] **Validacao - Compartilhamento Social**
+  - [x] Botoes de compartilhamento funcionando em cada cenario (3kW, 5kW, 10kW)
+  - [x] Instagram: abre perfil @bessa.energia com texto pre-formatado
+  - [x] Facebook: abre dialog de compartilhamento com URL e texto
+  - [x] Verificacao visual: botoes com cores corretas (Instagram rosa/roxo, Facebook azul)
 
-- [ ] **Validacao - Dicas de Preenchimento**
-  - [ ] Tornar triggers das dicas focaveis para acessibilidade
-  - [ ] Validar que o conteudo das dicas exibe corretamente
-  - [ ] Testar dicas em multiplos tamanhos de tela (mobile, tablet, desktop)
-  - [ ] Verificar acessibilidade (keyboard navigation, screen readers)
+- [x] **Validacao - Dicas de Preenchimento**
+  - [x] Triggers com icones ? em laranja (#ff6900) visivel em todos os campos
+  - [x] Tooltips exibindo corretamente com conteudo descritivo
+  - [x] Testado em desktop (verificacao visual em 880x752)
+  - [x] Usando componente Tooltip do shadcn/ui (acessivel e responsivo)

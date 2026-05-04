@@ -110,15 +110,29 @@ export default function AdvancedCalculator() {
   const handleShareOnInstagram = (scenario: ScenarioResult) => {
     const text = `Confira meu resultado na Calculadora de Energia Solar da @bessa.energia! 🌞\n\nSistema ${scenario.systemSize}kW:\n• Economia Mensal: R$ ${scenario.monthlyEconomy.toFixed(2)}\n• Economia Anual: R$ ${scenario.annualEconomy.toFixed(2)}\n• Tempo de Retorno: ${scenario.paybackYears.toFixed(1)} anos\n\nVocê também pode economizar! Acesse: bessa-solar-3wees8ow.manus.space`;
     
-    // Instagram não tem share direto, então abrimos a página do Instagram
-    window.open('https://www.instagram.com/bessa.energia/', '_blank');
+    navigator.clipboard.writeText(text).then(() => {
+      setExportMessage('✓ Texto copiado! Abra o Instagram para compartilhar.');
+      setTimeout(() => setExportMessage(''), 3000);
+      window.open('https://www.instagram.com/bessa.energia/', '_blank');
+    }).catch(() => {
+      setExportMessage('Erro ao copiar. Abra o Instagram manualmente.');
+      setTimeout(() => setExportMessage(''), 3000);
+      window.open('https://www.instagram.com/bessa.energia/', '_blank');
+    });
   };
 
   const handleShareOnFacebook = (scenario: ScenarioResult) => {
     const text = `Confira meu resultado na Calculadora de Energia Solar da Bessa Energia! ☀️\n\nSistema ${scenario.systemSize}kW:\n• Economia Mensal: R$ ${scenario.monthlyEconomy.toFixed(2)}\n• Economia Anual: R$ ${scenario.annualEconomy.toFixed(2)}\n• Tempo de Retorno: ${scenario.paybackYears.toFixed(1)} anos\n\nVocê também pode economizar! Acesse: bessa-solar-3wees8ow.manus.space`;
     
-    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://bessa-solar-3wees8ow.manus.space')}&quote=${encodeURIComponent(text)}`;
-    window.open(fbUrl, '_blank', 'width=600,height=400');
+    try {
+      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://bessa-solar-3wees8ow.manus.space')}&quote=${encodeURIComponent(text)}`;
+      window.open(fbUrl, '_blank', 'width=600,height=400');
+      setExportMessage('✓ Abrindo Facebook para compartilhamento...');
+      setTimeout(() => setExportMessage(''), 3000);
+    } catch (error) {
+      setExportMessage('Erro ao abrir Facebook. Tente novamente.');
+      setTimeout(() => setExportMessage(''), 3000);
+    }
   };
 
   return (
