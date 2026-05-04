@@ -46,19 +46,20 @@
   - [x] Múltiplas resoluções incluídas (256x256 até 16x16)
   - [x] Favicon exibido corretamente no navegador
 
-- [ ] **Configurar Servidor SMTP** (PARCIALMENTE CONCLUÍDO)
-  - [x] Variáveis de ambiente SMTP configuradas (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
-  - [x] Porta 587 (TLS) configurada para melhor compatibilidade
-  - [x] Testes vitest validando configuração
-  - [x] emailService.ts atualizado com nova porta
-  - [ ] Testar envio real de email com PDF em ambiente de produção (firewall do sandbox bloqueia TLS)
+- [ ] **Validar Email em Produção** (PENDENTE - Requer Publicação)
+  - [x] Configuração SMTP completa (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
+  - [x] Porta 587 (TLS) configurada
+  - [x] Testes vitest validando configuração (3 testes passando)
+  - [ ] Publicar projeto via botão Publish no painel Manus
+  - [ ] Testar envio real de email com PDF em ambiente de produção
   - [ ] Validar no navegador o fluxo completo de exportação com envio por email
 
-- [ ] **Configurar DNS Customizado** (PARCIALMENTE CONCLUÍDO)
-  - [x] Domínio automático disponível: bessa-solar-3wees8ow.manus.space
-  - [ ] Adicionar domínio customizado bessaenergia.com.br no painel Manus
-  - [ ] Configurar registros DNS de bessaenergia.com.br
-  - [ ] Validar acesso funcional via domínio customizado
+- [ ] **Validar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
+  - [x] Domínio automático disponível: bessa-solar-3wees8ow.manus.space (ativo)
+  - [ ] Adicionar bessaenergia.com.br no painel Manus (Settings > Domains)
+  - [ ] Configurar os registros DNS necessários (CNAME/A records)
+  - [ ] Aguardar propagação DNS (até 48 horas)
+  - [ ] Validar acesso funcional pelo domínio customizado
 
 - [x] **Organizar Dashboard** (CONCLUÍDO)
   - [x] Caixas de texto com barra de rolagem (max-h-96 overflow-y-auto)
@@ -83,19 +84,13 @@
   - [x] Favicon convertido do logo (154KB com múltiplas resoluções)
   - [x] Cores da marca (#ff6900 laranja, #253c7e azul escuro) aplicadas
 
-- [ ] **Testar Email em Produção** (PENDENTE - Requer Ambiente de Produção)
-  - [x] Problema identificado: Firewall do sandbox bloqueia TLS na porta 587
-  - [x] Solução: Testar em ambiente de produção (funcionará automaticamente)
-  - [x] Alternativa: Usar SendGrid ou Mailgun
-  - [x] Instruções adicionadas em DEPLOYMENT_INSTRUCTIONS.md
-  - [ ] Executar teste real após publicar em produção
+- [ ] **Publicar Projeto** (PENDENTE - Próximo Passo)
+  - [ ] Clicar no botão Publish no painel Manus (após checkpoint)
+  - [ ] Aguardar deploy em ambiente de produção
+  - [ ] Validar que o site está acessível via domínio automático
+  - [ ] Testar email em produção (TLS funcionará automaticamente)
 
-- [ ] **Configurar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
-  - [x] Domínio alvo: bessaenergia.com.br
-  - [x] Domínio temporário: bessa-solar-3wees8ow.manus.space (ativo)
-  - [x] Instruções passo a passo adicionadas em DEPLOYMENT_INSTRUCTIONS.md
-  - [x] Guia de configuração de DNS fornecido
-  - [ ] Usuário deve executar no painel Manus
+
 
 ## Fases Futuras
 
