@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, ArrowLeft } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useCalculatorParams } from '@/contexts/CalculatorContext';
+import { Link } from 'wouter';
 
 interface ScenarioResult {
   systemSize: number;
@@ -108,6 +109,16 @@ export default function AdvancedCalculator() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
+        {/* Back Button */}
+        <div className="mb-8">
+          <Link href="/">
+            <Button variant="outline" className="flex items-center gap-2">
+              <ArrowLeft size={18} />
+              Voltar
+            </Button>
+          </Link>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">

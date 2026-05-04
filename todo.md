@@ -288,3 +288,14 @@
   - [x] Adicionar overflow-y-auto para barra de rolagem vertical
   - [x] Verificacao visual: graficos exibindo corretamente com scroll
   - [x] 97 testes vitest passando
+
+
+## Adicao - Botao Voltar na Calculadora (Concluido)
+
+- [x] **Adicionar Botao Voltar na Calculadora Avancada**
+  - [x] Importar ArrowLeft icon do lucide-react
+  - [x] Importar Link do wouter
+  - [x] Adicionar botao Voltar no topo da pagina
+  - [x] Botao navega para a pagina inicial (/)
+  - [x] Verificacao visual: botao funcionando corretamente
+  - [x] 97 testes vitest passando
