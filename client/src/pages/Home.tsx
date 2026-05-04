@@ -315,6 +315,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Wallbox Pulsar Plus</h3>
                     <p className="text-sm text-orange-300">Carregador inteligente de alta potência</p>
                   </div>
                 </div>
@@ -328,6 +329,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Integração Solar</h3>
                     <p className="text-sm text-orange-300">Wallbox conectado ao sistema solar</p>
                   </div>
                 </div>
@@ -341,6 +343,7 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                   <div>
+                    <h3 className="text-xl font-bold text-white mb-1">Carport Solar</h3>
                     <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
                   </div>
                 </div>
@@ -357,6 +360,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Ponto de Recarga de VE Solar</h3>
                   <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
                 </div>
               </div>
@@ -372,6 +376,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
                 <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Carport Solar Profissional</h3>
                   <p className="text-sm text-orange-300">Sistema completo de carregamento solar</p>
                 </div>
               </div>
