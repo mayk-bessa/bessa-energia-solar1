@@ -108,9 +108,9 @@ export default function SolarCalculatorModal({ isOpen, onClose }: SolarCalculato
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-xl font-bold text-gray-900">Calculadora de Economia Solar</h2>
           <button
             onClick={onClose}
@@ -122,7 +122,7 @@ export default function SolarCalculatorModal({ isOpen, onClose }: SolarCalculato
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 overflow-y-auto flex-1">
           {!results ? (
             <>
               <div>

@@ -267,3 +267,14 @@
   - [x] Verificacao visual: todas as 5 imagens exibidas integralmente
   - [x] Navegacao circular funcionando perfeitamente
   - [x] 97 testes vitest passando
+
+
+## Correcao - Calculadora de Economia Solar (Concluido)
+
+- [x] **Adicionar Barra de Rolagem Vertical ao Modal da Calculadora**
+  - [x] Adicionar max-h-[90vh] ao container do modal
+  - [x] Adicionar flex flex-col para layout vertical
+  - [x] Adicionar overflow-y-auto flex-1 ao content area
+  - [x] Header com flex-shrink-0 para manter altura fixa
+  - [x] Verificacao visual: barra de rolagem funcionando perfeitamente
+  - [x] 97 testes vitest passando
