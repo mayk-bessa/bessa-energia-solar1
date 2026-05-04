@@ -278,3 +278,13 @@
   - [x] Header com flex-shrink-0 para manter altura fixa
   - [x] Verificacao visual: barra de rolagem funcionando perfeitamente
   - [x] 97 testes vitest passando
+
+
+## Correcao - Dashboard de Analise Solar (Concluido)
+
+- [x] **Corrigir Exibicao dos Graficos do Dashboard**
+  - [x] Aumentar altura do canvas de 80 para 100 (EconomyChart e ROIChart)
+  - [x] Adicionar max-h-[600px] ao container dos graficos
+  - [x] Adicionar overflow-y-auto para barra de rolagem vertical
+  - [x] Verificacao visual: graficos exibindo corretamente com scroll
+  - [x] 97 testes vitest passando

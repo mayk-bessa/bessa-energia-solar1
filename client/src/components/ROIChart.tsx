@@ -147,8 +147,8 @@ export default function ROIChart({ monthlyEconomy, systemSize }: ROIChartProps) 
   }, [monthlyEconomy, systemSize]);
 
   return (
-    <Card className="p-6 bg-white rounded-lg shadow-md">
-      <canvas ref={chartRef} height={80} />
+    <Card className="p-6 bg-white rounded-lg shadow-md max-h-[600px] overflow-y-auto">
+      <canvas ref={chartRef} height={100} />
     </Card>
   );
 }
