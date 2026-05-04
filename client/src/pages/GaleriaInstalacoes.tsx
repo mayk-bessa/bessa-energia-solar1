@@ -7,22 +7,22 @@ export default function GaleriaInstalacoes() {
 
   const images = [
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/instalacao-residencial-BH.webp',
-      alt: 'Instalação Residencial em BH',
-      title: 'Instalação Residencial',
-      description: 'Sistema solar residencial de 5kW instalado em Belo Horizonte'
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp',
+      alt: 'Obra Residencial',
+      title: 'Obra Residencial',
+      description: 'Instalação profissional em residências'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/usina-solar-comercial-BH.webp',
-      alt: 'Usina Solar Comercial em BH',
-      title: 'Usina Solar Comercial',
-      description: 'Sistema solar comercial de 50kW para empresa em Belo Horizonte'
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp',
+      alt: 'Equipe Especializada',
+      title: 'Equipe Especializada',
+      description: 'Profissionais certificados e experientes'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/paineis-solares-closeup.webp',
-      alt: 'Painéis Solares Close-up',
-      title: 'Painéis Solares de Alta Eficiência',
-      description: 'Painéis solares monocristalinos de última geração com eficiência de 22%'
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp',
+      alt: 'Usina Solar em BH',
+      title: 'Usina Solar em BH',
+      description: 'Tecnologia de ponta em energia limpa'
     }
   ];
 
@@ -88,11 +88,11 @@ export default function GaleriaInstalacoes() {
 
       {/* Lightbox Modal */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
           <div className="relative max-w-4xl w-full">
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white hover:text-orange-500 transition-colors"
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
             >
               <X size={32} />
             </button>
