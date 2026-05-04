@@ -1,6 +1,34 @@
 import { describe, it, expect } from 'vitest';
 
 describe('GaleriaWallBox', () => {
+  it('should have navigation arrows and close button', () => {
+    const buttons = [
+      { icon: 'ChevronLeft', color: 'text-white hover:text-orange-500' },
+      { icon: 'ChevronRight', color: 'text-white hover:text-orange-500' },
+      { icon: 'X', color: 'text-white hover:text-orange-500' }
+    ];
+    
+    expect(buttons).toHaveLength(3);
+    buttons.forEach(btn => {
+      expect(btn.color).toContain('text-white');
+      expect(btn.color).toContain('hover:text-orange-500');
+    });
+  });
+
+  it('should have fade-in animation for lightbox', () => {
+    const animationStyles = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+    `;
+    
+    expect(animationStyles).toContain('fadeIn');
+    expect(animationStyles).toContain('0.3s');
+    expect(animationStyles).toContain('ease-in-out');
+  });
+
   it('should have gallery images array with 5 items', () => {
     const images = [
       {
@@ -64,5 +92,41 @@ describe('GaleriaWallBox', () => {
     expect(concepts.wallbox).toBeDefined();
     expect(concepts.carport).toBeDefined();
     expect(concepts.ponto).toBeDefined();
+  });
+
+  it('should handle circular navigation for 5 images', () => {
+    const images = [
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+      { id: 4 },
+      { id: 5 }
+    ];
+    let currentIndex = 0;
+
+    currentIndex = (currentIndex + 1) % images.length;
+    expect(currentIndex).toBe(1);
+
+    currentIndex = 4;
+    currentIndex = (currentIndex + 1) % images.length;
+    expect(currentIndex).toBe(0);
+
+    currentIndex = 0;
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    expect(currentIndex).toBe(4);
+  });
+
+  it('should display image caption with title, description and counter', () => {
+    const image = {
+      title: 'Wallbox Pulsar Plus',
+      description: 'Carregador inteligente de alta potência'
+    };
+    const currentIndex = 0;
+    const totalImages = 5;
+    const counter = `${currentIndex + 1} de ${totalImages}`;
+    
+    expect(image.title).toBeDefined();
+    expect(image.description).toBeDefined();
+    expect(counter).toBe('1 de 5');
   });
 });

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function GaleriaInstalacoes() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const images = [
     {
@@ -25,6 +25,20 @@ export default function GaleriaInstalacoes() {
       description: 'Tecnologia de ponta em energia limpa'
     }
   ];
+
+  const selectedImage = selectedImageIndex !== null ? images[selectedImageIndex] : null;
+
+  const handlePrevious = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex - 1 + images.length) % images.length);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex + 1) % images.length);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -62,7 +76,7 @@ export default function GaleriaInstalacoes() {
               <div
                 key={index}
                 className="group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all"
-                onClick={() => setSelectedImage(image.src)}
+                onClick={() => setSelectedImageIndex(index)}
               >
                 <div className="relative overflow-hidden h-64">
                   <img
@@ -87,23 +101,64 @@ export default function GaleriaInstalacoes() {
       </section>
 
       {/* Lightbox Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+      {selectedImage && selectedImageIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
           <div className="relative max-w-4xl w-full">
+            {/* Botão Fechar */}
             <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
+              onClick={() => setSelectedImageIndex(null)}
+              className="absolute -top-12 right-0 text-white hover:text-orange-500 transition-colors z-10"
             >
               <X size={32} />
             </button>
+
+            {/* Seta Anterior */}
+            <button
+              onClick={handlePrevious}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-white hover:text-orange-500 transition-colors"
+            >
+              <ChevronLeft size={40} />
+            </button>
+
+            {/* Seta Próxima */}
+            <button
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
+            >
+              <ChevronRight size={40} />
+            </button>
+
+            {/* Imagem */}
             <img
-              src={selectedImage}
-              alt="Imagem ampliada"
-              className="w-full h-auto rounded-lg"
+              src={selectedImage.src}
+              alt={selectedImage.alt}
+              className="w-full h-auto rounded-lg animate-fade-in"
             />
+
+            {/* Legenda */}
+            <div className="mt-6 text-center animate-fade-in">
+              <h3 className="text-2xl font-bold text-white mb-2">{selectedImage.title}</h3>
+              <p className="text-lg text-orange-500">{selectedImage.description}</p>
+              <p className="text-sm text-gray-400 mt-4">{selectedImageIndex + 1} de {images.length}</p>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Estilos de Animação */}
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }

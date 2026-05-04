@@ -1,42 +1,56 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'wouter';
 
 export default function GaleriaWallBox() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const images = [
     {
-      src: '/manus-storage/Jg2RMUES7eYD_61169483.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-pulsar-plus-61169483.jpg',
       alt: 'Wallbox Pulsar Plus',
       title: 'Wallbox Pulsar Plus',
-      description: 'Carregador inteligente de alta potência até 22kW'
+      description: 'Carregador inteligente de alta potência'
     },
     {
-      src: '/manus-storage/lxYPE647fL7H_0da93c84.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-solar-integration-0da93c84.jpg',
       alt: 'Integração Solar',
       title: 'Integração Solar',
-      description: 'Wallbox conectado ao sistema solar para carregamento 100% renovável'
+      description: 'Wallbox conectado ao sistema solar'
     },
     {
-      src: '/manus-storage/Udy7cfQuAh7N_b63b45f2.png',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/carport-solar-7837a09a.jpg',
       alt: 'Carport Solar',
       title: 'Carport Solar',
-      description: 'Estacionamento com cobertura de painéis solares'
+      description: 'Estacionamento com carregamento solar'
     },
     {
-      src: '/manus-storage/oLceu0RoRFBv_7837a09a.jpg',
-      alt: 'Carport Solar Profissional',
-      title: 'Carport Solar Profissional',
-      description: 'Sistema completo de carregamento solar para múltiplos veículos'
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/ponto-recarga-ve-solar-344.jpg',
+      alt: 'Ponto de Recarga de VE Solar',
+      title: 'Ponto de Recarga de VE Solar',
+      description: 'Infraestrutura de carregamento solar'
     },
     {
       src: '/manus-storage/carport_ddb7d756.jpeg',
-      alt: 'Ponto de Recarga Solar',
-      title: 'Ponto de Recarga Solar',
-      description: 'Estação de carregamento com energia solar integrada'
+      alt: 'Carport Solar Profissional',
+      title: 'Carport Solar Profissional',
+      description: 'Sistema completo de carregamento solar'
     }
   ];
+
+  const selectedImage = selectedImageIndex !== null ? images[selectedImageIndex] : null;
+
+  const handlePrevious = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex - 1 + images.length) % images.length);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedImageIndex !== null) {
+      setSelectedImageIndex((selectedImageIndex + 1) % images.length);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -66,108 +80,84 @@ export default function GaleriaWallBox() {
         </div>
       </section>
 
-      {/* Concepts Section */}
+      {/* Conceitos Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Entenda as Diferenças</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Entenda os Conceitos</h2>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* WallBox */}
-            <div className="bg-white p-8 rounded-xl shadow-lg">
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-white text-xl font-bold">⚡</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">WallBox</h3>
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-bold text-blue-900 mb-4">WallBox</h3>
               <p className="text-gray-700 mb-4">
-                Um carregador de veículos elétricos inteligente e de alta potência que se instala na parede de sua casa ou empresa.
+                Um carregador de veículos elétricos inteligente que se instala na parede. Oferece carregamento rápido e seguro, com potência de até 22kW. Ideal para residências e empresas.
               </p>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-bold text-gray-900 mb-2">Características:</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>✓ Potência até 22kW</li>
-                  <li>✓ Instalação em parede</li>
-                  <li>✓ Controle inteligente</li>
-                  <li>✓ Compatível com painéis solares</li>
-                </ul>
-              </div>
+              <ul className="text-gray-600 space-y-2">
+                <li>✓ Carregamento rápido</li>
+                <li>✓ Inteligente e conectado</li>
+                <li>✓ Seguro e confiável</li>
+              </ul>
             </div>
 
-            {/* Carport Solar */}
-            <div className="bg-white p-8 rounded-xl shadow-lg">
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-white text-xl font-bold">🅿️</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Carport Solar</h3>
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-bold text-blue-900 mb-4">Carport Solar</h3>
               <p className="text-gray-700 mb-4">
-                Uma estrutura de estacionamento coberta com painéis solares, gerando energia enquanto protege o veículo.
+                Uma estrutura de cobertura com painéis solares integrados que funciona como estacionamento. Gera energia limpa enquanto protege os veículos da chuva e sol.
               </p>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-bold text-gray-900 mb-2">Características:</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>✓ Cobertura com painéis</li>
-                  <li>✓ Proteção do veículo</li>
-                  <li>✓ Geração de energia</li>
-                  <li>✓ Múltiplas vagas</li>
-                </ul>
-              </div>
+              <ul className="text-gray-600 space-y-2">
+                <li>✓ Gera energia solar</li>
+                <li>✓ Protege veículos</li>
+                <li>✓ Estacionamento inteligente</li>
+              </ul>
             </div>
 
-            {/* Ponto de Recarga */}
-            <div className="bg-white p-8 rounded-xl shadow-lg">
-              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
-                <span className="text-white text-xl font-bold">🔌</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ponto de Recarga</h3>
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-bold text-blue-900 mb-4">Ponto de Recarga VE</h3>
               <p className="text-gray-700 mb-4">
-                Uma estação de carregamento para veículos elétricos, que pode ser alimentada por energia solar ou da rede.
+                Infraestrutura de carregamento para veículos elétricos. Pode ser um wallbox individual ou um carport com múltiplas estações de carregamento para frotas.
               </p>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-bold text-gray-900 mb-2">Características:</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>✓ Carregamento rápido</li>
-                  <li>✓ Flexível de instalação</li>
-                  <li>✓ Fonte de energia variável</li>
-                  <li>✓ Uso público ou privado</li>
-                </ul>
-              </div>
+              <ul className="text-gray-600 space-y-2">
+                <li>✓ Infraestrutura completa</li>
+                <li>✓ Para veículos elétricos</li>
+                <li>✓ Escalável e modular</li>
+              </ul>
             </div>
           </div>
 
           {/* Comparison Table */}
-          <div className="mt-12 overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-900 text-white">
-                  <th className="border border-gray-300 p-4 text-left">Característica</th>
-                  <th className="border border-gray-300 p-4 text-center">WallBox</th>
-                  <th className="border border-gray-300 p-4 text-center">Carport Solar</th>
-                  <th className="border border-gray-300 p-4 text-center">Ponto de Recarga</th>
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-blue-900 text-white">
+                <tr>
+                  <th className="p-4 text-left">Característica</th>
+                  <th className="p-4 text-left">WallBox</th>
+                  <th className="p-4 text-left">Carport Solar</th>
+                  <th className="p-4 text-left">Ponto de Recarga VE</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-4 font-semibold">Instalação</td>
-                  <td className="border border-gray-300 p-4 text-center">Parede</td>
-                  <td className="border border-gray-300 p-4 text-center">Estrutura</td>
-                  <td className="border border-gray-300 p-4 text-center">Flexível</td>
+                <tr className="border-b">
+                  <td className="p-4 font-semibold">Gera Energia</td>
+                  <td className="p-4">Não</td>
+                  <td className="p-4">Sim</td>
+                  <td className="p-4">Depende</td>
                 </tr>
-                <tr className="hover:bg-gray-50 bg-gray-50">
-                  <td className="border border-gray-300 p-4 font-semibold">Potência Máxima</td>
-                  <td className="border border-gray-300 p-4 text-center">22kW</td>
-                  <td className="border border-gray-300 p-4 text-center">Variável</td>
-                  <td className="border border-gray-300 p-4 text-center">Variável</td>
+                <tr className="border-b">
+                  <td className="p-4 font-semibold">Protege Veículo</td>
+                  <td className="p-4">Não</td>
+                  <td className="p-4">Sim</td>
+                  <td className="p-4">Depende</td>
                 </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-4 font-semibold">Proteção</td>
-                  <td className="border border-gray-300 p-4 text-center">Não</td>
-                  <td className="border border-gray-300 p-4 text-center">Sim</td>
-                  <td className="border border-gray-300 p-4 text-center">Não</td>
+                <tr className="border-b">
+                  <td className="p-4 font-semibold">Potência</td>
+                  <td className="p-4">Até 22kW</td>
+                  <td className="p-4">Variável</td>
+                  <td className="p-4">Variável</td>
                 </tr>
-                <tr className="hover:bg-gray-50 bg-gray-50">
-                  <td className="border border-gray-300 p-4 font-semibold">Geração Solar</td>
-                  <td className="border border-gray-300 p-4 text-center">Opcional</td>
-                  <td className="border border-gray-300 p-4 text-center">Integrada</td>
-                  <td className="border border-gray-300 p-4 text-center">Opcional</td>
+                <tr>
+                  <td className="p-4 font-semibold">Instalação</td>
+                  <td className="p-4">Parede</td>
+                  <td className="p-4">Estrutura</td>
+                  <td className="p-4">Flexível</td>
                 </tr>
               </tbody>
             </table>
@@ -175,7 +165,7 @@ export default function GaleriaWallBox() {
         </div>
       </section>
 
-      {/* Gallery Grid */}
+      {/* Gallery Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Galeria de Projetos</h2>
@@ -184,7 +174,7 @@ export default function GaleriaWallBox() {
               <div
                 key={index}
                 className="group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all"
-                onClick={() => setSelectedImage(image.src)}
+                onClick={() => setSelectedImageIndex(index)}
               >
                 <div className="relative overflow-hidden h-80">
                   <img
@@ -209,23 +199,64 @@ export default function GaleriaWallBox() {
       </section>
 
       {/* Lightbox Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+      {selectedImage && selectedImageIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
           <div className="relative max-w-4xl w-full">
+            {/* Botão Fechar */}
             <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-white hover:text-orange-500 transition-colors"
+              onClick={() => setSelectedImageIndex(null)}
+              className="absolute -top-12 right-0 text-white hover:text-orange-500 transition-colors z-10"
             >
               <X size={32} />
             </button>
+
+            {/* Seta Anterior */}
+            <button
+              onClick={handlePrevious}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-white hover:text-orange-500 transition-colors"
+            >
+              <ChevronLeft size={40} />
+            </button>
+
+            {/* Seta Próxima */}
+            <button
+              onClick={handleNext}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
+            >
+              <ChevronRight size={40} />
+            </button>
+
+            {/* Imagem */}
             <img
-              src={selectedImage}
-              alt="Imagem ampliada"
-              className="w-full h-auto rounded-lg"
+              src={selectedImage.src}
+              alt={selectedImage.alt}
+              className="w-full h-auto rounded-lg animate-fade-in"
             />
+
+            {/* Legenda */}
+            <div className="mt-6 text-center animate-fade-in">
+              <h3 className="text-2xl font-bold text-white mb-2">{selectedImage.title}</h3>
+              <p className="text-lg text-orange-500">{selectedImage.description}</p>
+              <p className="text-sm text-gray-400 mt-4">{selectedImageIndex + 1} de {images.length}</p>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Estilos de Animação */}
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+      `}</style>
     </div>
   );
 }
