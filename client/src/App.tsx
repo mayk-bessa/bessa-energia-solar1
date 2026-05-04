@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdvancedCalculator from "./components/AdvancedCalculator";
 import Dashboard from "./pages/Dashboard";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -38,6 +39,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <WhatsAppButton />
           </TooltipProvider>
         </CalculatorProvider>
       </ThemeProvider>
