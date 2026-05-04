@@ -141,15 +141,17 @@
 
 ## Itens Recentemente Concluidos
 
-- [x] **Galerias com Lightbox** (CONCLUIDO)
+- [x] **Galerias com Lightbox** (CONCLUIDO - VERIFICADO VISUALMENTE)
   - [x] Galeria para Nossas Instalacoes em BH com 3 imagens
   - [x] Galeria para WallBox com 5 imagens + tabela comparativa
-  - [x] Setas de navegacao com hover laranja
-  - [x] Botao X para fechar
+  - [x] Setas de navegacao com hover laranja (#ff6900)
+  - [x] Botao X para fechar (posicionado 10 pts acima da seta de navegacao)
   - [x] Transicoes fade-in/fade-out 0.3s ease-in-out
-  - [x] Legendas com titulo, descricao e contador
+  - [x] Legendas com titulo, descricao e contador (ex: "1 de 5")
   - [x] Navegacao circular em ambas as galerias
   - [x] Testes vitest para navegacao e animacoes
+  - [x] URLs das imagens WallBox corrigidas (usando CDN + storage proxy)
+  - [x] Verificacao visual: Todas as imagens exibindo corretamente
 
 - [x] **Botao Flutuante WhatsApp** (CONCLUIDO)
   - [x] Botao verde no canto inferior direito

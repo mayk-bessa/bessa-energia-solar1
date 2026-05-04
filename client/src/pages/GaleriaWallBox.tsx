@@ -7,25 +7,25 @@ export default function GaleriaWallBox() {
 
   const images = [
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-pulsar-plus-61169483.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp',
       alt: 'Wallbox Pulsar Plus',
       title: 'Wallbox Pulsar Plus',
       description: 'Carregador inteligente de alta potência'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/wallbox-solar-integration-0da93c84.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp',
       alt: 'Integração Solar',
       title: 'Integração Solar',
       description: 'Wallbox conectado ao sistema solar'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/carport-solar-7837a09a.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp',
       alt: 'Carport Solar',
       title: 'Carport Solar',
       description: 'Estacionamento com carregamento solar'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/ponto-recarga-ve-solar-344.jpg',
+      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/hero-solar-panels-P8T8FYmLny5gbdJnA7NAeq.webp',
       alt: 'Ponto de Recarga de VE Solar',
       title: 'Ponto de Recarga de VE Solar',
       description: 'Infraestrutura de carregamento solar'
@@ -80,21 +80,21 @@ export default function GaleriaWallBox() {
         </div>
       </section>
 
-      {/* Conceitos Section */}
+      {/* Concepts Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Entenda os Conceitos</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Conceitos Principais</h2>
           
           <div className="grid md:grid-cols-3 gap-8 mb-12">
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <h3 className="text-2xl font-bold text-blue-900 mb-4">WallBox</h3>
               <p className="text-gray-700 mb-4">
-                Um carregador de veículos elétricos inteligente que se instala na parede. Oferece carregamento rápido e seguro, com potência de até 22kW. Ideal para residências e empresas.
+                Um carregador de veículos elétricos instalado na parede que oferece carregamento rápido e inteligente. Pode ser integrado a sistemas solares para maximizar o uso de energia renovável.
               </p>
               <ul className="text-gray-600 space-y-2">
-                <li>✓ Carregamento rápido</li>
+                <li>✓ Carregamento até 22kW</li>
+                <li>✓ Instalação em parede</li>
                 <li>✓ Inteligente e conectado</li>
-                <li>✓ Seguro e confiável</li>
               </ul>
             </div>
 
@@ -202,15 +202,6 @@ export default function GaleriaWallBox() {
       {selectedImage && selectedImageIndex !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
           <div className="relative max-w-4xl w-full">
-            {/* Botão Fechar */}
-            <button
-              onClick={() => setSelectedImageIndex(null)}
-              className="absolute right-0 text-white hover:text-orange-500 transition-colors z-10"
-              style={{ top: 'calc(50% - 80px)', transform: 'translateY(-50%)' }}
-            >
-              <X size={32} />
-            </button>
-
             {/* Seta Anterior */}
             <button
               onClick={handlePrevious}
@@ -225,6 +216,15 @@ export default function GaleriaWallBox() {
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
             >
               <ChevronRight size={40} />
+            </button>
+
+            {/* Botão Fechar */}
+            <button
+              onClick={() => setSelectedImageIndex(null)}
+              className="absolute text-white hover:text-orange-500 transition-colors z-10"
+              style={{ right: 'calc(100% + 64px)', top: 'calc(50% - 60px)' }}
+            >
+              <X size={32} />
             </button>
 
             {/* Imagem */}

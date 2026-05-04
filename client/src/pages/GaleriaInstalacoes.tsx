@@ -104,15 +104,6 @@ export default function GaleriaInstalacoes() {
       {selectedImage && selectedImageIndex !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
           <div className="relative max-w-4xl w-full">
-            {/* Botão Fechar */}
-            <button
-              onClick={() => setSelectedImageIndex(null)}
-              className="absolute right-0 text-white hover:text-orange-500 transition-colors z-10"
-              style={{ top: 'calc(50% - 80px)', transform: 'translateY(-50%)' }}
-            >
-              <X size={32} />
-            </button>
-
             {/* Seta Anterior */}
             <button
               onClick={handlePrevious}
@@ -127,6 +118,15 @@ export default function GaleriaInstalacoes() {
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
             >
               <ChevronRight size={40} />
+            </button>
+
+            {/* Botão Fechar */}
+            <button
+              onClick={() => setSelectedImageIndex(null)}
+              className="absolute text-white hover:text-orange-500 transition-colors z-10"
+              style={{ right: 'calc(100% + 64px)', top: 'calc(50% - 60px)' }}
+            >
+              <X size={32} />
             </button>
 
             {/* Imagem */}
