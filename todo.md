@@ -253,3 +253,17 @@
   - [x] Manter restante da seção inalterado (legenda, espaçamento, efeitos hover)
   - [x] Testar responsividade em diferentes resoluções (verificado em desktop)
   - [x] 97 testes vitest passando
+
+
+## Redimensionamento - Galeria WallBox (Concluido)
+
+- [x] **Redimensionar Todas as Imagens da Galeria WallBox**
+  - [x] Alterar de object-cover para object-contain (exibicao integral)
+  - [x] Alterar height de h-80 (320px) para auto com maxHeight 400px na galeria
+  - [x] Lightbox: maxHeight 70vh para melhor visualizacao
+  - [x] Manter proporcao original das imagens (aspect ratio preservado)
+  - [x] Adicionar fundo cinza (bg-gray-100) para melhor contraste
+  - [x] Manter restante inalterado (legenda, espacamento, efeitos hover, controles)
+  - [x] Verificacao visual: todas as 5 imagens exibidas integralmente
+  - [x] Navegacao circular funcionando perfeitamente
+  - [x] 97 testes vitest passando

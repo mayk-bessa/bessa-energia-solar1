@@ -176,11 +176,11 @@ export default function GaleriaWallBox() {
                 className="group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all"
                 onClick={() => setSelectedImageIndex(index)}
               >
-                <div className="relative overflow-hidden h-80">
+                <div className="relative overflow-hidden bg-gray-100" style={{ height: 'auto', maxHeight: '400px' }}>
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-auto object-contain group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                     <div className="text-white opacity-0 group-hover:opacity-100 transition-opacity">
@@ -208,7 +208,8 @@ export default function GaleriaWallBox() {
               <img
                 src={selectedImage.src}
                 alt={selectedImage.alt}
-                className="w-full h-auto rounded-lg animate-fade-in"
+                className="w-full h-auto object-contain rounded-lg animate-fade-in bg-gray-100"
+                style={{ maxHeight: '70vh' }}
               />
 
               {/* Botão Fechar (X) - Lado direito, 10 pt acima da seta, 5 pt dentro */}
