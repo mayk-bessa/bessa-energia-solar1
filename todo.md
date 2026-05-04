@@ -206,3 +206,24 @@
   - [x] Legendas com descrição exibidas na visualização em tela cheia
   - [x] 97 testes vitest passando
   - [x] Verificação visual: todas as imagens carregando corretamente
+
+
+## Alterações Finais - Galeria WallBox (Concluído)
+
+- [x] **Atualizar Imagem 1 (Wallbox Pulsar Plus)**
+  - [x] Título alterado para 'Wallbox Pulsar Plus'
+  - [x] Descrição alterada para 'Carregador inteligente de alta potência'
+  - [x] URL mantida: /manus-storage/Jg2RMUES7eYD_61169483.jpg
+
+- [x] **Substituir Imagem 5**
+  - [x] URL alterada para: /manus-storage/carport_ddb7d756.jpeg
+  - [x] Título mantido: 'Carport Solar Profissional'
+  - [x] Descrição mantida: 'Sistema completo de carregamento solar'
+
+- [x] **Verificações Finais**
+  - [x] Todas as imagens carregando corretamente
+  - [x] Legendas com título, descrição e contador visíveis
+  - [x] Navegação circular funcionando perfeitamente
+  - [x] Botão X e setas posicionados corretamente (10 pt acima, 5 pt dentro)
+  - [x] 97 testes vitest passando
+  - [x] Verificação visual: lightbox funcionando perfeitamente

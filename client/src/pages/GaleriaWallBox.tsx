@@ -8,9 +8,9 @@ export default function GaleriaWallBox() {
   const images = [
     {
       src: '/manus-storage/Jg2RMUES7eYD_61169483.jpg',
-      alt: 'Carport Solar',
-      title: 'Carport Solar',
-      description: 'Estacionamento com carregamento solar'
+      alt: 'Wallbox Pulsar Plus',
+      title: 'Wallbox Pulsar Plus',
+      description: 'Carregador inteligente de alta potência'
     },
     {
       src: '/manus-storage/lxYPE647fL7H_0da93c84.jpg',
@@ -31,7 +31,7 @@ export default function GaleriaWallBox() {
       description: 'Infraestrutura de carregamento solar'
     },
     {
-      src: '/manus-storage/M3W7ro9VGiw4_09c26695.jpg',
+      src: '/manus-storage/carport_ddb7d756.jpeg',
       alt: 'Carport Solar Profissional',
       title: 'Carport Solar Profissional',
       description: 'Sistema completo de carregamento solar'
