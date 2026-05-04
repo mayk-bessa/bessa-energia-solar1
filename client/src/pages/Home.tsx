@@ -305,47 +305,51 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Images Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
-                <img
-                  src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
-                  alt="Wallbox Pulsar Plus"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-1">Wallbox Pulsar Plus</h3>
-                    <p className="text-sm text-orange-300">Carregador inteligente de alta potência</p>
-                  </div>
+            {/* Images Grid - Full Width Responsive */}
+            {/* Wallbox Pulsar Plus - Full Width */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
+              <img
+                src="/manus-storage/Jg2RMUES7eYD_61169483.jpg"
+                alt="Wallbox Pulsar Plus"
+                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                style={{ height: '384px' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Wallbox Pulsar Plus</h3>
+                  <p className="text-sm text-orange-300">Carregador inteligente de alta potência</p>
                 </div>
               </div>
+            </div>
 
-              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
-                <img
-                  src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
-                  alt="Wallbox com Painéis Solares"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-1">Integração Solar</h3>
-                    <p className="text-sm text-orange-300">Wallbox conectado ao sistema solar</p>
-                  </div>
+            {/* Integração Solar - Full Width */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
+              <img
+                src="/manus-storage/lxYPE647fL7H_0da93c84.jpg"
+                alt="Wallbox com Painéis Solares"
+                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                style={{ height: '384px' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Integração Solar</h3>
+                  <p className="text-sm text-orange-300">Wallbox conectado ao sistema solar</p>
                 </div>
               </div>
+            </div>
 
-              <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
-                <img
-                  src="/manus-storage/Udy7cfQuAh7N_b63b45f2.png"
-                  alt="Carport Solar com Carro Elétrico"
-                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                  <div>
-                    <h3 className="text-xl font-bold text-white mb-1">Carport Solar</h3>
-                    <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
-                  </div>
+            {/* Carport Solar - Full Width */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
+              <img
+                src="/manus-storage/Udy7cfQuAh7N_b63b45f2.png"
+                alt="Carport Solar com Carro Elétrico"
+                className="w-full object-cover group-hover:scale-110 transition-transform duration-300"
+                style={{ height: '384px' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">Carport Solar</h3>
+                  <p className="text-sm text-orange-300">Estacionamento com carregamento solar</p>
                 </div>
               </div>
             </div>
