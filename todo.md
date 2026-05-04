@@ -159,3 +159,23 @@
   - [x] Proxy configurado para servir imagens do /manus-storage/
   - [x] Imagens da secao WallBox exibindo corretamente
   - [x] URLs do storage funcionando com storage proxy
+
+## Correções Solicitadas - Galerias WallBox
+
+- [ ] **Repositionar Botão X e Setas na Visualização em Tela Cheia**
+  - [x] Botão X: lado direito, 10 pt acima da seta direita, 5 pt dentro da imagem
+  - [x] Setas avançar/retroceder: lado direito, 5 pt dentro da imagem
+  - [x] Cor branca com hover laranja (#ff6900)
+  - [x] Garantir visibilidade em qualquer tamanho de tela
+  - [x] Elementos sempre à frente (z-index correto)
+
+- [x] **Adicionar Legenda com Descrição**
+  - [x] Exibir descrição da imagem quando aberta em tela cheia
+  - [x] Legenda visível abaixo ou sobreposta à imagem
+
+- [x] **Substituir Imagens da Galeria WallBox**
+  - [x] Imagem 1: carport_ddb7d756.jpeg
+  - [x] Imagem 2: lxYPE647fL7H_0da93c84.jpg
+  - [x] Imagem 3: Udy7cfQuAh7N_b63b45f2.png
+  - [x] Imagem 4: M3W7ro9VGiw4_09c26695.jpg
+  - [x] Manter imagem 5 inalterada

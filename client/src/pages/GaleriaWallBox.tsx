@@ -7,25 +7,25 @@ export default function GaleriaWallBox() {
 
   const images = [
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/residential-installation-DfxBVaAzHuL7tW6nVsCBrD.webp',
-      alt: 'Wallbox Pulsar Plus',
-      title: 'Wallbox Pulsar Plus',
-      description: 'Carregador inteligente de alta potência'
-    },
-    {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/commercial-solar-farm-nSnFepgr3tKZGu5qpD4kHT.webp',
-      alt: 'Integração Solar',
-      title: 'Integração Solar',
-      description: 'Wallbox conectado ao sistema solar'
-    },
-    {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/solar-panels-closeup-fhzVqa2w7QtrxtdEj9HQ3s.webp',
+      src: '/manus-storage/carport_ddb7d756.jpeg',
       alt: 'Carport Solar',
       title: 'Carport Solar',
       description: 'Estacionamento com carregamento solar'
     },
     {
-      src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/hero-solar-panels-P8T8FYmLny5gbdJnA7NAeq.webp',
+      src: '/manus-storage/lxYPE647fL7H_0da93c84.jpg',
+      alt: 'Integração Solar',
+      title: 'Integração Solar',
+      description: 'Wallbox conectado ao sistema solar'
+    },
+    {
+      src: '/manus-storage/Udy7cfQuAh7N_b63b45f2.png',
+      alt: 'Carport Solar Profissional',
+      title: 'Carport Solar Profissional',
+      description: 'Sistema completo de carregamento solar'
+    },
+    {
+      src: '/manus-storage/M3W7ro9VGiw4_09c26695.jpg',
       alt: 'Ponto de Recarga de VE Solar',
       title: 'Ponto de Recarga de VE Solar',
       description: 'Infraestrutura de carregamento solar'
@@ -201,43 +201,74 @@ export default function GaleriaWallBox() {
       {/* Lightbox Modal */}
       {selectedImage && selectedImageIndex !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
-          <div className="relative max-w-4xl w-full">
-            {/* Seta Anterior */}
-            <button
-              onClick={handlePrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-white hover:text-orange-500 transition-colors"
-            >
-              <ChevronLeft size={40} />
-            </button>
+          <div className="relative w-full max-w-4xl">
+            {/* Container da Imagem com Controles */}
+            <div className="relative">
+              {/* Imagem */}
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                className="w-full h-auto rounded-lg animate-fade-in"
+              />
 
-            {/* Seta Próxima */}
-            <button
-              onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
-            >
-              <ChevronRight size={40} />
-            </button>
+              {/* Botão Fechar (X) - Lado direito, 10 pt acima da seta, 5 pt dentro */}
+              <button
+                onClick={() => setSelectedImageIndex(null)}
+                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                style={{
+                  right: '5px',
+                  top: 'calc(50% - 60px)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <X size={32} strokeWidth={3} />
+              </button>
 
-            {/* Botão Fechar */}
-            <button
-              onClick={() => setSelectedImageIndex(null)}
-              className="absolute text-white hover:text-orange-500 transition-colors z-10"
-              style={{ right: 'calc(100% + 64px)', top: 'calc(50% - 60px)' }}
-            >
-              <X size={32} />
-            </button>
+              {/* Seta Anterior - Lado esquerdo, 5 pt dentro */}
+              <button
+                onClick={handlePrevious}
+                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                style={{
+                  left: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ChevronLeft size={40} strokeWidth={3} />
+              </button>
 
-            {/* Imagem */}
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              className="w-full h-auto rounded-lg animate-fade-in"
-            />
+              {/* Seta Próxima - Lado direito, 5 pt dentro, mesma altura da seta anterior */}
+              <button
+                onClick={handleNext}
+                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                style={{
+                  right: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ChevronRight size={40} strokeWidth={3} />
+              </button>
+            </div>
 
-            {/* Legenda */}
+            {/* Legenda abaixo da imagem */}
             <div className="mt-6 text-center animate-fade-in">
               <h3 className="text-2xl font-bold text-white mb-2">{selectedImage.title}</h3>
-              <p className="text-lg text-orange-500">{selectedImage.description}</p>
+              <p className="text-lg text-[#ff6900] font-semibold">{selectedImage.description}</p>
               <p className="text-sm text-gray-400 mt-4">{selectedImageIndex + 1} de {images.length}</p>
             </div>
           </div>
