@@ -269,6 +269,14 @@ export default function Home() {
             </div>
           </div>
 
+          <div className="flex justify-center mt-8">
+            <Link href="/galeria-instalacoes">
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3">
+                Ver Galeria Completa
+              </Button>
+            </Link>
+          </div>
+
           {/* WallBox Section */}
           <div className="mt-16 pt-12 border-t border-gray-200">
             <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
@@ -385,6 +393,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="flex justify-center mt-8">
+            <Link href="/galeria-wallbox">
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3">
+                Ver Galeria Completa WallBox
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

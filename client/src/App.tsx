@@ -10,6 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdvancedCalculator from "./components/AdvancedCalculator";
 import Dashboard from "./pages/Dashboard";
 import WhatsAppButton from "./components/WhatsAppButton";
+import GaleriaInstalacoes from "./pages/GaleriaInstalacoes";
+import GaleriaWallBox from "./pages/GaleriaWallBox";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +21,8 @@ function Router() {
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/calculadora-avancada"} component={AdvancedCalculator} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/galeria-instalacoes"} component={GaleriaInstalacoes} />
+      <Route path={"/galeria-wallbox"} component={GaleriaWallBox} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
