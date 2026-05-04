@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, ArrowLeft } from 'lucide-react';
+import { Download, ArrowLeft, Share2, Instagram, Facebook } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 import { useCalculatorParams } from '@/contexts/CalculatorContext';
 import { Link } from 'wouter';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface ScenarioResult {
   systemSize: number;
@@ -106,6 +107,20 @@ export default function AdvancedCalculator() {
     }
   };
 
+  const handleShareOnInstagram = (scenario: ScenarioResult) => {
+    const text = `Confira meu resultado na Calculadora de Energia Solar da @bessa.energia! 🌞\n\nSistema ${scenario.systemSize}kW:\n• Economia Mensal: R$ ${scenario.monthlyEconomy.toFixed(2)}\n• Economia Anual: R$ ${scenario.annualEconomy.toFixed(2)}\n• Tempo de Retorno: ${scenario.paybackYears.toFixed(1)} anos\n\nVocê também pode economizar! Acesse: bessa-solar-3wees8ow.manus.space`;
+    
+    // Instagram não tem share direto, então abrimos a página do Instagram
+    window.open('https://www.instagram.com/bessa.energia/', '_blank');
+  };
+
+  const handleShareOnFacebook = (scenario: ScenarioResult) => {
+    const text = `Confira meu resultado na Calculadora de Energia Solar da Bessa Energia! ☀️\n\nSistema ${scenario.systemSize}kW:\n• Economia Mensal: R$ ${scenario.monthlyEconomy.toFixed(2)}\n• Economia Anual: R$ ${scenario.annualEconomy.toFixed(2)}\n• Tempo de Retorno: ${scenario.paybackYears.toFixed(1)} anos\n\nVocê também pode economizar! Acesse: bessa-solar-3wees8ow.manus.space`;
+    
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://bessa-solar-3wees8ow.manus.space')}&quote=${encodeURIComponent(text)}`;
+    window.open(fbUrl, '_blank', 'width=600,height=400');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -135,9 +150,21 @@ export default function AdvancedCalculator() {
 
           {/* Monthly Spend Slider */}
           <div className="mb-8">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              Gasto Mensal com Energia: R$ {monthlySpend.toFixed(2)}
-            </label>
+            <div className="flex items-center gap-2 mb-3">
+              <label className="block text-sm font-semibold text-slate-700">
+                Gasto Mensal com Energia: R$ {monthlySpend.toFixed(2)}
+              </label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                    ?
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Insira o valor da sua conta de energia mensal. Este valor é usado para calcular quanto você economizará com o sistema solar.
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <input
               type="range"
               min="100"
@@ -155,9 +182,21 @@ export default function AdvancedCalculator() {
 
           {/* Economy Rate Slider */}
           <div className="mb-8">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              Taxa de Economia: {(economyRate * 100).toFixed(0)}%
-            </label>
+            <div className="flex items-center gap-2 mb-3">
+              <label className="block text-sm font-semibold text-slate-700">
+                Taxa de Economia: {(economyRate * 100).toFixed(0)}%
+              </label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                    ?
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Percentual de sua conta que será coberta pela energia solar. Varia de 70% a 95% dependendo da localização e consumo.
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <input
               type="range"
               min="0.70"
@@ -175,9 +214,21 @@ export default function AdvancedCalculator() {
 
           {/* kWh Cost Slider */}
           <div className="mb-8">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
-              Custo do kWh: R$ {kwhCost.toFixed(2)}
-            </label>
+            <div className="flex items-center gap-2 mb-3">
+              <label className="block text-sm font-semibold text-slate-700">
+                Custo do kWh: R$ {kwhCost.toFixed(2)}
+              </label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                    ?
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Valor que você paga por cada kWh de energia. Verifique sua conta de luz para o valor exato da sua região.
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <input
               type="range"
               min="0.50"
@@ -197,27 +248,72 @@ export default function AdvancedCalculator() {
           <div className="border-t pt-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Informações do Cliente (Opcional)</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="Nome completo"
-                value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={clientEmail}
-                onChange={(e) => setClientEmail(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              <input
-                type="tel"
-                placeholder="Telefone"
-                value={clientPhone}
-                onChange={(e) => setClientPhone(e.target.value)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="block text-sm font-semibold text-slate-700">Nome</label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                        ?
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Seu nome completo será incluído no relatório PDF gerado.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Nome completo"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="block text-sm font-semibold text-slate-700">Email</label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                        ?
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Seu email será usado para enviar o relatório PDF automaticamente.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="block text-sm font-semibold text-slate-700">Telefone</label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-orange-500 rounded-full cursor-help">
+                        ?
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Seu telefone será incluído no relatório para contato posterior.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <input
+                  type="tel"
+                  placeholder="Telefone"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
             </div>
           </div>
 
@@ -289,6 +385,24 @@ export default function AdvancedCalculator() {
                     <Download size={18} />
                     {isExporting ? 'Gerando...' : 'Exportar PDF'}
                   </Button>
+
+                  {/* Share Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      onClick={() => handleShareOnInstagram(scenario)}
+                      className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <Instagram size={16} />
+                      Instagram
+                    </Button>
+                    <Button
+                      onClick={() => handleShareOnFacebook(scenario)}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <Facebook size={16} />
+                      Facebook
+                    </Button>
+                  </div>
                 </div>
               </Card>
             );
@@ -365,6 +479,7 @@ export default function AdvancedCalculator() {
             <li>• Altere o custo do kWh conforme a tarifa da sua região</li>
             <li>• Compare os três cenários de investimento lado a lado</li>
             <li>• Exporte o relatório em PDF com suas informações de contato</li>
+            <li>• Compartilhe seus resultados no Instagram e Facebook</li>
           </ul>
         </Card>
       </div>

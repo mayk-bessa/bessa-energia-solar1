@@ -299,3 +299,39 @@
   - [x] Botao navega para a pagina inicial (/)
   - [x] Verificacao visual: botao funcionando corretamente
   - [x] 97 testes vitest passando
+
+
+## Novas Funcionalidades - Compartilhamento e Dicas (Concluido)
+
+- [x] **Compartilhamento nas Redes Sociais**
+  - [x] Botao para compartilhar no Instagram (@bessa.energia)
+  - [x] Botao para compartilhar no Facebook (bessa.energia)
+  - [x] Integrar com os resultados da calculadora
+  - [x] Testar compartilhamento em ambas as plataformas
+  - [x] Verificacao visual: botoes funcionando corretamente (visivel em cada cenario)
+
+- [x] **Melhorar Usabilidade com Dicas**
+  - [x] Adicionar dicas em "Gasto Mensal com Energia"
+  - [x] Adicionar dicas em "Taxa de Economia"
+  - [x] Adicionar dicas em "Custo do kWh"
+  - [x] Adicionar dicas em "Nome" (Informacoes do Cliente)
+  - [x] Adicionar dicas em "Email" (Informacoes do Cliente)
+  - [x] Adicionar dicas em "Telefone" (Informacoes do Cliente)
+  - [x] Testar dicas em diferentes tamanhos de tela (usando Tooltip do shadcn/ui)
+  - [x] Verificacao visual: dicas exibindo corretamente (ícone ? com hover)
+  - [x] 97 testes vitest passando
+
+
+## Validacao e Melhorias - Compartilhamento e Dicas
+
+- [ ] **Validacao - Compartilhamento Social**
+  - [ ] Implementar compartilhamento real dos resultados para Facebook com payload validado
+  - [ ] Definir solucao funcional para Instagram (copiar texto + abrir perfil com feedback)
+  - [ ] Testar botoes de compartilhamento no navegador
+  - [ ] Adicionar tratamento de fallback/erros para compartilhamento
+
+- [ ] **Validacao - Dicas de Preenchimento**
+  - [ ] Tornar triggers das dicas focaveis para acessibilidade
+  - [ ] Validar que o conteudo das dicas exibe corretamente
+  - [ ] Testar dicas em multiplos tamanhos de tela (mobile, tablet, desktop)
+  - [ ] Verificar acessibilidade (keyboard navigation, screen readers)
