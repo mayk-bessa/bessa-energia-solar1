@@ -104,37 +104,68 @@ export default function GaleriaInstalacoes() {
       {selectedImage && selectedImageIndex !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in">
           <div className="relative max-w-4xl w-full">
-            {/* Seta Anterior */}
-            <button
-              onClick={handlePrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 text-white hover:text-orange-500 transition-colors"
-            >
-              <ChevronLeft size={40} />
-            </button>
+            {/* Container da Imagem com Controles */}
+            <div className="relative inline-block w-full">
+              {/* Imagem */}
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                className="w-full h-auto rounded-lg animate-fade-in"
+              />
 
-            {/* Seta Próxima */}
-            <button
-              onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-16 text-white hover:text-orange-500 transition-colors"
-            >
-              <ChevronRight size={40} />
-            </button>
+              {/* Botão Fechar - Lado Direito, 10 pt acima da seta direita */}
+              <button
+                onClick={() => setSelectedImageIndex(null)}
+                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                style={{
+                  right: '5px',
+                  top: 'calc(50% - 60px)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <X size={32} strokeWidth={3} />
+              </button>
 
-            {/* Botão Fechar */}
-            <button
-              onClick={() => setSelectedImageIndex(null)}
-              className="absolute text-white hover:text-orange-500 transition-colors z-10"
-              style={{ right: 'calc(100% + 64px)', top: 'calc(50% - 60px)' }}
-            >
-              <X size={32} />
-            </button>
+              {/* Seta Anterior - Lado Esquerdo */}
+              <button
+                onClick={handlePrevious}
+                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                style={{
+                  left: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ChevronLeft size={32} strokeWidth={3} />
+              </button>
 
-            {/* Imagem */}
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              className="w-full h-auto rounded-lg animate-fade-in"
-            />
+              {/* Seta Próxima - Lado Direito */}
+              <button
+                onClick={handleNext}
+                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                style={{
+                  right: '5px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ChevronRight size={32} strokeWidth={3} />
+              </button>
+            </div>
 
             {/* Legenda */}
             <div className="mt-6 text-center animate-fade-in">

@@ -227,3 +227,18 @@
   - [x] Botão X e setas posicionados corretamente (10 pt acima, 5 pt dentro)
   - [x] 97 testes vitest passando
   - [x] Verificação visual: lightbox funcionando perfeitamente
+
+
+## Alterações - Galeria de Instalações (Concluído)
+
+- [x] **Adicionar Controles ao Lightbox da Galeria de Instalações**
+  - [x] Seta anterior (◀): lado esquerdo, 5 pt dentro da imagem
+  - [x] Seta próxima (▶): lado direito, 5 pt dentro da imagem
+  - [x] Botão X (fechar): lado direito, 10 pt acima da seta direita, 5 pt dentro
+  - [x] Cor branca com hover laranja (#ff6900)
+  - [x] Navegação circular funcionando (3 imagens)
+  - [x] Legenda com título, descrição e contador ("1 de 3")
+  - [x] Visível em qualquer tamanho de tela
+  - [x] Z-index correto (sempre à frente)
+  - [x] 97 testes vitest passando
+  - [x] Verificação visual: lightbox funcionando perfeitamente
