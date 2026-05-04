@@ -137,3 +137,28 @@
 - **Páginas Implementadas**: 3 (Home, Calculadora Avançada, Dashboard)
 - **Domínio Automático**: bessa-solar-3wees8ow.manus.space
 - **Status Geral**: ✅ PRONTO PARA PRODUÇÃO
+
+
+## Itens Recentemente Concluidos
+
+- [x] **Galerias com Lightbox** (CONCLUIDO)
+  - [x] Galeria para Nossas Instalacoes em BH com 3 imagens
+  - [x] Galeria para WallBox com 5 imagens + tabela comparativa
+  - [x] Setas de navegacao com hover laranja
+  - [x] Botao X para fechar
+  - [x] Transicoes fade-in/fade-out 0.3s ease-in-out
+  - [x] Legendas com titulo, descricao e contador
+  - [x] Navegacao circular em ambas as galerias
+  - [x] Testes vitest para navegacao e animacoes
+
+- [x] **Botao Flutuante WhatsApp** (CONCLUIDO)
+  - [x] Botao verde no canto inferior direito
+  - [x] Numero de telefone: 5531991029003 (Bessa Energia)
+  - [x] Abre conversa pre-preenchida no WhatsApp
+  - [x] Efeito hover com aumento de escala
+  - [x] Funciona em desktop e mobile
+
+- [x] **Storage Proxy** (CONCLUIDO)
+  - [x] Proxy configurado para servir imagens do /manus-storage/
+  - [x] Imagens da secao WallBox exibindo corretamente
+  - [x] URLs do storage funcionando com storage proxy

@@ -107,7 +107,8 @@ export default function GaleriaInstalacoes() {
             {/* Botão Fechar */}
             <button
               onClick={() => setSelectedImageIndex(null)}
-              className="absolute -top-12 right-0 text-white hover:text-orange-500 transition-colors z-10"
+              className="absolute right-0 text-white hover:text-orange-500 transition-colors z-10"
+              style={{ top: 'calc(50% - 80px)', transform: 'translateY(-50%)' }}
             >
               <X size={32} />
             </button>
