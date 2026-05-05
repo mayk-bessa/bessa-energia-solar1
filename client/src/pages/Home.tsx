@@ -593,6 +593,12 @@ export default function Home() {
               © 2024 Bessa Energia. Todos os direitos reservados.
             </p>
           </div>
+
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-500">
+              Desenvolvido com ❤️ pela Bessa Tecnologia
+            </p>
+          </div>
         </div>
       </footer>
 
