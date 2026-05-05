@@ -54,12 +54,14 @@
   - [ ] Testar envio real de email com PDF em ambiente de produção
   - [ ] Validar no navegador o fluxo completo de exportação com envio por email
 
-- [ ] **Validar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
+- [ ] **Configurar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
   - [x] Domínio automático disponível: bessa-solar-3wees8ow.manus.space (ativo)
-  - [ ] Adicionar bessaenergia.com.br no painel Manus (Settings > Domains)
-  - [ ] Configurar os registros DNS necessários (CNAME/A records)
-  - [ ] Aguardar propagação DNS (até 48 horas)
-  - [ ] Validar acesso funcional pelo domínio customizado
+  - [x] Instruções passo a passo fornecidas para adicionar bessaenergia.com.br
+  - [x] Guia de configuração DNS (CNAME ou A record) fornecido
+  - [ ] Adicionar o domínio no painel Manus (Settings > Domains)
+  - [ ] Configurar os registros DNS exigidos no provedor do domínio
+  - [ ] Aguardar propagação DNS (15 min - 48 horas)
+  - [ ] Validar acesso funcional via https://bessaenergia.com.br
 
 - [x] **Organizar Dashboard** (CONCLUÍDO)
   - [x] Caixas de texto com barra de rolagem (max-h-96 overflow-y-auto)
