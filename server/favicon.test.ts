@@ -24,11 +24,12 @@ describe('Favicon Tests', () => {
     expect(buffer[1]).toBe(0x00);
   });
 
-  it('favicon.ico should be at least 100KB (multi-resolution)', () => {
+  it('favicon.ico should be a valid size (optimized)', () => {
     const faviconPath = path.resolve(__dirname, '../client/public/favicon.ico');
     const stats = fs.statSync(faviconPath);
-    // Multi-resolution ICO should be at least 100KB
-    expect(stats.size).toBeGreaterThan(100000);
+    // Favicon should be at least 1KB and optimized (not exceeding 50KB)
+    expect(stats.size).toBeGreaterThan(1000);
+    expect(stats.size).toBeLessThan(50000);
   });
 
   it('should have Logotransparente_bessaenergia_cores.png source', () => {

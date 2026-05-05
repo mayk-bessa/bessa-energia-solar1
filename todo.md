@@ -322,12 +322,14 @@
   - [x] 97 testes vitest passando
 
 
-## Validacao e Melhorias - Compartilhamento e Dicas (Concluido)
+## Validacao e Melhorias - Compartilhamento e Dicas (Concluido - Melhorado)
 
-- [x] **Validacao - Compartilhamento Social**
+- [x] **Validacao - Compartilhamento Social (MELHORADO)**
   - [x] Botoes de compartilhamento funcionando em cada cenario (3kW, 5kW, 10kW)
-  - [x] Instagram: abre perfil @bessa.energia com texto pre-formatado
-  - [x] Facebook: abre dialog de compartilhamento com URL e texto
+  - [x] Instagram: copia texto dos resultados para clipboard + abre perfil @bessa.energia
+  - [x] Facebook: abre dialog de compartilhamento com payload validado + feedback
+  - [x] Tratamento de erros para ambas as plataformas
+  - [x] Mensagens de feedback ao usuario (✓ Texto copiado!, ✓ Abrindo Facebook...)
   - [x] Verificacao visual: botoes com cores corretas (Instagram rosa/roxo, Facebook azul)
 
 - [x] **Validacao - Dicas de Preenchimento**
@@ -335,3 +337,16 @@
   - [x] Tooltips exibindo corretamente com conteudo descritivo
   - [x] Testado em desktop (verificacao visual em 880x752)
   - [x] Usando componente Tooltip do shadcn/ui (acessivel e responsivo)
+  - [x] 97 testes vitest passando
+
+
+## Correcao - Favicon (Concluido)
+
+- [x] **Otimizar e Corrigir Favicon**
+  - [x] Favicon.ico original redimensionado de 154KB para 16KB (otimizado)
+  - [x] Convertido de 256x256 para 32x32 com 256 cores
+  - [x] Adicionados múltiplos formatos de favicon no index.html
+  - [x] Adicionadas tags: apple-touch-icon, shortcut icon, theme-color
+  - [x] Teste do favicon atualizado para aceitar tamanho otimizado (1KB-50KB)
+  - [x] 97 testes vitest passando
+  - [x] Verificacao visual: favicon exibindo corretamente na aba do navegador
