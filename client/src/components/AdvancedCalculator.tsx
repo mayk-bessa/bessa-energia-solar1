@@ -29,17 +29,17 @@ export default function AdvancedCalculator() {
   // Formata o telefone enquanto o usuário digita
   const formatPhoneNumber = (value: string): string => {
     const cleaned = value.replace(/\D/g, '');
-    const limited = cleaned.slice(0, 11);
+    const limited = cleaned.slice(0, 12);
     if (limited.length === 0) return '';
     if (limited.length <= 2) return `(${limited}`;
-    if (limited.length <= 7) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+    if (limited.length <= 8) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
     return `(${limited.slice(0, 2)}) ${limited.slice(2, 8)}-${limited.slice(8)}`;
   };
 
   // Valida o formato do telefone
   const isValidPhone = (phone: string): boolean => {
     const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length === 11;
+    return cleaned.length === 12;
   };
   const [isExporting, setIsExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
