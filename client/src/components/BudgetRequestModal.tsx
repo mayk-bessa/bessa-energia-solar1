@@ -38,19 +38,19 @@ export default function BudgetRequestModal({ isOpen, onClose }: BudgetRequestMod
     const cleaned = value.replace(/\D/g, '');
     
     // Limita a 12 dígitos (DDD 2 dígitos + 10 dígitos do celular)
-    const limited = cleaned.slice(0, 12);
+    const limited = cleaned.slice(0, 11);
     
-    // Formata como (99) 999999-9999
+    // Formata como (99)99999-9999
     if (limited.length === 0) return '';
     if (limited.length <= 2) return `(${limited}`;
-    if (limited.length <= 8) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
-    return `(${limited.slice(0, 2)}) ${limited.slice(2, 8)}-${limited.slice(8)}`;
+    if (limited.length <= 7) return `(${limited.slice(0, 2)})${limited.slice(2)}`;
+    return `(${limited.slice(0, 2)})${limited.slice(2, 7)}-${limited.slice(7)}`;
   };
 
   // Valida o formato do telefone
   const isValidPhone = (phone: string): boolean => {
     const cleaned = phone.replace(/\D/g, '');
-    return cleaned.length === 12; // DDD (2) + 10 dígitos do celular
+    return cleaned.length === 11; // DDD (2) + 9 dígitos do celular
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

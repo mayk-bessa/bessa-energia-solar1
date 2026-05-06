@@ -363,15 +363,15 @@
   - [x] 97 testes vitest passando
 
 
-## Correcao - Mascara de Telefone (Concluido)
+## Correcao - Mascara de Telefone (Concluido - CORRIGIDO PARA 11 DIGITOS)
 
 - [x] **Corrigir Máscara de Telefone em Todos os Formulários**
-  - [x] Formato: (99) 999999-9999 (DDD + 9 dígitos)
-  - [x] Aplicar em BudgetRequestModal.tsx (com validação completa)
-  - [x] Aplicar em AdvancedCalculator.tsx (com validação completa)
-  - [x] Formatação automática enquanto digita
-  - [x] Validação: rejeitar se não obedecer o formato
+  - [x] Formato: (99)99999-9999 (DDD 2 dígitos + 9 dígitos do celular = 11 total)
+  - [x] Aplicar em BudgetRequestModal.tsx (corrigido para 11 dígitos)
+  - [x] Aplicar em AdvancedCalculator.tsx (corrigido para 11 dígitos)
+  - [x] Formatação automática enquanto digita (31987654321 → (31)98765-4321)
+  - [x] Validação: rejeitar se não obedecer o formato (exatamente 11 dígitos)
   - [x] Validação: não permitir envio se campos vazios
   - [x] Mensagens de erro claras ao usuário (campo vermelho + texto)
-  - [x] Verificação visual: formatação funcionando em ambos os formulários
+  - [x] Verificação visual: formatação funcionando corretamente em ambos os formulários
   - [x] 97 testes vitest passando
