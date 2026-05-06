@@ -120,7 +120,7 @@ export default function Home() {
                   Solicitar Orçamento
                 </Button>
                 <Button onClick={() => consultantRef.current?.open()} className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-6 text-lg" style={{width: '234px', backgroundColor: '#253c7e'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a2d5f'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#253c7e'}>
-                  Tire suas Dúvidas.
+                  Tire suas Dúvidas
                 </Button>
                 <Link href="/calculadora-avancada">
                   <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 text-lg" style={{backgroundColor: '#253c7e', width: '234px'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a2d5f'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#253c7e'}>
@@ -158,7 +158,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Economia Real</h3>
                     <p className="text-gray-600">
-                      "Pague apenas a taxa mínima da Cemig e use o que poupa para realizar os seus sonhos."
+                      Pague apenas a taxa mínima da Cemig e use o que poupar para realizar os seus sonhos.
                     </p>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Financiamento Fácil</h3>
                     <p className="text-gray-600">
-                      "A prestação substitui a sua conta de luz. Em poucos anos o sistema está pago e o lucro é seu."
+                      A prestação substitui a sua conta de luz. Em poucos anos o sistema está pago e o lucro é seu.
                     </p>
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-bold text-lg text-gray-900 mb-2">Valorização Imobiliária</h3>
                     <p className="text-gray-600">
-                      "Um imóvel com energia solar valoriza-se instantaneamente no mercado."
+                      Um imóvel com energia solar valoriza-se instantaneamente no mercado.
                     </p>
                   </div>
                 </div>
