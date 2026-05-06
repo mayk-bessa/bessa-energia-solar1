@@ -24,6 +24,23 @@ export default function AdvancedCalculator() {
   const [clientName, setClientName] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+
+  // Formata o telefone enquanto o usuário digita
+  const formatPhoneNumber = (value: string): string => {
+    const cleaned = value.replace(/\D/g, '');
+    const limited = cleaned.slice(0, 11);
+    if (limited.length === 0) return '';
+    if (limited.length <= 2) return `(${limited}`;
+    if (limited.length <= 7) return `(${limited.slice(0, 2)}) ${limited.slice(2)}`;
+    return `(${limited.slice(0, 2)}) ${limited.slice(2, 8)}-${limited.slice(8)}`;
+  };
+
+  // Valida o formato do telefone
+  const isValidPhone = (phone: string): boolean => {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length === 11;
+  };
   const [isExporting, setIsExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
 
@@ -69,6 +86,12 @@ export default function AdvancedCalculator() {
   };
 
   const handleExportScenario = async (scenario: ScenarioResult) => {
+    // Validar telefone se preenchido
+    if (clientPhone && !isValidPhone(clientPhone)) {
+      setPhoneError('Telefone deve ter formato (99) 999999-9999');
+      return;
+    }
+
     setIsExporting(true);
     try {
       const response = await generateReportMutation.mutateAsync({
@@ -322,11 +345,22 @@ export default function AdvancedCalculator() {
                 </div>
                 <input
                   type="tel"
-                  placeholder="Telefone"
+                  placeholder="(31) 999999-9999"
                   value={clientPhone}
-                  onChange={(e) => setClientPhone(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  onChange={(e) => {
+                    const formatted = formatPhoneNumber(e.target.value);
+                    setClientPhone(formatted);
+                    if (phoneError && formatted) {
+                      setPhoneError('');
+                    }
+                  }}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors ${
+                    phoneError ? 'border-red-500 bg-red-50' : 'border-slate-300'
+                  }`}
                 />
+                {phoneError && (
+                  <p className="text-sm text-red-600 mt-1">{phoneError}</p>
+                )}
               </div>
             </div>
           </div>

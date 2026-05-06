@@ -361,3 +361,31 @@
   - [x] Espaçamento: mt-4 (margem superior)
   - [x] Verificacao visual: Frase exibindo corretamente no rodapé
   - [x] 97 testes vitest passando
+
+
+## Correcao - Mascara de Telefone (Pendente)
+
+- [ ] **Corrigir Máscara de Telefone em Todos os Formulários**
+  - [ ] Formato: (99) 999999-9999 (DDD + 9 dígitos)
+  - [ ] Aplicar em BudgetRequestModal.tsx
+  - [ ] Aplicar em VirtualConsultant.tsx (se houver campo de telefone)
+  - [ ] Aplicar em AdvancedCalculator.tsx
+  - [ ] Validação: rejeitar se não obedecer o formato
+  - [ ] Validação: não permitir envio se campos vazios
+  - [ ] Mensagens de erro claras ao usuário
+  - [ ] Testes vitest para validação de telefone
+  - [ ] Verificação visual em todos os formulários
+
+
+## Correcao - Mascara de Telefone (Concluido)
+
+- [x] **Corrigir Máscara de Telefone em Todos os Formulários**
+  - [x] Formato: (99) 999999-9999 (DDD + 9 dígitos)
+  - [x] Aplicar em BudgetRequestModal.tsx (com validação completa)
+  - [x] Aplicar em AdvancedCalculator.tsx (com validação completa)
+  - [x] Formatação automática enquanto digita
+  - [x] Validação: rejeitar se não obedecer o formato
+  - [x] Validação: não permitir envio se campos vazios
+  - [x] Mensagens de erro claras ao usuário (campo vermelho + texto)
+  - [x] Verificação visual: formatação funcionando em ambos os formulários
+  - [x] 97 testes vitest passando
