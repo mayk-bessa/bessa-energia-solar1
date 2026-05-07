@@ -394,3 +394,31 @@
   - [x] Manter restante das galerias inalterado
   - [x] Testar navegacao e interacoes (verificado visualmente)
   - [x] 97 testes vitest passando
+
+
+## Secao de Avaliacoes - Depoimentos e Ratings (Concluido)
+
+- [x] **Criar Componente de Avaliacoes**
+  - [x] Componente ClientReviews.tsx com depoimentos de clientes
+  - [x] Exibir nome, foto, rating e texto do depoimento
+  - [x] Carousel/slider para navegar entre depoimentos
+  - [x] Responsivo em desktop e mobile
+  - [x] Animacoes suaves (fade-in)
+
+- [x] **Integrar Fotos Reais das Usinas**
+  - [x] Componente GaleriaUsinas.tsx com fotos reais das usinas instaladas
+  - [x] Exibir em grid 2x2 com informacoes de capacidade e economia
+  - [x] Lightbox para ampliar fotos com navegacao anterior/proxima
+  - [x] Manter qualidade e proporcao das imagens
+
+- [x] **Adicionar Secao a Pagina Home**
+  - [x] Posicionar secao entre WallBox e Gerenciador de Arquivos
+  - [x] Manter estilo visual consistente com resto do site
+  - [x] Testar responsividade (verificado visualmente)
+
+- [x] **Testes e Validacao**
+  - [x] Verificar renderizacao em desktop (verificado)
+  - [x] Verificar responsividade em mobile
+  - [x] Testar carousel/navegacao (funcionando)
+  - [x] Validar que restante do site nao foi alterado (confirmado)
+  - [x] 97 testes vitest passando

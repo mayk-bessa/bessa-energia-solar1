@@ -8,6 +8,8 @@ import { Link } from 'wouter';
 import VirtualConsultant, { VirtualConsultantHandle } from '@/components/VirtualConsultant';
 import BudgetRequestModal from '@/components/BudgetRequestModal';
 import SolarCalculatorModal from '@/components/SolarCalculatorModal';
+import ClientReviews from '@/components/ClientReviews';
+import GaleriaUsinas from '@/components/GaleriaUsinas';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -404,6 +406,12 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Client Reviews Section */}
+      <ClientReviews />
+
+      {/* Usinas Gallery Section */}
+      <GaleriaUsinas />
 
       {/* File Upload Section (Only for authenticated users) */}
       {isAuthenticated && (
