@@ -375,3 +375,22 @@
   - [x] Mensagens de erro claras ao usuário (campo vermelho + texto)
   - [x] Verificação visual: formatação funcionando corretamente em ambos os formulários
   - [x] 97 testes vitest passando
+
+
+## Novas Funcionalidades - Botao Topo e Cores das Setas (Concluido)
+
+- [x] **Implementar Botao Topo**
+  - [x] Criar componente ScrollToTop.tsx com seta para cima
+  - [x] Posicionar no canto inferior direito (abaixo do botao WhatsApp)
+  - [x] Scroll suave ate o topo da pagina
+  - [x] Mostrar/ocultar baseado na posicao de scroll (aparece apos 300px)
+  - [x] Nao sobrepor o botao WhatsApp (z-index 40, WhatsApp z-index 50)
+  - [x] Testar em desktop (verificado visualmente)
+
+- [x] **Alterar Cores das Setas nas Galerias**
+  - [x] GaleriaWallBox.tsx: setas e botao X com cor padrao preta
+  - [x] GaleriaInstalacoes.tsx: setas e botao X com cor padrao preta
+  - [x] Hover: laranja (#ff6900) em ambas as galerias
+  - [x] Manter restante das galerias inalterado
+  - [x] Testar navegacao e interacoes (verificado visualmente)
+  - [x] 97 testes vitest passando

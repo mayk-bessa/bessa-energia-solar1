@@ -116,7 +116,7 @@ export default function GaleriaInstalacoes() {
               {/* Botão Fechar - Lado Direito, 10 pt acima da seta direita */}
               <button
                 onClick={() => setSelectedImageIndex(null)}
-                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-20"
                 style={{
                   right: '5px',
                   top: 'calc(50% - 60px)',
@@ -133,7 +133,7 @@ export default function GaleriaInstalacoes() {
               {/* Seta Anterior - Lado Esquerdo */}
               <button
                 onClick={handlePrevious}
-                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-20"
                 style={{
                   left: '5px',
                   top: '50%',
@@ -151,7 +151,7 @@ export default function GaleriaInstalacoes() {
               {/* Seta Próxima - Lado Direito */}
               <button
                 onClick={handleNext}
-                className="absolute text-white hover:text-orange-500 transition-colors z-20"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-20"
                 style={{
                   right: '5px',
                   top: '50%',

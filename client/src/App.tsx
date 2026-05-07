@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdvancedCalculator from "./components/AdvancedCalculator";
 import Dashboard from "./pages/Dashboard";
 import WhatsAppButton from "./components/WhatsAppButton";
+import ScrollToTop from "./components/ScrollToTop";
 import GaleriaInstalacoes from "./pages/GaleriaInstalacoes";
 import GaleriaWallBox from "./pages/GaleriaWallBox";
 
@@ -44,6 +45,7 @@ function App() {
             <Toaster />
             <Router />
             <WhatsAppButton />
+            <ScrollToTop />
           </TooltipProvider>
         </CalculatorProvider>
       </ThemeProvider>

@@ -215,7 +215,7 @@ export default function GaleriaWallBox() {
               {/* Botão Fechar (X) - Lado direito, 10 pt acima da seta, 5 pt dentro */}
               <button
                 onClick={() => setSelectedImageIndex(null)}
-                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-50"
                 style={{
                   right: '5px',
                   top: 'calc(50% - 60px)',
@@ -232,7 +232,7 @@ export default function GaleriaWallBox() {
               {/* Seta Anterior - Lado esquerdo, 5 pt dentro */}
               <button
                 onClick={handlePrevious}
-                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-50"
                 style={{
                   left: '5px',
                   top: '50%',
@@ -250,7 +250,7 @@ export default function GaleriaWallBox() {
               {/* Seta Próxima - Lado direito, 5 pt dentro, mesma altura da seta anterior */}
               <button
                 onClick={handleNext}
-                className="absolute text-white hover:text-[#ff6900] transition-colors z-50"
+                className="absolute text-black hover:text-[#ff6900] transition-colors z-50"
                 style={{
                   right: '5px',
                   top: '50%',
