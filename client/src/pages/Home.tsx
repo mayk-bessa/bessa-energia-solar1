@@ -290,12 +290,15 @@ export default function Home() {
 
             {/* Advantages Grid */}
             <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 shadow-md">
-                <div className="flex items-center mb-4">
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 shadow-md relative overflow-hidden">
+                <div className="absolute -top-4 -right-4 opacity-10 pointer-events-none">
+                  <img src="/manus-storage/raio_fec4f2a5.png" alt="" className="w-32 h-32 object-contain animate-pulse" />
+                </div>
+                <div className="flex items-center mb-4 relative z-10">
                   <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg">⚡</div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Carregamento Rápido</h3>
-                <p className="text-sm text-gray-700">Carregue seu veículo em poucas horas com potências de até 22kW</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2 relative z-10">Carregamento Rápido</h3>
+                <p className="text-sm text-gray-700 relative z-10">Carregue seu veículo em poucas horas com potências de até 22kW</p>
               </div>
 
               <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-md">

@@ -422,3 +422,14 @@
   - [x] Testar carousel/navegacao (funcionando)
   - [x] Validar que restante do site nao foi alterado (confirmado)
   - [x] 97 testes vitest passando
+
+
+## Integração do Ícone Raio - WallBox (Concluído)
+
+- [x] **Adicionar Ícone do Raio na Seção WallBox**
+  - [x] Upload da imagem raio.png para CDN (/manus-storage/raio_fec4f2a5.png)
+  - [x] Integrar ícone na seção de "Carregamento Rápido"
+  - [x] Posicionar como elemento decorativo (canto superior direito, opacity-10)
+  - [x] Adicionar animação de pulsação/brilho (animate-pulse)
+  - [x] Testar responsividade (verificado visualmente)
+  - [x] Validar que restante do site não foi alterado (confirmado)
