@@ -586,7 +586,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-orange-500 mt-0.5" />
-                  <span>Rua Vaga 241 Bairro Savassi, Belo Horizonte</span>
+                  <span>AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG</span>
                 </div>
               </div>
             </div>

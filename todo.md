@@ -433,3 +433,12 @@
   - [x] Adicionar animação de pulsação/brilho (animate-pulse)
   - [x] Testar responsividade (verificado visualmente)
   - [x] Validar que restante do site não foi alterado (confirmado)
+
+
+## Alteração de Endereço Comercial (Concluído)
+
+- [x] **Alterar Endereço Comercial**
+  - [x] Alterar endereço no footer da página Home
+  - [x] Novo endereço: AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
+  - [x] Verificar visualização no navegador (confirmado)
+  - [x] Manter restante do site inalterado (confirmado)
