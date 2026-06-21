@@ -607,7 +607,7 @@ export default function Home() {
 
           <div className="text-center mt-4">
             <p className="text-sm text-gray-500">
-              Desenvolvido com ❤️ pela Bessa Tecnologia
+              Desenvolvido com ❤️ por Bessa Tecnologia
             </p>
           </div>
         </div>
