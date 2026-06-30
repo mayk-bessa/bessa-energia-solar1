@@ -46,20 +46,20 @@
   - [x] Múltiplas resoluções incluídas (256x256 até 16x16)
   - [x] Favicon exibido corretamente no navegador
 
-- [ ] **Validar Email em Produção** (PENDENTE - Requer Publicação)
+- [ ] **Validar Email em Produção** (PENDENTE - Requer Publicação do Usuário)
   - [x] Configuração SMTP completa (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS)
   - [x] Porta 587 (TLS) configurada
   - [x] Testes vitest validando configuração (3 testes passando)
-  - [ ] Publicar projeto via botão Publish no painel Manus
-  - [ ] Testar envio real de email com PDF em ambiente de produção
-  - [ ] Validar no navegador o fluxo completo de exportação com envio por email
+  - [ ] Publicar projeto via botão Publish no painel Manus (Ação do Usuário)
+  - [ ] Testar envio real de email com PDF em ambiente de produção (Ação do Usuário)
+  - [ ] Validar no navegador o fluxo completo de exportação com envio por email (Ação do Usuário)
 
 - [ ] **Validar Domínio Customizado** (PENDENTE - Requer Ação do Usuário)
   - [x] Domínio automático disponível: bessa-solar-3wees8ow.manus.space (ativo)
-  - [ ] Adicionar bessaenergia.com.br no painel Manus (Settings > Domains)
-  - [ ] Configurar os registros DNS necessários (CNAME/A records)
-  - [ ] Aguardar propagação DNS (até 48 horas)
-  - [ ] Validar acesso funcional pelo domínio customizado
+  - [ ] Adicionar bessaenergia.com.br no painel Manus (Settings > Domains) (Ação do Usuário)
+  - [ ] Configurar os registros DNS necessários (CNAME/A records) (Ação do Usuário)
+  - [ ] Aguardar propagação DNS (até 48 horas) (Ação do Usuário)
+  - [ ] Validar acesso funcional pelo domínio customizado (Ação do Usuário)
 
 - [x] **Organizar Dashboard** (CONCLUÍDO)
   - [x] Caixas de texto com barra de rolagem (max-h-96 overflow-y-auto)
@@ -85,10 +85,10 @@
   - [x] Cores da marca (#ff6900 laranja, #253c7e azul escuro) aplicadas
 
 - [ ] **Publicar Projeto** (PENDENTE - Próximo Passo)
-  - [ ] Clicar no botão Publish no painel Manus (após checkpoint)
-  - [ ] Aguardar deploy em ambiente de produção
-  - [ ] Validar que o site está acessível via domínio automático
-  - [ ] Testar email em produção (TLS funcionará automaticamente)
+  - [ ] Clicar no botão Publish no painel Manus (após checkpoint) (Ação do Usuário)
+  - [ ] Aguardar deploy em ambiente de produção (Ação do Usuário)
+  - [ ] Validar que o site está acessível via domínio automático (Ação do Usuário)
+  - [ ] Testar email em produção (TLS funcionará automaticamente) (Ação do Usuário)
 
 
 
