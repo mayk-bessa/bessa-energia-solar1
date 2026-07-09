@@ -133,9 +133,18 @@ const VirtualConsultant = forwardRef<VirtualConsultantHandle>(function VirtualCo
       {isOpen && (
         <div className="fixed bottom-24 right-6 z-40 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[600px] animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-t-2xl">
-            <h3 className="font-bold text-lg">Consultor Virtual</h3>
-            <p className="text-sm text-orange-100">Estamos aqui para ajudar!</p>
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-t-2xl flex justify-between items-start">
+            <div>
+              <h3 className="font-bold text-lg">Consultor Virtual</h3>
+              <p className="text-sm text-orange-100">Estamos aqui para ajudar!</p>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white hover:bg-orange-700 rounded-full p-1 transition-colors"
+              aria-label="Fechar consultor"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Messages */}
