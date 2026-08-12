@@ -7,31 +7,31 @@ export default function GaleriaWallBox() {
 
   const images = [
     {
-      src: '/manus-storage/Jg2RMUES7eYD_61169483.jpg',
+      src: '/manus-storage/wallbox-pulsar-plus_609cc9b4.jpg',
       alt: 'Wallbox Pulsar Plus',
       title: 'Wallbox Pulsar Plus',
       description: 'Carregador inteligente de alta potência'
     },
     {
-      src: '/manus-storage/lxYPE647fL7H_0da93c84.jpg',
+      src: '/manus-storage/wallbox-paineis-solares_3c556904.jpg',
       alt: 'Integração Solar',
       title: 'Integração Solar',
       description: 'Wallbox conectado ao sistema solar'
     },
     {
-      src: '/manus-storage/Udy7cfQuAh7N_b63b45f2.png',
+      src: '/manus-storage/carport-carro-eletrico_6d129f8f.jpg',
       alt: 'Carport Solar Profissional',
       title: 'Carport Solar Profissional',
       description: 'Sistema completo de carregamento solar'
     },
     {
-      src: '/manus-storage/oLceu0RoRFBv_7837a09a.jpg',
+      src: '/manus-storage/estacionamento-carregamento-solar_1ee10208.jpg',
       alt: 'Ponto de Recarga de VE Solar',
       title: 'Ponto de Recarga de VE Solar',
       description: 'Infraestrutura de carregamento solar'
     },
     {
-      src: '/manus-storage/carport_ddb7d756.jpeg',
+      src: '/manus-storage/carport-solar-profissional_c2fb61cf.jpg',
       alt: 'Carport Solar Profissional',
       title: 'Carport Solar Profissional',
       description: 'Sistema completo de carregamento solar'

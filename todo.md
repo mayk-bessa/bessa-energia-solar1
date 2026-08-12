@@ -442,3 +442,5 @@
   - [x] Novo endereço: AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
   - [x] Verificar visualização no navegador (confirmado)
   - [x] Manter restante do site inalterado (confirmado)
+
+- [x] Corrigir exibição quebrada das cinco imagens da seção WallBox no site em produção, preservando o restante da aplicação
