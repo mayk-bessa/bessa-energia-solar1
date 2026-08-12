@@ -322,7 +322,7 @@ export default function Home() {
             {/* Wallbox Pulsar Plus - Full Width */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
               <img
-                src="/manus-storage/wallbox-pulsar-plus_609cc9b4.jpg"
+                src="/images/wallbox/wallbox-pulsar-plus.webp"
                 alt="Wallbox Pulsar Plus"
                 className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
                 style={{ height: 'auto', maxHeight: '500px' }}
@@ -338,7 +338,7 @@ export default function Home() {
             {/* Integração Solar - Full Width */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
               <img
-                src="/manus-storage/wallbox-paineis-solares_3c556904.jpg"
+                src="/images/wallbox/wallbox-paineis-solares.webp"
                 alt="Wallbox com Painéis Solares"
                 className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
                 style={{ height: 'auto', maxHeight: '500px' }}
@@ -354,7 +354,7 @@ export default function Home() {
             {/* Carport Solar - Full Width */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
               <img
-                src="/manus-storage/carport-carro-eletrico_6d129f8f.jpg"
+                src="/images/wallbox/carport-carro-eletrico.webp"
                 alt="Carport Solar com Carro Elétrico"
                 className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
                 style={{ height: 'auto', maxHeight: '500px' }}
@@ -370,7 +370,7 @@ export default function Home() {
             {/* Estacionamento com carregamento solar - Full Width */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow mb-6">
               <img
-                src="/manus-storage/estacionamento-carregamento-solar_1ee10208.jpg"
+                src="/images/wallbox/estacionamento-carregamento-solar.webp"
                 alt="Estacionamento com Carregamento Solar"
                 className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
                 style={{ height: 'auto', maxHeight: '500px' }}
@@ -386,7 +386,7 @@ export default function Home() {
             {/* Carport Section */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow">
               <img
-                src="/manus-storage/carport-solar-profissional_c2fb61cf.jpg"
+                src="/images/wallbox/carport-solar-profissional.webp"
                 alt="Carport Solar Profissional"
                 className="w-full object-contain group-hover:scale-110 transition-transform duration-300 bg-gray-100"
                 style={{ height: 'auto', maxHeight: '500px' }}

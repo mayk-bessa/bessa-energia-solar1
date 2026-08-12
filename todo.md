@@ -444,3 +444,7 @@
   - [x] Manter restante do site inalterado (confirmado)
 
 - [x] Corrigir exibição quebrada das cinco imagens da seção WallBox no site em produção, preservando o restante da aplicação
+
+- [ ] Confirmar no domínio bessaenergia.com.br que o VPS foi atualizado para a versão WallBox 395967df e que as cinco novas imagens respondem sem erro
+
+- [x] Preparar cinco arquivos WallBox em client/public/images/wallbox/ e atualizar referências para /images/wallbox/; validar 101 testes, build e respostas HTTP 200 no preview
