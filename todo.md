@@ -455,3 +455,5 @@
 
 - [x] Adicionar galeria pop-up automática na página principal com cinco fotos locais em 1920 × 1280 e controles de navegação/fechamento
 - [x] Vincular o ícone de localização no rodapé ao Google Maps para AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
+
+- [ ] Sincronizar o checkpoint da galeria pop-up com o GitHub, atualizar o VPS e confirmar a nova versão em bessaenergia.com.br
