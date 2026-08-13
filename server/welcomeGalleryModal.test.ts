@@ -65,4 +65,21 @@ describe('WelcomeGalleryModal', () => {
     expect(homeSource).toContain('hover:shadow-orange-500/30');
     expect(homeSource).toContain('focus:ring-2 focus:ring-orange-500');
   });
+
+  it('uses smooth color and scale transitions for both Instagram controls', () => {
+    expect(homeSource).toContain('transition-[transform,background-color,color,box-shadow] duration-300 ease-out');
+    expect(homeSource).toContain('transition-[transform,border-color,box-shadow,background-color] duration-300 ease-out');
+    expect(homeSource).toContain('hover:scale-[1.03]');
+    expect(homeSource).toContain('hover:scale-[1.06]');
+  });
+
+  it('adds the received gallery art with contextual descriptions and hides the resolution label', () => {
+    expect(gallerySource).toContain('/manus-storage/reajustes-tarifarios-solar_4d0669db.jpg');
+    expect(gallerySource).toContain('/manus-storage/condicoes-pagamento-solar_25e9a652.jpg');
+    expect(gallerySource).toContain('/manus-storage/economia-previsibilidade-solar_287bce8e.jpg');
+    expect(gallerySource).toContain('Proteção contra reajustes');
+    expect(gallerySource).toContain('Condições de pagamento');
+    expect(gallerySource).toContain('Economia com previsibilidade');
+    expect(gallerySource).not.toContain('Imagem em alta resolução: 1920 × 1280 px');
+  });
 });

@@ -624,9 +624,9 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Abrir Instagram da Bessa Energia"
-                  className="group inline-flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-gray-200 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="group inline-flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-gray-200 transition-[transform,background-color,color,box-shadow] duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-white/10 hover:text-orange-400 hover:shadow-md hover:shadow-orange-500/10 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
-                  <Instagram className="h-5 w-5 text-orange-500 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3" />
+                  <Instagram className="h-5 w-5 text-orange-500 transition-[transform,color] duration-300 ease-out group-hover:scale-110 group-hover:rotate-3" />
                   <span>@bessa.energia</span>
                 </a>
                 <a
@@ -634,7 +634,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Abrir Instagram da Bessa Energia pelo QR code"
-                  className="group rounded-lg border border-transparent bg-white p-2 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:scale-105 hover:border-orange-400 hover:shadow-lg hover:shadow-orange-500/30 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="group rounded-lg border border-transparent bg-white p-2 shadow-sm transition-[transform,border-color,box-shadow,background-color] duration-300 ease-out hover:-translate-y-1 hover:scale-[1.06] hover:border-orange-400 hover:bg-orange-50 hover:shadow-lg hover:shadow-orange-500/30 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <QRCode
                     value="https://www.instagram.com/bessa.energia/"

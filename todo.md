@@ -465,3 +465,9 @@
 - [x] Inserir QR code funcional para o Instagram no rodapé, mantendo a responsividade e a legibilidade
 
 - [x] Adicionar efeito de hover e foco para destacar o ícone do Instagram e o QR code no rodapé
+
+- [x] Refinar as transições de cor e escala dos hovers do Instagram e QR code para uma interação mais fluida
+- [x] Remover a indicação textual de resolução da galeria pop-up
+- [x] Analisar as três fotos e os dois vídeos enviados e integrar as mídias adequadas à galeria com descrições contextuais
+- [ ] Sincronizar as alterações aprovadas com GitHub e VPS
+- [ ] Criar backup seguro do projeto sem credenciais e enviar ao Google Drive

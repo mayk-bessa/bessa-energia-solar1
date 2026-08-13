@@ -12,26 +12,49 @@ const galleryImages = [
     src: '/images/wallbox/wallbox-pulsar-plus.webp',
     alt: 'Wallbox Pulsar Plus instalado em ambiente residencial',
     title: 'Wallbox Pulsar Plus',
+    description: 'Carregamento inteligente para veículos elétricos em projetos residenciais modernos.',
   },
   {
     src: '/images/wallbox/wallbox-paineis-solares.webp',
     alt: 'Wallbox integrado a painéis solares',
     title: 'Integração Solar',
+    description: 'Painéis solares e mobilidade elétrica trabalhando juntos para reduzir custos.',
   },
   {
     src: '/images/wallbox/carport-carro-eletrico.webp',
     alt: 'Carport solar com carro elétrico',
     title: 'Carport Solar',
+    description: 'Estrutura que une sombreamento, geração fotovoltaica e recarga veicular.',
   },
   {
     src: '/images/wallbox/estacionamento-carregamento-solar.webp',
     alt: 'Estacionamento com carregamento solar',
     title: 'Mobilidade Elétrica',
+    description: 'Recarga sustentável para veículos elétricos em estacionamentos e empresas.',
   },
   {
     src: '/images/wallbox/carport-solar-profissional.webp',
     alt: 'Carport solar profissional com carregador veicular',
     title: 'Projeto Profissional',
+    description: 'Solução completa para geração solar e infraestrutura de recarga.',
+  },
+  {
+    src: '/manus-storage/reajustes-tarifarios-solar_4d0669db.jpg',
+    alt: 'Arte informativa sobre reajustes tarifários e energia solar',
+    title: 'Proteção contra reajustes',
+    description: 'A energia solar ajuda a reduzir a exposição às altas tarifárias com uma solução de longo prazo.',
+  },
+  {
+    src: '/manus-storage/condicoes-pagamento-solar_25e9a652.jpg',
+    alt: 'Arte sobre condições especiais de pagamento para energia solar',
+    title: 'Condições de pagamento',
+    description: 'Opções facilitadas para transformar seu projeto de energia solar em realidade.',
+  },
+  {
+    src: '/manus-storage/economia-previsibilidade-solar_287bce8e.jpg',
+    alt: 'Arte sobre economia e previsibilidade com energia solar',
+    title: 'Economia com previsibilidade',
+    description: 'Faça uma simulação e construa uma alternativa duradoura diante da elevação das tarifas.',
   },
 ];
 
@@ -121,7 +144,7 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
         <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
           <div>
             <p className="font-semibold text-slate-900">{selectedImage.title}</p>
-            <p className="text-sm text-slate-500">Imagem em alta resolução: 1920 × 1280 px</p>
+            <p className="text-sm text-slate-500">{selectedImage.description}</p>
           </div>
           <div className="flex gap-2" aria-label="Selecionar foto da galeria">
             {galleryImages.map((image, index) => (
