@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from '@/components/ui/button';
-import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, Trash2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Sun, Shield, Home as HomeIcon, Upload, FileText, Trash2, Instagram } from 'lucide-react';
+import QRCode from 'react-qr-code';
 import { trpc } from '@/lib/trpc';
 import { getLoginUrl } from '@/const';
 import { Link } from 'wouter';
@@ -574,7 +575,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-8">
             <div>
               <h3 className="text-white font-bold text-lg mb-4">A Empresa</h3>
               <p className="text-sm leading-relaxed">
@@ -613,6 +614,38 @@ export default function Home() {
               <p className="text-sm">
                 Todos os direitos reservados Bessa Tecnologia & Energia.
               </p>
+            </div>
+
+            <div>
+              <h3 className="text-white font-bold text-lg mb-4">Instagram</h3>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://www.instagram.com/bessa.energia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Abrir Instagram da Bessa Energia"
+                  className="inline-flex items-center gap-2 rounded-lg text-sm font-medium text-gray-200 transition-colors hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <Instagram className="h-5 w-5 text-orange-500" />
+                  <span>@bessa.energia</span>
+                </a>
+                <a
+                  href="https://www.instagram.com/bessa.energia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Abrir Instagram da Bessa Energia pelo QR code"
+                  className="rounded-lg bg-white p-2 shadow-sm transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <QRCode
+                    value="https://www.instagram.com/bessa.energia/"
+                    size={84}
+                    level="M"
+                    bgColor="#ffffff"
+                    fgColor="#111827"
+                  />
+                </a>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-gray-400">Aponte a câmera para acompanhar novidades e projetos da Bessa Energia.</p>
             </div>
           </div>
 

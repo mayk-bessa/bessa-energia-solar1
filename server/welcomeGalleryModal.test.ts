@@ -37,9 +37,25 @@ describe('WelcomeGalleryModal', () => {
     expect(gallerySource).toContain("event.key === 'Escape'");
   });
 
+  it('animates the popup with a subtle fade-in', () => {
+    expect(gallerySource).toContain("import { motion } from 'framer-motion'");
+    expect(gallerySource).toContain('initial={{ opacity: 0 }}');
+    expect(gallerySource).toContain('animate={{ opacity: 1 }}');
+    expect(gallerySource).toContain("duration: 0.32");
+  });
+
   it('links the footer location icon to Google Maps', () => {
     expect(homeSource).toContain('https://www.google.com/maps/search/?api=1&query=');
     expect(homeSource).toContain('Abrir endereço da Bessa Energia no Google Maps');
     expect(homeSource).toContain('AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG');
+  });
+
+  it('adds an accessible Instagram link and an actionable QR code to the footer', () => {
+    expect(homeSource).toContain("import QRCode from 'react-qr-code'");
+    expect(homeSource).toContain('https://www.instagram.com/bessa.energia/');
+    expect(homeSource).toContain('Abrir Instagram da Bessa Energia');
+    expect(homeSource).toContain('Abrir Instagram da Bessa Energia pelo QR code');
+    expect(homeSource).toContain('<QRCode');
+    expect(homeSource).toContain('size={84}');
   });
 });

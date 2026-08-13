@@ -459,3 +459,7 @@
 - [x] Sincronizar o checkpoint da galeria pop-up com o GitHub, atualizar o VPS e confirmar a nova versão em bessaenergia.com.br
 
 - [x] Confirmar externamente no domínio principal a galeria pop-up e o destino do ícone Google Maps após a atualização do VPS
+
+- [x] Adicionar animação suave de fade-in à galeria pop-up ao acessar a página principal
+- [x] Inserir ícone e link do Instagram @bessa.energia no rodapé
+- [x] Inserir QR code funcional para o Instagram no rodapé, mantendo a responsividade e a legibilidade

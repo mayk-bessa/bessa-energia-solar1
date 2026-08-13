@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type WelcomeGalleryModalProps = {
   isOpen: boolean;
@@ -61,13 +62,21 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
   const nextImage = () => setSelectedIndex((index) => (index + 1) % galleryImages.length);
 
   return (
-    <div
+    <motion.div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="welcome-gallery-title"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.32, ease: 'easeOut' }}
     >
-      <div className="relative w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <motion.div
+        className="relative w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+        initial={{ opacity: 0, y: 16, scale: 0.985 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.38, delay: 0.06, ease: 'easeOut' }}
+      >
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4 sm:px-7">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-600">Bessa Energia</p>
@@ -127,7 +136,7 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
