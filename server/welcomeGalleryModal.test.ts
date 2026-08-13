@@ -58,4 +58,11 @@ describe('WelcomeGalleryModal', () => {
     expect(homeSource).toContain('<QRCode');
     expect(homeSource).toContain('size={84}');
   });
+
+  it('highlights the Instagram controls on hover while preserving focus visibility', () => {
+    expect(homeSource).toContain('group-hover:scale-110');
+    expect(homeSource).toContain('hover:bg-white/10');
+    expect(homeSource).toContain('hover:shadow-orange-500/30');
+    expect(homeSource).toContain('focus:ring-2 focus:ring-orange-500');
+  });
 });

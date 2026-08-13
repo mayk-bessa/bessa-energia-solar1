@@ -463,3 +463,5 @@
 - [x] Adicionar animação suave de fade-in à galeria pop-up ao acessar a página principal
 - [x] Inserir ícone e link do Instagram @bessa.energia no rodapé
 - [x] Inserir QR code funcional para o Instagram no rodapé, mantendo a responsividade e a legibilidade
+
+- [x] Adicionar efeito de hover e foco para destacar o ícone do Instagram e o QR code no rodapé

@@ -11,3 +11,7 @@ Após fechar a galeria, o DOM do rodapé confirmou dois links acessíveis para `
 ## Validação visual do rodapé
 
 O preview em desktop confirmou a organização em quatro colunas — empresa, contato, legal e Instagram. O QR code foi exibido em bloco branco compacto ao lado do ícone e do identificador `@bessa.energia`, sem sobrepor os dados de contato, os avisos legais, o botão de WhatsApp ou o botão de retorno ao topo. Em telas menores, a grade utiliza uma coluna antes do breakpoint `md`, preservando a leitura vertical dos elementos.
+
+## Destaques de interação
+
+O identificador do Instagram agora sobe discretamente, recebe fundo claro translúcido e aumenta o ícone ao passar o cursor. O QR code sobe e amplia suavemente, ganha borda laranja e sombra de destaque. Os dois controles preservam um anel de foco laranja para navegação por teclado.
