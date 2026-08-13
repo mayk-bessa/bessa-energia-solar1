@@ -61,6 +61,23 @@ const galleryImages = [
 export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryModalProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreenInstructionVisible, setIsFullscreenInstructionVisible] = useState(false);
+  const [fullscreenInstructionCycle, setFullscreenInstructionCycle] = useState(0);
+
+  const previousImage = () => setSelectedIndex((index) => (index - 1 + galleryImages.length) % galleryImages.length);
+  const nextImage = () => setSelectedIndex((index) => (index + 1) % galleryImages.length);
+  const showFullscreenInstruction = () => {
+    setIsFullscreenInstructionVisible(true);
+    setFullscreenInstructionCycle((cycle) => cycle + 1);
+  };
+  const openFullscreen = () => {
+    setIsFullscreen(true);
+    showFullscreenInstruction();
+  };
+  const closeFullscreen = () => {
+    setIsFullscreen(false);
+    setIsFullscreenInstructionVisible(false);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -69,7 +86,7 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
       if (event.key !== 'Escape') return;
 
       if (isFullscreen) {
-        setIsFullscreen(false);
+        closeFullscreen();
         return;
       }
 
@@ -87,14 +104,19 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
   }, [isFullscreen, isOpen, onClose]);
 
   useEffect(() => {
-    if (!isOpen) setIsFullscreen(false);
+    if (!isOpen) closeFullscreen();
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isFullscreen || !isFullscreenInstructionVisible) return;
+
+    const timeoutId = window.setTimeout(() => setIsFullscreenInstructionVisible(false), 5000);
+    return () => window.clearTimeout(timeoutId);
+  }, [fullscreenInstructionCycle, isFullscreen, isFullscreenInstructionVisible]);
 
   if (!isOpen) return null;
 
   const selectedImage = galleryImages[selectedIndex];
-  const previousImage = () => setSelectedIndex((index) => (index - 1 + galleryImages.length) % galleryImages.length);
-  const nextImage = () => setSelectedIndex((index) => (index + 1) % galleryImages.length);
 
   return (
     <motion.div
@@ -130,7 +152,7 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
         <div className="relative bg-slate-100">
           <button
             type="button"
-            onClick={() => setIsFullscreen(true)}
+            onClick={openFullscreen}
             className="block w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-orange-500"
             aria-label={`Abrir ${selectedImage.title} em tela cheia`}
           >
@@ -194,7 +216,7 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
           >
             <button
               type="button"
-              onClick={() => setIsFullscreen(false)}
+              onClick={closeFullscreen}
               className="absolute right-4 top-4 z-10 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:right-7 sm:top-7"
               aria-label="Fechar tela cheia"
             >
@@ -203,7 +225,8 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
 
             <button
               type="button"
-              onClick={() => setIsFullscreen(false)}
+              onClick={closeFullscreen}
+              onMouseMove={showFullscreenInstruction}
               className="group flex h-full w-full cursor-zoom-out items-center justify-center focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400"
               aria-label="Retornar ao tamanho original"
             >
@@ -220,9 +243,37 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
               />
             </button>
 
-            <p className="pointer-events-none absolute bottom-5 rounded-full bg-slate-900/80 px-4 py-2 text-sm font-medium text-white sm:bottom-7">
-              Clique na imagem para retornar ao tamanho original
-            </p>
+            <button
+              type="button"
+              onClick={previousImage}
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:left-7"
+              aria-label="Foto anterior em tela cheia"
+            >
+              <ChevronLeft className="h-8 w-8" />
+            </button>
+
+            <button
+              type="button"
+              onClick={nextImage}
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:right-7"
+              aria-label="Próxima foto em tela cheia"
+            >
+              <ChevronRight className="h-8 w-8" />
+            </button>
+
+            <AnimatePresence>
+              {isFullscreenInstructionVisible && (
+                <motion.p
+                  className="pointer-events-none absolute bottom-5 rounded-full bg-slate-900/80 px-4 py-2 text-sm font-medium text-white sm:bottom-7"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                >
+                  Clique na imagem para retornar ao tamanho original. Use as setas para navegar.
+                </motion.p>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

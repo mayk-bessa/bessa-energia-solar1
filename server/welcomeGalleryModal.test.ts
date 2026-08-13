@@ -47,6 +47,14 @@ describe('WelcomeGalleryModal', () => {
     expect(gallerySource).toContain('setIsFullscreen(false);');
   });
 
+  it('navigates the full-screen images and briefly shows contextual instructions', () => {
+    expect(gallerySource).toContain('aria-label="Foto anterior em tela cheia"');
+    expect(gallerySource).toContain('aria-label="Próxima foto em tela cheia"');
+    expect(gallerySource).toContain('onMouseMove={showFullscreenInstruction}');
+    expect(gallerySource).toContain('window.setTimeout(() => setIsFullscreenInstructionVisible(false), 5000)');
+    expect(gallerySource).toContain('Clique na imagem para retornar ao tamanho original. Use as setas para navegar.');
+  });
+
   it('animates the popup with a subtle fade-in', () => {
     expect(gallerySource).toContain("import { AnimatePresence, motion } from 'framer-motion'");
     expect(gallerySource).toContain('initial={{ opacity: 0 }}');

@@ -476,3 +476,5 @@
 - [x] Preparar roteiro de atualização manual do VPS para a galeria promocional, pois o acesso SSH remoto do ambiente foi recusado
 
 - [x] Adicionar visualização ampliada em tela cheia para a imagem selecionada da galeria pop-up, alternando por clique e com botão X acessível para retornar ao modal
+
+- [x] Adicionar setas de navegação à tela cheia e ocultar a instrução após 5 segundos, reapresentando-a ao mover o mouse sobre a imagem
