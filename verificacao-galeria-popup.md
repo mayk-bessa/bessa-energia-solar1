@@ -22,3 +22,6 @@ O ícone de localização no rodapé está configurado com abertura em nova aba 
 | Testes automatizados | 105 testes Vitest aprovados |
 | Build de produção | Aprovado |
 
+## Confirmação no VPS
+
+Em 13 de agosto de 2026, a versão foi confirmada diretamente em `https://bessaenergia.com.br` após a atualização do VPS. A galeria pop-up abriu ao carregar a página e as cinco imagens locais reportaram `complete: true` com dimensão natural de **1920 × 1280 px**. O ícone de localização também foi verificado no domínio público e encaminha, em nova aba, para a busca correspondente no Google Maps.
