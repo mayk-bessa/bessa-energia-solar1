@@ -469,7 +469,8 @@
 - [x] Refinar as transições de cor e escala dos hovers do Instagram e QR code para uma interação mais fluida
 - [x] Remover a indicação textual de resolução da galeria pop-up
 - [x] Analisar as três fotos e os dois vídeos enviados e integrar as mídias adequadas à galeria com descrições contextuais
-- [ ] Sincronizar as alterações aprovadas com GitHub e VPS
-- [ ] Criar backup seguro do projeto sem credenciais e enviar ao Google Drive
+- [x] Sincronizar as alterações aprovadas com GitHub e VPS
+- [x] Criar backup seguro do projeto sem credenciais e enviar ao Google Drive
 
 - [x] Preparar as três novas artes em caminho local para que a galeria funcione também no VPS
+- [x] Preparar roteiro de atualização manual do VPS para a galeria promocional, pois o acesso SSH remoto do ambiente foi recusado
