@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type WelcomeGalleryModalProps = {
   isOpen: boolean;
@@ -60,12 +60,20 @@ const galleryImages = [
 
 export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryModalProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key !== 'Escape') return;
+
+      if (isFullscreen) {
+        setIsFullscreen(false);
+        return;
+      }
+
+      onClose();
     };
 
     document.addEventListener('keydown', handleEscape);
@@ -76,7 +84,11 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = originalOverflow;
     };
-  }, [isOpen, onClose]);
+  }, [isFullscreen, isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) setIsFullscreen(false);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -116,13 +128,20 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
         </div>
 
         <div className="relative bg-slate-100">
-          <img
-            src={selectedImage.src}
-            alt={selectedImage.alt}
-            width={1920}
-            height={1280}
-            className="h-auto max-h-[62vh] w-full object-contain"
-          />
+          <button
+            type="button"
+            onClick={() => setIsFullscreen(true)}
+            className="block w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-orange-500"
+            aria-label={`Abrir ${selectedImage.title} em tela cheia`}
+          >
+            <img
+              src={selectedImage.src}
+              alt={selectedImage.alt}
+              width={1920}
+              height={1280}
+              className="h-auto max-h-[62vh] w-full object-contain"
+            />
+          </button>
           <button
             type="button"
             onClick={previousImage}
@@ -160,6 +179,53 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
           </div>
         </div>
       </motion.div>
+
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/95 p-4 backdrop-blur-sm sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Visualização em tela cheia: ${selectedImage.title}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.24, ease: 'easeOut' }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:right-7 sm:top-7"
+              aria-label="Fechar tela cheia"
+            >
+              <X className="h-7 w-7" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsFullscreen(false)}
+              className="group flex h-full w-full cursor-zoom-out items-center justify-center focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400"
+              aria-label="Retornar ao tamanho original"
+            >
+              <motion.img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                width={1920}
+                height={1280}
+                className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                initial={{ opacity: 0, scale: 0.985 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.985 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
+              />
+            </button>
+
+            <p className="pointer-events-none absolute bottom-5 rounded-full bg-slate-900/80 px-4 py-2 text-sm font-medium text-white sm:bottom-7">
+              Clique na imagem para retornar ao tamanho original
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

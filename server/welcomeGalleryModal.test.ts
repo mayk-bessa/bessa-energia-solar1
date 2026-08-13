@@ -34,11 +34,21 @@ describe('WelcomeGalleryModal', () => {
     expect(gallerySource).toContain('aria-label="Fechar galeria"');
     expect(gallerySource).toContain('aria-label="Foto anterior"');
     expect(gallerySource).toContain('aria-label="Próxima foto"');
-    expect(gallerySource).toContain("event.key === 'Escape'");
+    expect(gallerySource).toContain("event.key !== 'Escape'");
+  });
+
+  it('opens the selected image in full screen and restores the gallery with click, X or Escape', () => {
+    expect(gallerySource).toContain("const [isFullscreen, setIsFullscreen] = useState(false);");
+    expect(gallerySource).toContain('Abrir ${selectedImage.title} em tela cheia');
+    expect(gallerySource).toContain('aria-label="Fechar tela cheia"');
+    expect(gallerySource).toContain('aria-label="Retornar ao tamanho original"');
+    expect(gallerySource).toContain('Clique na imagem para retornar ao tamanho original');
+    expect(gallerySource).toContain('if (isFullscreen) {');
+    expect(gallerySource).toContain('setIsFullscreen(false);');
   });
 
   it('animates the popup with a subtle fade-in', () => {
-    expect(gallerySource).toContain("import { motion } from 'framer-motion'");
+    expect(gallerySource).toContain("import { AnimatePresence, motion } from 'framer-motion'");
     expect(gallerySource).toContain('initial={{ opacity: 0 }}');
     expect(gallerySource).toContain('animate={{ opacity: 1 }}');
     expect(gallerySource).toContain("duration: 0.32");

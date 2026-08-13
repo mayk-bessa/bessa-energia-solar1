@@ -474,3 +474,5 @@
 
 - [x] Preparar as três novas artes em caminho local para que a galeria funcione também no VPS
 - [x] Preparar roteiro de atualização manual do VPS para a galeria promocional, pois o acesso SSH remoto do ambiente foi recusado
+
+- [x] Adicionar visualização ampliada em tela cheia para a imagem selecionada da galeria pop-up, alternando por clique e com botão X acessível para retornar ao modal
