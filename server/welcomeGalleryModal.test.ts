@@ -74,9 +74,9 @@ describe('WelcomeGalleryModal', () => {
   });
 
   it('adds the received gallery art with contextual descriptions and hides the resolution label', () => {
-    expect(gallerySource).toContain('/manus-storage/reajustes-tarifarios-solar_4d0669db.jpg');
-    expect(gallerySource).toContain('/manus-storage/condicoes-pagamento-solar_25e9a652.jpg');
-    expect(gallerySource).toContain('/manus-storage/economia-previsibilidade-solar_287bce8e.jpg');
+    expect(gallerySource).toContain('/images/galeria/reajustes-tarifarios-solar.jpg');
+    expect(gallerySource).toContain('/images/galeria/condicoes-pagamento-solar.jpg');
+    expect(gallerySource).toContain('/images/galeria/economia-previsibilidade-solar.jpg');
     expect(gallerySource).toContain('Proteção contra reajustes');
     expect(gallerySource).toContain('Condições de pagamento');
     expect(gallerySource).toContain('Economia com previsibilidade');

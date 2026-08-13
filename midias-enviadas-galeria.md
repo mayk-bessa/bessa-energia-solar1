@@ -17,4 +17,4 @@ Os dois vídeos foram analisados por amostragem para contextualizar as novas ima
 | `97C1718F-4599-4B6B-9413-E48866E21DA3.MP4` | Wallbox, mobilidade elétrica e integração entre carro e energia solar | Complementa o posicionamento da galeria sobre mobilidade sustentável. |
 | `43550D58-5236-454A-8367-8115CDD46553.MP4` | Campanha Bessa Energia/Intelbras com equipamentos e condições comerciais | Complementa as artes sobre condições de pagamento e economia. |
 
-As fotos inseridas na galeria serão preservadas sem recorte obrigatório; o modal acomodará formatos vertical e quadrado com `object-contain`.
+As fotos inseridas na galeria serão preservadas sem recorte obrigatório; o modal acomodará formatos vertical e quadrado com `object-contain`. Para manter compatibilidade com o VPS, as três artes são distribuídas junto à aplicação em `client/public/images/galeria/` e expostas no site por `/images/galeria/`.

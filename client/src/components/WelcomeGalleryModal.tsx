@@ -39,19 +39,19 @@ const galleryImages = [
     description: 'Solução completa para geração solar e infraestrutura de recarga.',
   },
   {
-    src: '/manus-storage/reajustes-tarifarios-solar_4d0669db.jpg',
+    src: '/images/galeria/reajustes-tarifarios-solar.jpg',
     alt: 'Arte informativa sobre reajustes tarifários e energia solar',
     title: 'Proteção contra reajustes',
     description: 'A energia solar ajuda a reduzir a exposição às altas tarifárias com uma solução de longo prazo.',
   },
   {
-    src: '/manus-storage/condicoes-pagamento-solar_25e9a652.jpg',
+    src: '/images/galeria/condicoes-pagamento-solar.jpg',
     alt: 'Arte sobre condições especiais de pagamento para energia solar',
     title: 'Condições de pagamento',
     description: 'Opções facilitadas para transformar seu projeto de energia solar em realidade.',
   },
   {
-    src: '/manus-storage/economia-previsibilidade-solar_287bce8e.jpg',
+    src: '/images/galeria/economia-previsibilidade-solar.jpg',
     alt: 'Arte sobre economia e previsibilidade com energia solar',
     title: 'Economia com previsibilidade',
     description: 'Faça uma simulação e construa uma alternativa duradoura diante da elevação das tarifas.',

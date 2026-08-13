@@ -471,3 +471,5 @@
 - [x] Analisar as três fotos e os dois vídeos enviados e integrar as mídias adequadas à galeria com descrições contextuais
 - [ ] Sincronizar as alterações aprovadas com GitHub e VPS
 - [ ] Criar backup seguro do projeto sem credenciais e enviar ao Google Drive
+
+- [x] Preparar as três novas artes em caminho local para que a galeria funcione também no VPS
