@@ -10,12 +10,14 @@ import BudgetRequestModal from '@/components/BudgetRequestModal';
 import SolarCalculatorModal from '@/components/SolarCalculatorModal';
 import ClientReviews from '@/components/ClientReviews';
 import GaleriaUsinas from '@/components/GaleriaUsinas';
+import WelcomeGalleryModal from '@/components/WelcomeGalleryModal';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const consultantRef = useRef<VirtualConsultantHandle>(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
+  const [isWelcomeGalleryOpen, setIsWelcomeGalleryOpen] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -89,6 +91,13 @@ export default function Home() {
                 Olá, {user?.name || 'Usuário'}
               </div>
             ) : null}
+            <Button
+              variant="outline"
+              onClick={() => setIsWelcomeGalleryOpen(true)}
+              className="hidden border-orange-500 text-orange-600 hover:bg-orange-50 md:inline-flex"
+            >
+              Galeria de Fotos
+            </Button>
             <Button onClick={() => setIsBudgetModalOpen(true)} className="bg-orange-500 hover:bg-orange-600 text-white" style={{backgroundColor: '#ff6900'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#ff5500'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ff6900'}>
               Solicitar Orçamento
             </Button>
@@ -585,7 +594,15 @@ export default function Home() {
                   <span>contato@bessaenergia.com.br</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-orange-500 mt-0.5" />
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=AVENIDA%20GET%C3%9ALIO%20VARGAS%2C%20N%C2%BA%20671%2C%20SALA%20500%2C%20PARTE%201557%20SAVASSI%2C%20BELO%20HORIZONTE%2FMG"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Abrir endereço da Bessa Energia no Google Maps"
+                    className="mt-0.5 rounded text-orange-500 transition-colors hover:text-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  >
+                    <MapPin className="w-4 h-4" />
+                  </a>
                   <span>AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG</span>
                 </div>
               </div>
@@ -622,6 +639,10 @@ export default function Home() {
         onClose={() => setIsCalculatorModalOpen(false)}
       />
       <VirtualConsultant ref={consultantRef} />
+      <WelcomeGalleryModal
+        isOpen={isWelcomeGalleryOpen}
+        onClose={() => setIsWelcomeGalleryOpen(false)}
+      />
     </div>
   );
 }

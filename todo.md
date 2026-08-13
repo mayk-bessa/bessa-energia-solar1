@@ -452,3 +452,6 @@
 - [x] Instalação manual do pacote WallBox no VPS em /var/www/bessaenergia.com.br/client/public/images/wallbox/ confirmada pelo carregamento público das cinco URLs
 
 - [x] Verificar externamente as cinco URLs em /images/wallbox/ após a atualização manual do VPS
+
+- [x] Adicionar galeria pop-up automática na página principal com cinco fotos locais em 1920 × 1280 e controles de navegação/fechamento
+- [x] Vincular o ícone de localização no rodapé ao Google Maps para AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
