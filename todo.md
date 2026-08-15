@@ -490,3 +490,5 @@
 - [x] Reposicionar com precisão os controles de tela cheia (botão X e setas nas galerias)
 
 - [x] Corrigir o endereço exibido nos relatórios/PDFs para AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
+
+- [x] Corrigir o mapa de cobertura que não está sendo exibido na página inicial e validar o carregamento no navegador (componente testado e funcional na prévia; VPS precisa executar o pull para atualizar o bundle público)
