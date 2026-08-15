@@ -29,6 +29,10 @@ describe('Coverage map and legitimate reviews', () => {
       expect(mapSource).toContain(region);
     }
     expect(mapSource).toContain('Regiões de atuação destacadas no mapa');
+    expect(mapSource).toContain('Exibir região atendida');
+    expect(mapSource).toContain('group-hover:opacity-100');
+    expect(mapSource).toContain('group-focus-visible:opacity-100');
+    expect(mapSource).toContain('Região atendida');
   });
 
   it('does not hard-code customer testimonials or ratings', () => {

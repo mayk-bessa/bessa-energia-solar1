@@ -76,6 +76,7 @@
 
 /// <reference types="@types/google.maps" />
 
+import { MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
@@ -138,6 +139,7 @@ export function MapView({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const [mapError, setMapError] = useState(false);
+  const [activeFallbackRegion, setActiveFallbackRegion] = useState<string | null>(null);
 
   const init = usePersistFn(async () => {
     try {
@@ -200,16 +202,43 @@ export function MapView({
                 ))}
               </div>
             </div>
-            {FALLBACK_REGIONS.map((region) => (
-              <div
-                key={region.name}
-                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-white/95 px-2 py-1 text-[10px] font-semibold text-[#253c7e] shadow-md ring-2 ring-[#ff6900]/70 sm:text-xs"
-                style={{ left: region.left, top: region.top }}
-              >
-                <span className="h-2.5 w-2.5 rounded-full bg-[#ff6900] ring-2 ring-white" />
-                {region.name}
-              </div>
-            ))}
+            {FALLBACK_REGIONS.map((region) => {
+              const isActive = activeFallbackRegion === region.name;
+
+              return (
+                <button
+                  key={region.name}
+                  type="button"
+                  aria-label={`Exibir região atendida: ${region.name}`}
+                  aria-pressed={isActive}
+                  onClick={() =>
+                    setActiveFallbackRegion((current) =>
+                      current === region.name ? null : region.name,
+                    )
+                  }
+                  className={cn(
+                    "group pointer-events-auto absolute z-20 -translate-x-1/2 -translate-y-full rounded-full p-1 transition duration-200 hover:scale-110 hover:drop-shadow-[0_8px_12px_rgba(37,60,126,0.35)] focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6900]/45",
+                    isActive && "z-30 scale-110 drop-shadow-[0_8px_12px_rgba(37,60,126,0.35)]",
+                  )}
+                  style={{ left: region.left, top: region.top }}
+                >
+                  <span
+                    className={cn(
+                      "pointer-events-none absolute bottom-full left-1/2 mb-2 w-max max-w-[11rem] -translate-x-1/2 rounded-lg bg-[#253c7e] px-3 py-2 text-left text-xs font-semibold text-white opacity-0 shadow-xl transition-opacity duration-200 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-x-6 before:border-t-6 before:border-x-transparent before:border-t-[#253c7e] group-hover:opacity-100 group-focus-visible:opacity-100",
+                      isActive && "opacity-100",
+                    )}
+                  >
+                    <span className="block text-white">{region.name}</span>
+                    <span className="mt-0.5 block font-normal text-white/80">Região atendida</span>
+                  </span>
+                  <span className="absolute inset-1 rounded-full bg-[#ff6900]/35 opacity-0 transition group-hover:animate-ping group-hover:opacity-100" />
+                  <MapPin
+                    aria-hidden="true"
+                    className="relative h-9 w-9 fill-[#ff6900] stroke-white stroke-[2.5] drop-shadow-md"
+                  />
+                </button>
+              );
+            })}
           </div>
           <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-2 rounded-lg bg-white/95 p-3 text-sm text-slate-700 shadow-lg sm:flex-row sm:items-center sm:justify-between">
             <span>Mapa alternativo com regiões de atuação destacadas</span>

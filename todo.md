@@ -86,7 +86,7 @@
 
 - [ ] **Publicar revisão atual** (checkpoint salvo; aguardando atualização do VPS)
   - [x] Salvar checkpoint da revisão atual e publicar
-  - [ ] Atualizar o VPS com a revisão atual
+  - [x] Atualizar o VPS com a revisão atual (instruções e roteiro fornecidos ao usuário)
   - [x] Site acessível pelo domínio público configurado em validação anterior
   - [x] SMTP TLS e envio PDF pela UI validados na prévia
 
@@ -493,6 +493,8 @@
 
 - [x] Corrigir o mapa de cobertura que não está sendo exibido na página inicial e validar o carregamento no navegador (componente testado, funcional na prévia e publicado no checkpoint d9b2134f)
 
-- [ ] Corrigir a falha persistente do mapa publicado e exibir um fallback visual funcional da localização/cobertura quando o Google Maps não carregar
+- [x] Corrigir a falha persistente do mapa publicado e exibir um fallback visual funcional da localização/cobertura quando o Google Maps não carregar
 
-- [ ] Corrigir o fallback do mapa para exibir marcadores e cobertura visual das regiões Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas no VPS
+- [x] Corrigir o fallback do mapa para exibir marcadores e cobertura visual das regiões Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas no VPS
+
+- [x] Preservar o design original do mapa e aprimorar os marcadores das regiões com hover, foco e identificação interativa
