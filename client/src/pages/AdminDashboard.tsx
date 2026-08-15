@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 
 const statusColors: Record<string, string> = {
@@ -32,9 +32,13 @@ export default function AdminDashboard() {
   const [newStatus, setNewStatus] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
 
-  // Redirect if not admin
-  if (user?.role !== "admin") {
-    navigate("/");
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  if (!user || user.role !== "admin") {
     return null;
   }
 
@@ -55,6 +59,11 @@ export default function AdminDashboard() {
       setNewStatus("");
       setNotes("");
     },
+  });
+
+  const { data: pendingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery();
+  const moderateReviewMutation = trpc.reviews.moderate.useMutation({
+    onSuccess: () => refetchReviews(),
   });
 
   const handleUpdateStatus = () => {
@@ -252,6 +261,38 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+
+        <section className="mt-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Avaliações pendentes</CardTitle>
+              <CardDescription>Somente avaliações aprovadas são exibidas no site.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {pendingReviews?.length ? (
+                <div className="space-y-4">
+                  {pendingReviews.map((review) => (
+                    <div key={review.id} className="rounded-lg border border-gray-200 p-4">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div>
+                          <p className="font-semibold text-gray-900">{review.name} · {review.city}</p>
+                          <p className="text-sm text-gray-600">{review.rating}/5 · {review.projectType || 'Projeto não informado'}</p>
+                          <p className="mt-2 text-gray-700">“{review.comment}”</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'approved' })} className="bg-green-600 hover:bg-green-700">Aprovar</Button>
+                          <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'rejected' })} variant="outline" className="border-red-300 text-red-700 hover:bg-red-50">Rejeitar</Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="py-6 text-center text-gray-500">Nenhuma avaliação pendente.</p>
+              )}
+            </CardContent>
+          </Card>
+        </section>
       </div>
     </div>
   );

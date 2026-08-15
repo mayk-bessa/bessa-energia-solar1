@@ -53,6 +53,12 @@ describe('WelcomeGalleryModal', () => {
     expect(gallerySource).toContain('onMouseMove={showFullscreenInstruction}');
     expect(gallerySource).toContain('window.setTimeout(() => setIsFullscreenInstructionVisible(false), 5000)');
     expect(gallerySource).toContain('Clique na imagem para retornar ao tamanho original. Use as setas para navegar.');
+    expect(gallerySource).toContain('absolute right-5 top-1/2 z-10 flex -translate-y-1/2 flex-col');
+    expect(gallerySource).toContain('aria-label="Fechar tela cheia"');
+    expect(gallerySource).toContain('aria-label="Foto anterior em tela cheia"');
+    expect(gallerySource).toContain('aria-label="Próxima foto em tela cheia"');
+    expect(gallerySource).not.toContain('absolute left-5 top-1/2');
+    expect(gallerySource).not.toContain('sm:right-7 sm:top-7');
   });
 
   it('animates the popup with a subtle fade-in', () => {

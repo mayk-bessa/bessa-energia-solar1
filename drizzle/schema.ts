@@ -77,3 +77,21 @@ export const technicalVisits = mysqlTable("technicalVisits", {
 
 export type TechnicalVisit = typeof technicalVisits.$inferSelect;
 export type InsertTechnicalVisit = typeof technicalVisits.$inferInsert;
+
+/**
+ * Public review submissions. Only approved records are shown on the website.
+ */
+export const reviews = mysqlTable("reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  city: varchar("city", { length: 120 }).notNull(),
+  rating: int("rating").notNull(),
+  comment: text("comment").notNull(),
+  projectType: varchar("projectType", { length: 120 }),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = typeof reviews.$inferInsert;

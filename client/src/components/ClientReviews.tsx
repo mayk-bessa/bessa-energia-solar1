@@ -1,198 +1,107 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { FormEvent, useMemo, useState } from 'react';
+import { Loader2, Send, Star } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
-interface Review {
-  id: number;
-  name: string;
-  location: string;
-  rating: number;
-  text: string;
-  avatar: string;
-  projectType: string;
-}
-
-const reviews: Review[] = [
-  {
-    id: 1,
-    name: 'Carlos Silva',
-    location: 'Belo Horizonte - MG',
-    rating: 5,
-    text: 'Excelente trabalho! A equipe foi muito profissional e atenciosa. Minha conta de luz caiu 85% no primeiro mês. Recomendo muito!',
-    avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/avatar-1-carlos.jpg',
-    projectType: 'Residencial 5kW'
-  },
-  {
-    id: 2,
-    name: 'Fernanda Costa',
-    location: 'Belo Horizonte - MG',
-    rating: 5,
-    text: 'Investimento que vale muito a pena! Já recuperei 30% do investimento em apenas 1 ano. Equipe muito competente!',
-    avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/avatar-2-fernanda.jpg',
-    projectType: 'Residencial 8kW'
-  },
-  {
-    id: 3,
-    name: 'João Oliveira',
-    location: 'Belo Horizonte - MG',
-    rating: 5,
-    text: 'Instalação rápida e sem complicações. O atendimento pós-venda é impecável. Muito satisfeito com o resultado!',
-    avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/avatar-3-joao.jpg',
-    projectType: 'Comercial 10kW'
-  },
-  {
-    id: 4,
-    name: 'Patricia Mendes',
-    location: 'Belo Horizonte - MG',
-    rating: 5,
-    text: 'Melhor decisão que tomei! A Bessa Energia ofereceu as melhores condições de financiamento. Recomendo para todos!',
-    avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/avatar-4-patricia.jpg',
-    projectType: 'Residencial 6kW'
-  },
-  {
-    id: 5,
-    name: 'Roberto Ferreira',
-    location: 'Belo Horizonte - MG',
-    rating: 5,
-    text: 'Profissionalismo de primeira qualidade! Desde o orçamento até a instalação, tudo perfeito. Muito grato!',
-    avatar: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663417025632/3WeEs8oW3WFUxiz2LNTEV2/avatar-5-roberto.jpg',
-    projectType: 'Industrial 25kW'
-  }
-];
+const initialForm = {
+  name: '',
+  city: '',
+  rating: '5',
+  projectType: '',
+  comment: '',
+};
 
 export default function ClientReviews() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const utils = trpc.useUtils();
+  const { data: reviews, isLoading } = trpc.reviews.listApproved.useQuery();
+  const submitReview = trpc.reviews.submit.useMutation({
+    onSuccess: async () => {
+      setForm(initialForm);
+      setFeedback('Obrigado. Sua avaliação foi enviada e será exibida após validação.');
+      await utils.reviews.listApproved.invalidate();
+    },
+    onError: () => setFeedback('Não foi possível enviar sua avaliação. Revise os campos e tente novamente.'),
+  });
+  const [form, setForm] = useState(initialForm);
+  const [feedback, setFeedback] = useState('');
 
-  const handlePrevious = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === 0 ? reviews.length - 1 : prevIndex - 1
-    );
+  const averageRating = useMemo(() => {
+    if (!reviews?.length) return 0;
+    return reviews.reduce((total, review) => total + review.rating, 0) / reviews.length;
+  }, [reviews]);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFeedback('');
+    submitReview.mutate({
+      name: form.name,
+      city: form.city,
+      rating: Number(form.rating),
+      projectType: form.projectType || undefined,
+      comment: form.comment,
+    });
   };
-
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) => 
-      prevIndex === reviews.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  const currentReview = reviews[currentIndex];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section id="avaliacoes" className="bg-gradient-to-b from-gray-50 to-white py-20">
       <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            O que Nossos Clientes Dizem
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Confira os depoimentos de clientes satisfeitos que já transformaram suas contas de luz com energia solar
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <h2 className="mb-4 text-4xl font-bold text-gray-900">Avaliações de clientes</h2>
+          <p className="text-lg text-gray-600">
+            Compartilhe sua experiência com a Bessa Energia. As avaliações são exibidas somente após validação da equipe.
           </p>
         </div>
 
-        {/* Reviews Carousel */}
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 relative">
-            {/* Navigation Buttons */}
-            <button
-              onClick={handlePrevious}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-3 transition-colors"
-              aria-label="Anterior"
-            >
-              <ChevronLeft size={24} />
-            </button>
-
-            <button
-              onClick={handleNext}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-3 transition-colors"
-              aria-label="Próximo"
-            >
-              <ChevronRight size={24} />
-            </button>
-
-            {/* Review Content */}
-            <div className="text-center px-12">
-              {/* Avatar */}
-              <div className="mb-6 flex justify-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                  {currentReview.name.charAt(0)}
-                </div>
-              </div>
-
-              {/* Rating Stars */}
-              <div className="flex justify-center gap-1 mb-6">
-                {Array.from({ length: currentReview.rating }).map((_, i) => (
-                  <Star
-                    key={i}
-                    size={24}
-                    className="fill-yellow-400 text-yellow-400"
-                  />
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="rounded-2xl bg-white p-8 shadow-xl">
+            {isLoading ? (
+              <div className="flex justify-center py-12"><Loader2 className="h-7 w-7 animate-spin text-orange-500" /></div>
+            ) : reviews?.length ? (
+              <div className="grid gap-5 md:grid-cols-2">
+                {reviews.map((review) => (
+                  <article key={review.id} className="rounded-xl border border-gray-200 p-5">
+                    <div className="mb-3 flex items-center gap-1" aria-label={`${review.rating} de 5 estrelas`}>
+                      {Array.from({ length: review.rating }).map((_, index) => <Star key={index} className="h-5 w-5 fill-yellow-400 text-yellow-400" />)}
+                    </div>
+                    <blockquote className="mb-5 text-gray-700">“{review.comment}”</blockquote>
+                    <p className="font-semibold text-gray-900">{review.name}</p>
+                    <p className="text-sm text-gray-500">{review.city}{review.projectType ? ` · ${review.projectType}` : ''}</p>
+                  </article>
                 ))}
               </div>
-
-              {/* Review Text */}
-              <p className="text-lg text-gray-700 mb-8 italic leading-relaxed">
-                "{currentReview.text}"
-              </p>
-
-              {/* Client Info */}
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {currentReview.name}
-                </h3>
-                <p className="text-sm text-orange-500 font-semibold mb-2">
-                  {currentReview.projectType}
-                </p>
-                <p className="text-gray-600">
-                  📍 {currentReview.location}
-                </p>
+            ) : (
+              <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center">
+                <p className="font-semibold text-gray-800">Ainda não há avaliações publicadas.</p>
+                <p className="mt-2 text-sm text-gray-600">Se você já é cliente, envie sua experiência pelo formulário ao lado.</p>
               </div>
-            </div>
+            )}
 
-            {/* Indicators */}
-            <div className="flex justify-center gap-2 mt-8">
-              {reviews.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentIndex
-                      ? 'bg-orange-500 w-8'
-                      : 'bg-gray-300 w-2 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Ir para depoimento ${index + 1}`}
-                />
-              ))}
-            </div>
+            {reviews?.length ? (
+              <div className="mt-8 border-t border-gray-200 pt-6 text-center text-sm text-gray-600">
+                Média das avaliações publicadas: <strong className="text-gray-900">{averageRating.toFixed(1)} de 5</strong> · {reviews.length} avaliação(ões)
+              </div>
+            ) : null}
           </div>
 
-          {/* Counter */}
-          <div className="text-center mt-6 text-gray-600">
-            <p className="text-sm">
-              {currentIndex + 1} de {reviews.length}
-            </p>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid md:grid-cols-3 gap-8 mt-16">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-orange-500 mb-2">
-              500+
+          <form onSubmit={handleSubmit} className="rounded-2xl bg-gray-900 p-8 text-white shadow-xl" aria-label="Enviar avaliação">
+            <h3 className="text-2xl font-bold">Conte sua experiência</h3>
+            <p className="mt-2 text-sm text-gray-300">Sua avaliação ficará pendente até ser revisada pela equipe.</p>
+            <div className="mt-6 space-y-4">
+              <input required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Nome" aria-label="Nome" className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
+              <input required value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} placeholder="Cidade e estado" aria-label="Cidade e estado" className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <select value={form.rating} onChange={(event) => setForm({ ...form, rating: event.target.value })} aria-label="Nota" className="rounded-lg border border-white/20 bg-gray-800 px-4 py-3 text-white focus:border-orange-400 focus:outline-none">
+                  {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating} estrela{rating === 1 ? '' : 's'}</option>)}
+                </select>
+                <input value={form.projectType} onChange={(event) => setForm({ ...form, projectType: event.target.value })} placeholder="Tipo de projeto (opcional)" aria-label="Tipo de projeto" className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
+              </div>
+              <textarea required minLength={10} maxLength={1000} value={form.comment} onChange={(event) => setForm({ ...form, comment: event.target.value })} placeholder="Escreva sua avaliação" aria-label="Avaliação" rows={5} className="w-full resize-none rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
+              <button type="submit" disabled={submitReview.isPending} className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60">
+                {submitReview.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                Enviar avaliação
+              </button>
+              {feedback ? <p role="status" className="text-sm text-orange-200">{feedback}</p> : null}
             </div>
-            <p className="text-gray-600">Clientes Satisfeitos</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-orange-500 mb-2">
-              4.9★
-            </div>
-            <p className="text-gray-600">Avaliação Média</p>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-orange-500 mb-2">
-              95%
-            </div>
-            <p className="text-gray-600">Economia Média</p>
-          </div>
+          </form>
         </div>
       </div>
     </section>

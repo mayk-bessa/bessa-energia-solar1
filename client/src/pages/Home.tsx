@@ -12,6 +12,14 @@ import SolarCalculatorModal from '@/components/SolarCalculatorModal';
 import ClientReviews from '@/components/ClientReviews';
 import GaleriaUsinas from '@/components/GaleriaUsinas';
 import WelcomeGalleryModal from '@/components/WelcomeGalleryModal';
+import { MapView } from '@/components/Map';
+
+const mapCoveragePoints = [
+  { name: 'Grande BH', position: { lat: -19.9191, lng: -43.9386 } },
+  { name: 'Vale do Aço', position: { lat: -19.4778, lng: -42.5278 } },
+  { name: 'Triângulo Mineiro', position: { lat: -18.9186, lng: -48.2772 } },
+  { name: 'Sul de Minas', position: { lat: -21.5518, lng: -45.4303 } },
+];
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -427,6 +435,37 @@ export default function Home() {
       {/* Usinas Gallery Section */}
       <GaleriaUsinas />
 
+      {/* Coverage Map Section */}
+      <section id="cobertura" className="bg-blue-50 py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto mb-10 max-w-3xl text-center">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900">Atendimento em Minas Gerais</h2>
+            <p className="text-lg text-gray-600">Atuamos em todo o estado, com atendimento direcionado para a Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas, nas cidades atendidas pela CEMIG.</p>
+          </div>
+          <div className="grid gap-8 lg:grid-cols-[1.5fr_0.5fr]">
+            <MapView
+              className="overflow-hidden rounded-2xl shadow-xl"
+              initialCenter={{ lat: -19.9191, lng: -43.9386 }}
+              initialZoom={7}
+              onMapReady={(map) => {
+                const Marker = window.google?.maps.marker?.AdvancedMarkerElement;
+                if (!Marker) return;
+                mapCoveragePoints.forEach((point) => {
+                  new Marker({ map, position: point.position, title: point.name });
+                });
+              }}
+            />
+            <div className="rounded-2xl bg-white p-8 shadow-xl">
+              <h3 className="mb-4 text-xl font-bold text-gray-900">Regiões atendidas</h3>
+              <ul className="space-y-3 text-gray-700">
+                {mapCoveragePoints.map((point) => <li key={point.name} className="flex items-center gap-3"><MapPin className="h-5 w-5 text-orange-500" />{point.name}</li>)}
+              </ul>
+              <p className="mt-6 text-sm text-gray-600">Fale com nossa equipe para confirmar a disponibilidade de atendimento na sua cidade.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* File Upload Section (Only for authenticated users) */}
       {isAuthenticated && (
         <section className="py-20 bg-blue-50">
@@ -612,7 +651,7 @@ export default function Home() {
                       ×
                     </button>
                   </div>
-                  <div className="max-h-80 space-y-3 overflow-y-auto pr-1 text-sm leading-relaxed text-gray-200">
+                  <div className="space-y-3 pr-1 text-sm leading-relaxed text-gray-200">
                     <p>A Bessa Energia é uma empresa especializada em soluções de energia solar fotovoltaica, focada em gerar economia de até 95% na conta de luz para residências, comércios e indústrias.</p>
                     <p>Com mais de 500 clientes satisfeitos, oferecemos projetos personalizados de painéis solares, usinas fotovoltaicas e carregadores veiculares Wallbox.</p>
                     <p>Embora nossa atuação cubra todo o estado de Minas Gerais, temos forte presença e atendimento direcionado para as regiões da Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas, abrangendo todas as cidades atendidas pela concessionária CEMIG.</p>

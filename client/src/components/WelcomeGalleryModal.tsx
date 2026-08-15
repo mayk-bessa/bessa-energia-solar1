@@ -217,15 +217,6 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
             <button
               type="button"
               onClick={closeFullscreen}
-              className="absolute right-4 top-4 z-10 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:right-7 sm:top-7"
-              aria-label="Fechar tela cheia"
-            >
-              <X className="h-7 w-7" />
-            </button>
-
-            <button
-              type="button"
-              onClick={closeFullscreen}
               onMouseMove={showFullscreenInstruction}
               className="group flex h-full w-full cursor-zoom-out items-center justify-center focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-400"
               aria-label="Retornar ao tamanho original"
@@ -243,23 +234,34 @@ export default function WelcomeGalleryModal({ isOpen, onClose }: WelcomeGalleryM
               />
             </button>
 
-            <button
-              type="button"
-              onClick={previousImage}
-              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:left-7"
-              aria-label="Foto anterior em tela cheia"
-            >
-              <ChevronLeft className="h-8 w-8" />
-            </button>
-
-            <button
-              type="button"
-              onClick={nextImage}
-              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 sm:right-7"
-              aria-label="Próxima foto em tela cheia"
-            >
-              <ChevronRight className="h-8 w-8" />
-            </button>
+            <div className="absolute right-5 top-1/2 z-10 flex -translate-y-1/2 flex-col items-center gap-2 sm:right-8">
+              <button
+                type="button"
+                onClick={closeFullscreen}
+                className="rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                aria-label="Fechar tela cheia"
+              >
+                <X className="h-7 w-7" />
+              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={previousImage}
+                  className="rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  aria-label="Foto anterior em tela cheia"
+                >
+                  <ChevronLeft className="h-8 w-8" />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextImage}
+                  className="rounded-full bg-white/95 p-3 text-slate-800 shadow-lg transition-[transform,background-color,color] duration-200 ease-out hover:scale-105 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  aria-label="Próxima foto em tela cheia"
+                >
+                  <ChevronRight className="h-8 w-8" />
+                </button>
+              </div>
+            </div>
 
             <AnimatePresence>
               {isFullscreenInstructionVisible && (

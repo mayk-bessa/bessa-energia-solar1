@@ -1,6 +1,6 @@
 import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -250,4 +250,28 @@ export async function getTechnicalVisitsByBudgetId(budgetRequestId: number) {
   }
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function createReview(review: InsertReview) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.insert(reviews).values(review);
+  return { id: (result as any).insertId || (result as any)[0]?.id };
+}
+
+export async function getApprovedReviews() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(reviews).where(eq(reviews.status, "approved")).orderBy(desc(reviews.createdAt));
+}
+
+export async function getPendingReviews() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(reviews).where(eq(reviews.status, "pending")).orderBy(desc(reviews.createdAt));
+}
+
+export async function updateReviewStatus(id: number, status: "approved" | "rejected") {
+  const db = await getDb();
+  if (!db) return undefined;
+  return await db.update(reviews).set({ status }).where(eq(reviews.id, id));
+}
+

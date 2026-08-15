@@ -7,6 +7,7 @@ import { z } from "zod";
 import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest, createTechnicalVisit, getTechnicalVisitsByBudgetId } from "./db";
 import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
+import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
 
 export const appRouter = router({
@@ -178,6 +179,36 @@ export const appRouter = router({
           });
         }),
     }),
+  }),
+
+  reviews: router({
+    listApproved: publicProcedure.query(async () => getApprovedReviews()),
+
+    submit: publicProcedure
+      .input(z.object({
+        name: z.string().trim().min(2).max(255),
+        city: z.string().trim().min(2).max(120),
+        rating: z.number().int().min(1).max(5),
+        comment: z.string().trim().min(10).max(1000),
+        projectType: z.string().trim().max(120).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await createReview({ ...input, status: "pending" });
+        return { success: true, reviewId: result?.id };
+      }),
+
+    listPending: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+      return await getPendingReviews();
+    }),
+
+    moderate: protectedProcedure
+      .input(z.object({ id: z.number(), status: z.enum(["approved", "rejected"]) }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+        await updateReviewStatus(input.id, input.status);
+        return { success: true };
+      }),
   }),
 
   files: router({

@@ -19,6 +19,8 @@ describe('Footer company information', () => {
     ]) expect(homeSource).toContain(paragraph);
     expect(homeSource).toContain('Sobre a Empresa');
     expect(homeSource).toContain('role="dialog"');
+    expect(homeSource).not.toContain('max-h-80 space-y-3 overflow-y-auto');
+    expect(homeSource).toContain('className="space-y-3 pr-1 text-sm leading-relaxed text-gray-200"');
   });
 
   it('supports click, hover and keyboard focus', () => {
