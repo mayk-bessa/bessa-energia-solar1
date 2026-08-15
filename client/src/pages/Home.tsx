@@ -19,6 +19,7 @@ export default function Home() {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
   const [isWelcomeGalleryOpen, setIsWelcomeGalleryOpen] = useState(true);
+  const [isCompanyInfoOpen, setIsCompanyInfoOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -576,11 +577,50 @@ export default function Home() {
       <footer className="bg-gray-900 text-gray-300 py-12">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4">A Empresa</h3>
+            <div className="relative" onMouseLeave={() => setIsCompanyInfoOpen(false)}>
+              <h3 className="text-white font-bold text-lg mb-4">
+                <button
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isCompanyInfoOpen}
+                  onClick={() => setIsCompanyInfoOpen((open) => !open)}
+                  onFocus={() => setIsCompanyInfoOpen(true)}
+                  onMouseEnter={() => setIsCompanyInfoOpen(true)}
+                  className="rounded text-left text-white underline decoration-orange-500 underline-offset-4 transition-colors hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  A Empresa
+                </button>
+              </h3>
               <p className="text-sm leading-relaxed">
-                Líder profissional comercial para todas categorias. Especialização em energia solar, tecnologia renovável, sustentabilidade e consultoria energética.
+                A Bessa Energia é uma empresa especializada em soluções de energia solar fotovoltaica, focada em gerar economia de até 95% na conta de luz para residências, comércios e indústrias.
               </p>
+
+              {isCompanyInfoOpen && (
+                <div
+                  role="dialog"
+                  aria-label="Sobre a Empresa"
+                  className="absolute bottom-full left-0 z-40 mb-3 w-[min(24rem,calc(100vw-2rem))] rounded-xl border border-orange-400/60 bg-gray-950 p-5 text-gray-100 shadow-2xl shadow-black/40"
+                >
+                  <div className="mb-3 flex items-start justify-between gap-4">
+                    <h4 className="text-base font-bold text-white">Sobre a Empresa</h4>
+                    <button
+                      type="button"
+                      aria-label="Fechar Sobre a Empresa"
+                      onClick={() => setIsCompanyInfoOpen(false)}
+                      className="rounded p-1 text-gray-300 transition-colors hover:bg-white/10 hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="max-h-80 space-y-3 overflow-y-auto pr-1 text-sm leading-relaxed text-gray-200">
+                    <p>A Bessa Energia é uma empresa especializada em soluções de energia solar fotovoltaica, focada em gerar economia de até 95% na conta de luz para residências, comércios e indústrias.</p>
+                    <p>Com mais de 500 clientes satisfeitos, oferecemos projetos personalizados de painéis solares, usinas fotovoltaicas e carregadores veiculares Wallbox.</p>
+                    <p>Embora nossa atuação cubra todo o estado de Minas Gerais, temos forte presença e atendimento direcionado para as regiões da Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas, abrangendo todas as cidades atendidas pela concessionária CEMIG.</p>
+                    <p>Cuidamos de todo o processo para você: desde o estudo de viabilidade, instalação, até a homologação completa junto à CEMIG, além de oferecermos opções de financiamento facilitadas.</p>
+                    <p>Conecte sua casa ou empresa ao futuro da sustentabilidade com a Bessa Energia.</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div>

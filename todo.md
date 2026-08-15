@@ -478,3 +478,5 @@
 - [x] Adicionar visualização ampliada em tela cheia para a imagem selecionada da galeria pop-up, alternando por clique e com botão X acessível para retornar ao modal
 
 - [x] Adicionar setas de navegação à tela cheia e ocultar a instrução após 5 segundos, reapresentando-a ao mover o mouse sobre a imagem
+
+- [x] Alterar somente a seção “A Empresa” do rodapé: substituir o resumo, criar link interativo e exibir o texto completo em pop-up ao clique ou hover
