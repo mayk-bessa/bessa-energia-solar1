@@ -494,3 +494,5 @@
 - [x] Corrigir o mapa de cobertura que não está sendo exibido na página inicial e validar o carregamento no navegador (componente testado, funcional na prévia e publicado no checkpoint d9b2134f)
 
 - [ ] Corrigir a falha persistente do mapa publicado e exibir um fallback visual funcional da localização/cobertura quando o Google Maps não carregar
+
+- [ ] Corrigir o fallback do mapa para exibir marcadores e cobertura visual das regiões Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas no VPS

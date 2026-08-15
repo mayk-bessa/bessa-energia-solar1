@@ -96,6 +96,13 @@ const FALLBACK_MAP_URL =
 const COMPANY_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Minas+Gerais%2C+Brasil";
 
+const FALLBACK_REGIONS = [
+  { name: "Triângulo Mineiro", left: "29%", top: "50%" },
+  { name: "Grande BH", left: "63%", top: "62%" },
+  { name: "Vale do Aço", left: "77%", top: "56%" },
+  { name: "Sul de Minas", left: "51%", top: "76%" },
+] as const;
+
 function loadMapScript() {
   return new Promise<void>((resolve, reject) => {
     const script = document.createElement("script");
@@ -176,8 +183,36 @@ export function MapView({
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
+          <div
+            className="pointer-events-none absolute inset-0"
+            aria-label="Regiões de atuação destacadas no mapa"
+          >
+            <div className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] rounded-lg bg-white/95 p-3 text-xs text-slate-700 shadow-lg">
+              <p className="mb-2 font-semibold text-[#253c7e]">Regiões atendidas</p>
+              <div className="flex flex-wrap gap-1.5">
+                {FALLBACK_REGIONS.map((region) => (
+                  <span
+                    key={region.name}
+                    className="rounded-full bg-[#253c7e]/95 px-2 py-1 font-medium text-white"
+                  >
+                    {region.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {FALLBACK_REGIONS.map((region) => (
+              <div
+                key={region.name}
+                className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-white/95 px-2 py-1 text-[10px] font-semibold text-[#253c7e] shadow-md ring-2 ring-[#ff6900]/70 sm:text-xs"
+                style={{ left: region.left, top: region.top }}
+              >
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ff6900] ring-2 ring-white" />
+                {region.name}
+              </div>
+            ))}
+          </div>
           <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-2 rounded-lg bg-white/95 p-3 text-sm text-slate-700 shadow-lg sm:flex-row sm:items-center sm:justify-between">
-            <span>Mapa alternativo de cobertura regional</span>
+            <span>Mapa alternativo com regiões de atuação destacadas</span>
             <a
               href={COMPANY_MAPS_URL}
               target="_blank"

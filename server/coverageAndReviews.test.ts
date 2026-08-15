@@ -23,6 +23,12 @@ describe('Coverage map and legitimate reviews', () => {
     expect(mapSource).toContain('Mapa alternativo de cobertura em Minas Gerais');
     expect(mapSource).toContain('https://www.google.com/maps?q=Minas+Gerais%2C+Brazil&output=embed');
     expect(mapSource).toContain('Abrir no Google Maps');
+    expect(mapSource).toContain('FALLBACK_REGIONS');
+    for (const region of ['Grande BH', 'Vale do Aço', 'Triângulo Mineiro', 'Sul de Minas']) {
+      expect(mapSource).toContain(`name: "${region}"`);
+      expect(mapSource).toContain(region);
+    }
+    expect(mapSource).toContain('Regiões de atuação destacadas no mapa');
   });
 
   it('does not hard-code customer testimonials or ratings', () => {
