@@ -20,18 +20,22 @@ describe('Coverage map and legitimate reviews', () => {
     expect(homeSource).toContain('AdvancedMarkerElement');
     expect(mapSource).toContain('Google Maps API indisponível após o carregamento');
     expect(mapSource).toContain('aria-label="Mapa de cobertura da Bessa Energia"');
-    expect(mapSource).toContain('Mapa alternativo de cobertura em Minas Gerais');
-    expect(mapSource).toContain('https://www.google.com/maps?q=Minas+Gerais%2C+Brazil&output=embed');
+    expect(mapSource).toContain('Mapa georreferenciado das regiões atendidas em Minas Gerais');
+    expect(mapSource).toContain('MapContainer');
+    expect(mapSource).toContain('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     expect(mapSource).toContain('Abrir no Google Maps');
     expect(mapSource).toContain('FALLBACK_REGIONS');
     for (const region of ['Grande BH', 'Vale do Aço', 'Triângulo Mineiro', 'Sul de Minas']) {
       expect(mapSource).toContain(`name: "${region}"`);
       expect(mapSource).toContain(region);
     }
-    expect(mapSource).toContain('Regiões de atuação destacadas no mapa');
-    expect(mapSource).toContain('Exibir região atendida');
-    expect(mapSource).toContain('group-hover:opacity-100');
-    expect(mapSource).toContain('group-focus-visible:opacity-100');
+    expect(mapSource).toContain('position: { lat: -19.9191, lng: -43.9386 }');
+    expect(mapSource).toContain('position: { lat: -19.4778, lng: -42.5278 }');
+    expect(mapSource).toContain('position: { lat: -18.9186, lng: -48.2772 }');
+    expect(mapSource).toContain('position: { lat: -21.5518, lng: -45.4303 }');
+    expect(mapSource).toContain('fallbackMarkerIcon');
+    expect(mapSource).toContain('Tooltip');
+    expect(mapSource).toContain('force-map-fallback');
     expect(mapSource).toContain('Região atendida');
   });
 

@@ -76,8 +76,10 @@
 
 /// <reference types="@types/google.maps" />
 
-import { MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import L from "leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
 
@@ -92,17 +94,39 @@ const FORGE_BASE_URL =
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
-const FALLBACK_MAP_URL =
-  "https://www.google.com/maps?q=Minas+Gerais%2C+Brazil&output=embed";
 const COMPANY_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=Minas+Gerais%2C+Brasil";
 
 const FALLBACK_REGIONS = [
-  { name: "Triângulo Mineiro", left: "29%", top: "50%" },
-  { name: "Grande BH", left: "63%", top: "62%" },
-  { name: "Vale do Aço", left: "77%", top: "56%" },
-  { name: "Sul de Minas", left: "51%", top: "76%" },
+  {
+    name: "Grande BH",
+    city: "Belo Horizonte",
+    position: { lat: -19.9191, lng: -43.9386 },
+  },
+  {
+    name: "Vale do Aço",
+    city: "Ipatinga",
+    position: { lat: -19.4778, lng: -42.5278 },
+  },
+  {
+    name: "Triângulo Mineiro",
+    city: "Uberlândia",
+    position: { lat: -18.9186, lng: -48.2772 },
+  },
+  {
+    name: "Sul de Minas",
+    city: "Varginha",
+    position: { lat: -21.5518, lng: -45.4303 },
+  },
 ] as const;
+
+const fallbackMarkerIcon = L.divIcon({
+  className: "bessa-map-pin-wrapper",
+  html: '<span class="bessa-map-pin" aria-hidden="true"></span>',
+  iconSize: [34, 42],
+  iconAnchor: [17, 42],
+  tooltipAnchor: [0, -38],
+});
 
 function loadMapScript() {
   return new Promise<void>((resolve, reject) => {
@@ -139,7 +163,9 @@ export function MapView({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const [mapError, setMapError] = useState(false);
-  const [activeFallbackRegion, setActiveFallbackRegion] = useState<string | null>(null);
+  const forceFallbackPreview =
+    import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).has("force-map-fallback");
 
   const init = usePersistFn(async () => {
     try {
@@ -170,78 +196,45 @@ export function MapView({
   });
 
   useEffect(() => {
+    if (forceFallbackPreview) {
+      setMapError(true);
+      return;
+    }
     init();
-  }, [init]);
+  }, [forceFallbackPreview, init]);
 
   return (
     <div className={cn("relative w-full h-[500px]", className)}>
       <div ref={mapContainer} className="h-full w-full" aria-label="Mapa de cobertura da Bessa Energia" />
       {mapError ? (
         <div className="absolute inset-0 overflow-hidden bg-slate-100">
-          <iframe
-            src={FALLBACK_MAP_URL}
-            title="Mapa alternativo de cobertura em Minas Gerais"
-            className="h-full w-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-          <div
-            className="pointer-events-none absolute inset-0"
-            aria-label="Regiões de atuação destacadas no mapa"
+          <MapContainer
+            center={[-20.2, -45.1]}
+            zoom={7}
+            scrollWheelZoom={false}
+            className="h-full w-full"
+            aria-label="Mapa georreferenciado das regiões atendidas em Minas Gerais"
           >
-            <div className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] rounded-lg bg-white/95 p-3 text-xs text-slate-700 shadow-lg">
-              <p className="mb-2 font-semibold text-[#253c7e]">Regiões atendidas</p>
-              <div className="flex flex-wrap gap-1.5">
-                {FALLBACK_REGIONS.map((region) => (
-                  <span
-                    key={region.name}
-                    className="rounded-full bg-[#253c7e]/95 px-2 py-1 font-medium text-white"
-                  >
-                    {region.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-            {FALLBACK_REGIONS.map((region) => {
-              const isActive = activeFallbackRegion === region.name;
-
-              return (
-                <button
-                  key={region.name}
-                  type="button"
-                  aria-label={`Exibir região atendida: ${region.name}`}
-                  aria-pressed={isActive}
-                  onClick={() =>
-                    setActiveFallbackRegion((current) =>
-                      current === region.name ? null : region.name,
-                    )
-                  }
-                  className={cn(
-                    "group pointer-events-auto absolute z-20 -translate-x-1/2 -translate-y-full rounded-full p-1 transition duration-200 hover:scale-110 hover:drop-shadow-[0_8px_12px_rgba(37,60,126,0.35)] focus-visible:scale-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#ff6900]/45",
-                    isActive && "z-30 scale-110 drop-shadow-[0_8px_12px_rgba(37,60,126,0.35)]",
-                  )}
-                  style={{ left: region.left, top: region.top }}
-                >
-                  <span
-                    className={cn(
-                      "pointer-events-none absolute bottom-full left-1/2 mb-2 w-max max-w-[11rem] -translate-x-1/2 rounded-lg bg-[#253c7e] px-3 py-2 text-left text-xs font-semibold text-white opacity-0 shadow-xl transition-opacity duration-200 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-x-6 before:border-t-6 before:border-x-transparent before:border-t-[#253c7e] group-hover:opacity-100 group-focus-visible:opacity-100",
-                      isActive && "opacity-100",
-                    )}
-                  >
-                    <span className="block text-white">{region.name}</span>
-                    <span className="mt-0.5 block font-normal text-white/80">Região atendida</span>
-                  </span>
-                  <span className="absolute inset-1 rounded-full bg-[#ff6900]/35 opacity-0 transition group-hover:animate-ping group-hover:opacity-100" />
-                  <MapPin
-                    aria-hidden="true"
-                    className="relative h-9 w-9 fill-[#ff6900] stroke-white stroke-[2.5] drop-shadow-md"
-                  />
-                </button>
-              );
-            })}
-          </div>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {FALLBACK_REGIONS.map((region) => (
+              <Marker
+                key={region.name}
+                position={[region.position.lat, region.position.lng]}
+                icon={fallbackMarkerIcon}
+                keyboard
+              >
+                <Tooltip direction="top" offset={[0, -38]} opacity={1} className="bessa-map-tooltip">
+                  <strong>{region.name}</strong>
+                  <span>{region.city} · Região atendida</span>
+                </Tooltip>
+              </Marker>
+            ))}
+          </MapContainer>
           <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-2 rounded-lg bg-white/95 p-3 text-sm text-slate-700 shadow-lg sm:flex-row sm:items-center sm:justify-between">
-            <span>Mapa alternativo com regiões de atuação destacadas</span>
+            <span>Mapa georreferenciado com as regiões de atuação destacadas</span>
             <a
               href={COMPANY_MAPS_URL}
               target="_blank"

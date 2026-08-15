@@ -192,3 +192,64 @@
     }
   }
 }
+
+.bessa-map-pin-wrapper {
+  background: transparent;
+  border: 0;
+}
+
+.bessa-map-pin {
+  position: relative;
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: #ff6900;
+  box-shadow: 0 5px 12px rgb(37 60 126 / 42%);
+  transform: rotate(-45deg);
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.bessa-map-pin::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #fff;
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.bessa-map-pin-wrapper:hover .bessa-map-pin,
+.bessa-map-pin-wrapper:focus-within .bessa-map-pin {
+  background: #253c7e;
+  box-shadow: 0 8px 18px rgb(37 60 126 / 56%);
+  transform: rotate(-45deg) scale(1.14);
+}
+
+.bessa-map-tooltip {
+  border: 0;
+  border-radius: 0.65rem;
+  background: #253c7e;
+  color: #fff;
+  box-shadow: 0 8px 18px rgb(15 23 42 / 28%);
+  padding: 0.55rem 0.7rem;
+}
+
+.bessa-map-tooltip::before {
+  border-top-color: #253c7e;
+}
+
+.bessa-map-tooltip strong,
+.bessa-map-tooltip span {
+  display: block;
+}
+
+.bessa-map-tooltip span {
+  margin-top: 0.15rem;
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.72rem;
+}

@@ -498,3 +498,5 @@
 - [x] Corrigir o fallback do mapa para exibir marcadores e cobertura visual das regiões Grande BH, Vale do Aço, Triângulo Mineiro e Sul de Minas no VPS
 
 - [x] Preservar o design original do mapa e aprimorar os marcadores das regiões com hover, foco e identificação interativa
+
+- [x] Substituir o fallback percentual por mapa georreferenciado com as posições reais das regiões atendidas em Minas Gerais
