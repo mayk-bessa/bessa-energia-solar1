@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
+import {
+  COMPANY_ADDRESS,
+  generateSolarReportPDF,
+  type SolarCalculationData,
+} from "./pdfGenerator";
 import { sendPDFReportEmail } from "./emailService";
 
 describe("budget.generateReport", () => {
@@ -36,6 +40,12 @@ describe("budget.generateReport", () => {
     expect(pdfBuffer).toBeInstanceOf(Buffer);
     expect(pdfBuffer.length).toBeGreaterThan(1000);
     expect(pdfBuffer.toString("utf8", 0, 4)).toBe("%PDF");
+  });
+
+  it("uses the current company address in the report footer", () => {
+    expect(COMPANY_ADDRESS).toBe(
+      "AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG"
+    );
   });
 
   it("should generate PDF without client information", async () => {

@@ -84,8 +84,8 @@
   - [x] Favicon convertido do logo (154KB com múltiplas resoluções)
   - [x] Cores da marca (#ff6900 laranja, #253c7e azul escuro) aplicadas
 
-- [ ] **Publicar revisão atual** (checkpoint e atualização do VPS ainda pendentes)
-  - [ ] Salvar checkpoint da revisão atual e publicar
+- [ ] **Publicar revisão atual** (checkpoint salvo; aguardando atualização do VPS)
+  - [x] Salvar checkpoint da revisão atual e publicar
   - [ ] Atualizar o VPS com a revisão atual
   - [x] Site acessível pelo domínio público configurado em validação anterior
   - [x] SMTP TLS e envio PDF pela UI validados na prévia
@@ -488,3 +488,5 @@
 - [x] Integrar mapa funcional de cobertura com geolocalização e área da CEMIG
 - [x] Implementar seção de avaliações legítimas sem dados falsificados (seguindo política de conteúdo)
 - [x] Reposicionar com precisão os controles de tela cheia (botão X e setas nas galerias)
+
+- [x] Corrigir o endereço exibido nos relatórios/PDFs para AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG

@@ -7,6 +7,9 @@ import { PDFDocument, rgb, degrees } from "pdf-lib";
 import { readFileSync } from "fs";
 import { join } from "path";
 
+export const COMPANY_ADDRESS =
+  "AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG";
+
 export interface SolarCalculationData {
   monthlySpend: number;
   monthlyEconomy: number;
@@ -312,10 +315,18 @@ export async function generateSolarReportPDF(
     font: await pdfDoc.embedFont("Helvetica"),
   });
 
-  page.drawText("Rua Vaga 241, Bairro Savassi, Belo Horizonte - MG", {
+  page.drawText("AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500,", {
     x: 40,
     y: yPosition - 24,
-    size: 9,
+    size: 8,
+    color: rgb(0.5, 0.5, 0.5),
+    font: await pdfDoc.embedFont("Helvetica"),
+  });
+
+  page.drawText("PARTE 1557 SAVASSI, BELO HORIZONTE/MG", {
+    x: 40,
+    y: yPosition - 35,
+    size: 8,
     color: rgb(0.5, 0.5, 0.5),
     font: await pdfDoc.embedFont("Helvetica"),
   });
