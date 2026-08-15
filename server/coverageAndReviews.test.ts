@@ -18,8 +18,11 @@ describe('Coverage map and legitimate reviews', () => {
     }
     expect(homeSource).toContain('initialZoom={7}');
     expect(homeSource).toContain('AdvancedMarkerElement');
-    expect(mapSource).toContain('Google Maps indisponível');
+    expect(mapSource).toContain('Google Maps API indisponível após o carregamento');
     expect(mapSource).toContain('aria-label="Mapa de cobertura da Bessa Energia"');
+    expect(mapSource).toContain('Mapa alternativo de cobertura em Minas Gerais');
+    expect(mapSource).toContain('https://www.google.com/maps?q=Minas+Gerais%2C+Brazil&output=embed');
+    expect(mapSource).toContain('Abrir no Google Maps');
   });
 
   it('does not hard-code customer testimonials or ratings', () => {

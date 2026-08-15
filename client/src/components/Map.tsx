@@ -91,6 +91,10 @@ const FORGE_BASE_URL =
   import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+const FALLBACK_MAP_URL =
+  "https://www.google.com/maps?q=Minas+Gerais%2C+Brazil&output=embed";
+const COMPANY_MAPS_URL =
+  "https://www.google.com/maps/search/?api=1&query=Minas+Gerais%2C+Brasil";
 
 function loadMapScript() {
   return new Promise<void>((resolve, reject) => {
@@ -131,25 +135,28 @@ export function MapView({
   const init = usePersistFn(async () => {
     try {
       await loadMapScript();
-    } catch {
+      if (!window.google?.maps?.Map) {
+        throw new Error("Google Maps API indisponível após o carregamento");
+      }
+      if (!mapContainer.current) {
+        throw new Error("Map container not found");
+      }
+      map.current = new window.google.maps.Map(mapContainer.current, {
+        zoom: initialZoom,
+        center: initialCenter,
+        mapTypeControl: true,
+        fullscreenControl: true,
+        zoomControl: true,
+        streetViewControl: true,
+        mapId: "DEMO_MAP_ID",
+      });
+      setMapError(false);
+      if (onMapReady) {
+        onMapReady(map.current);
+      }
+    } catch (error) {
+      console.error("Failed to initialize Google Maps", error);
       setMapError(true);
-      return;
-    }
-    if (!mapContainer.current) {
-      console.error("Map container not found");
-      return;
-    }
-    map.current = new window.google.maps.Map(mapContainer.current, {
-      zoom: initialZoom,
-      center: initialCenter,
-      mapTypeControl: true,
-      fullscreenControl: true,
-      zoomControl: true,
-      streetViewControl: true,
-      mapId: "DEMO_MAP_ID",
-    });
-    if (onMapReady) {
-      onMapReady(map.current);
     }
   });
 
@@ -161,8 +168,25 @@ export function MapView({
     <div className={cn("relative w-full h-[500px]", className)}>
       <div ref={mapContainer} className="h-full w-full" aria-label="Mapa de cobertura da Bessa Energia" />
       {mapError ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 p-6 text-center text-sm text-gray-600">
-          Não foi possível carregar o mapa agora. Consulte as regiões atendidas ao lado ou abra o endereço no Google Maps.
+        <div className="absolute inset-0 overflow-hidden bg-slate-100">
+          <iframe
+            src={FALLBACK_MAP_URL}
+            title="Mapa alternativo de cobertura em Minas Gerais"
+            className="h-full w-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+          <div className="absolute bottom-3 left-3 right-3 flex flex-col gap-2 rounded-lg bg-white/95 p-3 text-sm text-slate-700 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+            <span>Mapa alternativo de cobertura regional</span>
+            <a
+              href={COMPANY_MAPS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-[#253c7e] underline decoration-[#ff6900] underline-offset-2 hover:text-[#ff6900]"
+            >
+              Abrir no Google Maps
+            </a>
+          </div>
         </div>
       ) : null}
     </div>

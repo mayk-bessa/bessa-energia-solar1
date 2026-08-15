@@ -491,4 +491,6 @@
 
 - [x] Corrigir o endereço exibido nos relatórios/PDFs para AVENIDA GETÚLIO VARGAS, Nº 671, SALA 500, PARTE 1557 SAVASSI, BELO HORIZONTE/MG
 
-- [x] Corrigir o mapa de cobertura que não está sendo exibido na página inicial e validar o carregamento no navegador (componente testado e funcional na prévia; VPS precisa executar o pull para atualizar o bundle público)
+- [x] Corrigir o mapa de cobertura que não está sendo exibido na página inicial e validar o carregamento no navegador (componente testado, funcional na prévia e publicado no checkpoint d9b2134f)
+
+- [ ] Corrigir a falha persistente do mapa publicado e exibir um fallback visual funcional da localização/cobertura quando o Google Maps não carregar
