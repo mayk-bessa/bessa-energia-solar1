@@ -33,9 +33,9 @@ describe('Footer company information', () => {
     expect(homeSource).toContain('aria-label="Fechar Sobre a Empresa"');
   });
 
-  it('preserves existing footer destinations', () => {
+  it('preserves the requested footer destinations', () => {
     for (const item of [
-      'https://www.google.com/maps/search/?api=1&query=',
+      'https://www.google.com/maps/place/Bessa+Energia+Solar+-+Usinas+solares/@-19.9353262,-43.9322918,17z/data=!3m1!4b1!4m6!3m5!1s0xa6999edfa9d1c3:0x958bac5dc3b3c81d!8m2!3d-19.9353313!4d-43.9297169!16s%2Fg%2F11zww7kqbc?entry=ttu&g_ep=EgoyMDI2MDgxMi4wIKXMDSoASAFQAw%3D%3D',
       'https://www.instagram.com/bessa.energia/',
       'contato@bessaenergia.com.br',
       '(31) 9 9102-9003',
@@ -43,5 +43,6 @@ describe('Footer company information', () => {
       'Tire suas Dúvidas',
       'WallBox - Carregador Inteligente',
     ]) expect(homeSource).toContain(item);
+    expect(homeSource).not.toContain('https://www.google.com/maps/search/?api=1&query=');
   });
 });

@@ -675,7 +675,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-start gap-2">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=AVENIDA%20GET%C3%9ALIO%20VARGAS%2C%20N%C2%BA%20671%2C%20SALA%20500%2C%20PARTE%201557%20SAVASSI%2C%20BELO%20HORIZONTE%2FMG"
+                    href="https://www.google.com/maps/place/Bessa+Energia+Solar+-+Usinas+solares/@-19.9353262,-43.9322918,17z/data=!3m1!4b1!4m6!3m5!1s0xa6999edfa9d1c3:0x958bac5dc3b3c81d!8m2!3d-19.9353313!4d-43.9297169!16s%2Fg%2F11zww7kqbc?entry=ttu&g_ep=EgoyMDI2MDgxMi4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Abrir endereço da Bessa Energia no Google Maps"

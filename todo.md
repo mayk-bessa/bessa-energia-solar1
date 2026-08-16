@@ -84,7 +84,7 @@
   - [x] Favicon convertido do logo (154KB com múltiplas resoluções)
   - [x] Cores da marca (#ff6900 laranja, #253c7e azul escuro) aplicadas
 
-- [ ] **Publicar revisão atual** (checkpoint salvo; aguardando atualização do VPS)
+- [x] **Publicar revisão atual** (VPS atualizado e mapa georreferenciado confirmado pelo usuário)
   - [x] Salvar checkpoint da revisão atual e publicar
   - [x] Atualizar o VPS com a revisão atual (instruções e roteiro fornecidos ao usuário)
   - [x] Site acessível pelo domínio público configurado em validação anterior
@@ -500,3 +500,5 @@
 - [x] Preservar o design original do mapa e aprimorar os marcadores das regiões com hover, foco e identificação interativa
 
 - [x] Substituir o fallback percentual por mapa georreferenciado com as posições reais das regiões atendidas em Minas Gerais
+
+- [x] Atualizar exclusivamente o link de localização do rodapé para o URL oficial da Bessa Energia no Google Maps fornecido pelo usuário
