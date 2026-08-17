@@ -13,6 +13,7 @@ import WhatsAppButton from "./components/WhatsAppButton";
 import ScrollToTop from "./components/ScrollToTop";
 import GaleriaInstalacoes from "./pages/GaleriaInstalacoes";
 import GaleriaWallBox from "./pages/GaleriaWallBox";
+import InteractiveChargingProposal from "./pages/InteractiveChargingProposal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -24,6 +25,7 @@ function Router() {
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/galeria-instalacoes"} component={GaleriaInstalacoes} />
       <Route path={"/galeria-wallbox"} component={GaleriaWallBox} />
+      <Route path={"/proposta-estacao-recarga"} component={InteractiveChargingProposal} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -513,3 +513,5 @@
 
 - [x] Adicionar tabela de especificações técnicas detalhadas da Intelbras Home EVE 0074H à proposta comercial
 - [x] Criar mensagem de e-mail pronta para envio da proposta comercial à cliente
+
+- [x] Criar versão web interativa da proposta comercial com campos de componentes de instalação, quantidades, valores unitários e cálculo automático do total
