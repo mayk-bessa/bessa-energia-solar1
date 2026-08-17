@@ -43,3 +43,20 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+export const sellerProcedure = t.procedure.use(
+  t.middleware(async opts => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || (ctx.user.role !== 'admin' && ctx.user.role !== 'seller')) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito a vendedores autorizados" });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+      },
+    });
+  }),
+);

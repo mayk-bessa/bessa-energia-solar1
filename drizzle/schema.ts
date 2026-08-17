@@ -16,7 +16,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "seller", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -95,3 +95,25 @@ export const reviews = mysqlTable("reviews", {
 
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = typeof reviews.$inferInsert;
+
+/**
+ * Propostas de estação de recarga elaboradas por vendedores autorizados.
+ * Os componentes são serializados em JSON para preservar o escopo comercial calculado.
+ */
+export const chargingProposals = mysqlTable("chargingProposals", {
+  id: int("id").autoincrement().primaryKey(),
+  sellerId: int("sellerId").notNull().references(() => users.id),
+  sellerName: varchar("sellerName", { length: 255 }).notNull(),
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  clientEmail: varchar("clientEmail", { length: 320 }),
+  clientPhone: varchar("clientPhone", { length: 20 }),
+  componentsJson: text("componentsJson").notNull(),
+  totalCents: int("totalCents").notNull(),
+  status: mysqlEnum("status", ["draft", "sent"]).default("draft").notNull(),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChargingProposal = typeof chargingProposals.$inferSelect;
+export type InsertChargingProposal = typeof chargingProposals.$inferInsert;

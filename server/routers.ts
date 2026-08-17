@@ -1,14 +1,23 @@
 import { COOKIE_NAME } from "@shared/const";
-import { sendPDFReportEmail } from "./emailService";
+import { sendChargingProposalEmail, sendPDFReportEmail } from "./emailService";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { adminProcedure, publicProcedure, router, protectedProcedure, sellerProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { saveFileMetadata, getUserFiles, createBudgetRequest, getBudgetRequests, getBudgetRequestById, updateBudgetRequest, createTechnicalVisit, getTechnicalVisitsByBudgetId } from "./db";
 import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
+import { createChargingProposal, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateUserRole } from "./db";
+import { generateChargingProposalPDF } from "./chargingProposalPdf";
+
+const chargingComponentSchema = z.object({
+  id: z.string().min(1).max(120),
+  name: z.string().trim().min(1).max(255),
+  quantity: z.number().int().min(0).max(10000),
+  unitPrice: z.number().min(0).max(10000000),
+});
 
 export const appRouter = router({
   system: systemRouter,
@@ -179,6 +188,96 @@ export const appRouter = router({
           });
         }),
     }),
+  }),
+
+  chargingProposals: router({
+    list: sellerProcedure.query(async ({ ctx }) => {
+      const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
+      return await getChargingProposals({ sellerId, limit: 100 });
+    }),
+
+    getById: sellerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input, ctx }) => {
+        const proposal = await getChargingProposalById(input.id);
+        if (!proposal) return null;
+        if (ctx.user.role !== "admin" && proposal.sellerId !== ctx.user.id) {
+          throw new Error("Unauthorized");
+        }
+        return proposal;
+      }),
+
+    save: sellerProcedure
+      .input(z.object({
+        clientName: z.string().trim().min(2).max(255),
+        clientEmail: z.string().email().optional(),
+        clientPhone: z.string().trim().max(20).optional(),
+        sellerName: z.string().trim().max(255).optional(),
+        components: z.array(chargingComponentSchema).min(1).max(100),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const totalCents = Math.round(input.components.reduce(
+          (sum, component) => sum + component.quantity * component.unitPrice,
+          0,
+        ) * 100);
+
+        const result = await createChargingProposal({
+          sellerId: ctx.user.id,
+          sellerName: input.sellerName || ctx.user.name || "Vendedor Bessa Energia",
+          clientName: input.clientName,
+          clientEmail: input.clientEmail || null,
+          clientPhone: input.clientPhone || null,
+          componentsJson: JSON.stringify(input.components),
+          totalCents,
+          status: "draft",
+        });
+
+        return { success: true, proposalId: result.id, totalCents };
+      }),
+
+    sendEmail: sellerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input, ctx }) => {
+        const proposal = await getChargingProposalById(input.id);
+        if (!proposal) throw new Error("Proposta não encontrada");
+        if (ctx.user.role !== "admin" && proposal.sellerId !== ctx.user.id) {
+          throw new Error("Unauthorized");
+        }
+        if (!proposal.clientEmail) throw new Error("Informe o e-mail da cliente antes de enviar a proposta");
+
+        let rawComponents: unknown;
+        try {
+          rawComponents = JSON.parse(proposal.componentsJson);
+        } catch {
+          throw new Error("Os componentes salvos na proposta estão inválidos");
+        }
+        const parsedComponents = z.array(chargingComponentSchema).safeParse(rawComponents);
+        if (!parsedComponents.success) throw new Error("Os componentes salvos na proposta estão inválidos");
+
+        const pdf = await generateChargingProposalPDF({
+          proposalId: proposal.id,
+          clientName: proposal.clientName,
+          sellerName: proposal.sellerName,
+          components: parsedComponents.data,
+          totalCents: proposal.totalCents,
+          createdAt: proposal.createdAt,
+        });
+        const sent = await sendChargingProposalEmail(proposal.clientName, proposal.clientEmail, pdf, proposal.id);
+        if (!sent) throw new Error("Não foi possível enviar o e-mail da proposta");
+
+        await markChargingProposalAsSent(proposal.id);
+        return { success: true };
+      }),
+  }),
+
+  salesTeam: router({
+    listUsers: adminProcedure.query(async () => getUsersForRoleManagement()),
+    updateRole: adminProcedure
+      .input(z.object({ id: z.number().int().positive(), role: z.enum(["user", "seller", "admin"]) }))
+      .mutation(async ({ input }) => {
+        await updateUserRole(input.id, input.role);
+        return { success: true };
+      }),
   }),
 
   reviews: router({

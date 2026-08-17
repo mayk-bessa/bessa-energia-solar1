@@ -515,3 +515,7 @@
 - [x] Criar mensagem de e-mail pronta para envio da proposta comercial à cliente
 
 - [x] Criar versão web interativa da proposta comercial com campos de componentes de instalação, quantidades, valores unitários e cálculo automático do total
+
+- [x] Restringir a proposta interativa ao acesso de vendedores autorizados e administradores
+- [x] Salvar propostas de estação de recarga no painel para consulta e acompanhamento
+- [x] Gerar e enviar a proposta comercial em PDF por e-mail para a cliente

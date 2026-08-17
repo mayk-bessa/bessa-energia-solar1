@@ -1,6 +1,6 @@
 import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -275,3 +275,55 @@ export async function updateReviewStatus(id: number, status: "approved" | "rejec
   return await db.update(reviews).set({ status }).where(eq(reviews.id, id));
 }
 
+export async function createChargingProposal(proposal: InsertChargingProposal) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para salvar a proposta");
+
+  const result = await db.insert(chargingProposals).values(proposal);
+  return { id: (result as any).insertId || (result as any)[0]?.id };
+}
+
+export async function getChargingProposals(filters: { sellerId?: number; limit?: number } = {}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = db.select().from(chargingProposals).orderBy(desc(chargingProposals.createdAt));
+  if (filters.sellerId) {
+    query = query.where(eq(chargingProposals.sellerId, filters.sellerId)) as any;
+  }
+  if (filters.limit) {
+    query = query.limit(filters.limit) as any;
+  }
+  return await query;
+}
+
+export async function getChargingProposalById(id: number): Promise<ChargingProposal | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(chargingProposals).where(eq(chargingProposals.id, id)).limit(1);
+  return result[0];
+}
+
+export async function markChargingProposalAsSent(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para atualizar a proposta");
+  return await db.update(chargingProposals).set({ status: "sent", sentAt: new Date() }).where(eq(chargingProposals.id, id));
+}
+
+export async function getUsersForRoleManagement() {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    createdAt: users.createdAt,
+  }).from(users).orderBy(desc(users.createdAt));
+}
+
+export async function updateUserRole(id: number, role: "user" | "seller" | "admin") {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para atualizar o perfil");
+  return await db.update(users).set({ role }).where(eq(users.id, id));
+}
