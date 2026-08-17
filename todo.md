@@ -504,3 +504,5 @@
 - [x] Atualizar exclusivamente o link de localização do rodapé para o URL oficial da Bessa Energia no Google Maps fornecido pelo usuário
 
 - [x] Configurar dados estruturados LocalBusiness para melhorar o SEO local da página nos resultados de busca
+
+- [x] Adicionar uma meta description focada em SEO local para os serviços de energia solar da Bessa Energia

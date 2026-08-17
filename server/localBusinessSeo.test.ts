@@ -11,6 +11,11 @@ function getLocalBusinessSchema(): Record<string, unknown> {
 }
 
 describe('SEO LocalBusiness', () => {
+  it('adds a focused local SEO meta description', () => {
+    const match = indexSource.match(/<meta name="description" content="([^"]+)" \/>/);
+    expect(match?.[1]).toBe('Bessa Energia Solar em Belo Horizonte: projetos de painéis solares, usinas fotovoltaicas e Wallbox para residências, comércios e indústrias em Minas Gerais.');
+  });
+
   it('declares a valid LocalBusiness JSON-LD block', () => {
     const schema = getLocalBusinessSchema();
     expect(schema['@context']).toBe('https://schema.org');
