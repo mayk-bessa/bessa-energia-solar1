@@ -506,3 +506,10 @@
 - [x] Configurar dados estruturados LocalBusiness para melhorar o SEO local da página nos resultados de busca
 
 - [x] Adicionar uma meta description focada em SEO local para os serviços de energia solar da Bessa Energia
+
+- [x] Criar proposta comercial em PDF para Estação de Recarga Intelbras Home EVE 0074H em nome de RENATA COALHO TEIXEIRA, seguindo a identidade visual da Bessa Energia Solar e o modelo anexado
+
+- [x] Revisar a capa da proposta comercial com imagem de fundo suave inspirada na primeira imagem do site e área de contraste para a logomarca
+
+- [x] Adicionar tabela de especificações técnicas detalhadas da Intelbras Home EVE 0074H à proposta comercial
+- [x] Criar mensagem de e-mail pronta para envio da proposta comercial à cliente
