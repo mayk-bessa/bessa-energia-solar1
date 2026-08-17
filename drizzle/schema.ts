@@ -109,7 +109,7 @@ export const chargingProposals = mysqlTable("chargingProposals", {
   clientPhone: varchar("clientPhone", { length: 20 }),
   componentsJson: text("componentsJson").notNull(),
   totalCents: int("totalCents").notNull(),
-  status: mysqlEnum("status", ["draft", "sent"]).default("draft").notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
   sentAt: timestamp("sentAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

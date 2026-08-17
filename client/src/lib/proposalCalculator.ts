@@ -3,6 +3,7 @@ export type ProposalComponent = {
   name: string;
   quantity: number;
   unitPrice: number;
+  imageUrl?: string;
 };
 
 export function calculateLineTotal(component: ProposalComponent): number {

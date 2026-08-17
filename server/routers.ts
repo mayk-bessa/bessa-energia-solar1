@@ -9,14 +9,16 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateUserRole } from "./db";
+import { createChargingProposal, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateChargingProposalStatus, updateUserRole } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
+import { randomUUID } from "crypto";
 
 const chargingComponentSchema = z.object({
   id: z.string().min(1).max(120),
   name: z.string().trim().min(1).max(255),
   quantity: z.number().int().min(0).max(10000),
   unitPrice: z.number().min(0).max(10000000),
+  imageUrl: z.string().max(2048).optional(),
 });
 
 export const appRouter = router({
@@ -229,10 +231,61 @@ export const appRouter = router({
           clientPhone: input.clientPhone || null,
           componentsJson: JSON.stringify(input.components),
           totalCents,
-          status: "draft",
+          status: "pending",
         });
 
         return { success: true, proposalId: result.id, totalCents };
+      }),
+
+    uploadProductImage: sellerProcedure
+      .input(z.object({
+        fileName: z.string().trim().min(1).max(150),
+        dataUrl: z.string().min(32).max(7_000_000),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const match = input.dataUrl.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/);
+        if (!match) throw new Error("Envie uma imagem PNG, JPEG ou WebP válida");
+        const [, contentType, encoded] = match;
+        const buffer = Buffer.from(encoded, "base64");
+        if (!buffer.length || buffer.length > 5 * 1024 * 1024) throw new Error("A imagem deve ter no máximo 5 MB");
+
+        const extension = contentType === "image/png" ? "png" : contentType === "image/webp" ? "webp" : "jpg";
+        const stored = await storagePut(
+          `charging-proposals/${ctx.user.id}/products/${randomUUID()}.${extension}`,
+          buffer,
+          contentType,
+        );
+        return { url: stored.url, key: stored.key };
+      }),
+
+    duplicate: sellerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input, ctx }) => {
+        const source = await getChargingProposalById(input.id);
+        if (!source) throw new Error("Proposta não encontrada");
+        if (ctx.user.role !== "admin" && source.sellerId !== ctx.user.id) throw new Error("Unauthorized");
+
+        const result = await createChargingProposal({
+          sellerId: ctx.user.id,
+          sellerName: ctx.user.name || source.sellerName,
+          clientName: `${source.clientName} — cópia`,
+          clientEmail: source.clientEmail,
+          clientPhone: source.clientPhone,
+          componentsJson: source.componentsJson,
+          totalCents: source.totalCents,
+          status: "pending",
+        });
+        return { success: true, proposalId: result.id };
+      }),
+
+    updateStatus: sellerProcedure
+      .input(z.object({ id: z.number().int().positive(), status: z.enum(["pending", "approved", "rejected"]) }))
+      .mutation(async ({ input, ctx }) => {
+        const proposal = await getChargingProposalById(input.id);
+        if (!proposal) throw new Error("Proposta não encontrada");
+        if (ctx.user.role !== "admin" && proposal.sellerId !== ctx.user.id) throw new Error("Unauthorized");
+        await updateChargingProposalStatus(input.id, input.status);
+        return { success: true };
       }),
 
     sendEmail: sellerProcedure
@@ -267,6 +320,25 @@ export const appRouter = router({
 
         await markChargingProposalAsSent(proposal.id);
         return { success: true };
+      }),
+
+    previewPdf: sellerProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .query(async ({ input, ctx }) => {
+        const proposal = await getChargingProposalById(input.id);
+        if (!proposal) throw new Error("Proposta não encontrada");
+        if (ctx.user.role !== "admin" && proposal.sellerId !== ctx.user.id) throw new Error("Unauthorized");
+        const parsedComponents = z.array(chargingComponentSchema).safeParse(JSON.parse(proposal.componentsJson));
+        if (!parsedComponents.success) throw new Error("Os componentes salvos na proposta estão inválidos");
+        const pdf = await generateChargingProposalPDF({
+          proposalId: proposal.id,
+          clientName: proposal.clientName,
+          sellerName: proposal.sellerName,
+          components: parsedComponents.data,
+          totalCents: proposal.totalCents,
+          createdAt: proposal.createdAt,
+        });
+        return { dataUrl: `data:application/pdf;base64,${pdf.toString("base64")}` };
       }),
   }),
 

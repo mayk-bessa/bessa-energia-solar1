@@ -307,7 +307,13 @@ export async function getChargingProposalById(id: number): Promise<ChargingPropo
 export async function markChargingProposalAsSent(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível para atualizar a proposta");
-  return await db.update(chargingProposals).set({ status: "sent", sentAt: new Date() }).where(eq(chargingProposals.id, id));
+  return await db.update(chargingProposals).set({ sentAt: new Date() }).where(eq(chargingProposals.id, id));
+}
+
+export async function updateChargingProposalStatus(id: number, status: "pending" | "approved" | "rejected") {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para atualizar a proposta");
+  return await db.update(chargingProposals).set({ status }).where(eq(chargingProposals.id, id));
 }
 
 export async function getUsersForRoleManagement() {

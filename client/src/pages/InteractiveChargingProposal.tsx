@@ -5,8 +5,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { calculateLineTotal, calculateProposalTotal, type ProposalComponent } from "@/lib/proposalCalculator";
-import { ArrowLeft, Calculator, CheckCircle2, CirclePlus, FileDown, LockKeyhole, Minus, Plus, Save, Send, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, LockKeyhole, Minus, Plus, Save, Send, Trash2, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 
@@ -22,6 +22,15 @@ function parseCurrencyValue(value: string) {
   return Number.isFinite(Number(normalized)) ? Math.max(0, Number(normalized)) : 0;
 }
 
+function readImageAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("Não foi possível ler a imagem selecionada."));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function InteractiveChargingProposal() {
   const { user, loading } = useAuth();
   const [clientName, setClientName] = useState("RENATA COALHO TEIXEIRA");
@@ -30,10 +39,21 @@ export default function InteractiveChargingProposal() {
   const [sellerName, setSellerName] = useState("");
   const [components, setComponents] = useState<ProposalComponent[]>(INITIAL_COMPONENTS);
   const [lastSavedProposalId, setLastSavedProposalId] = useState<number | null>(null);
+  const [uploadingComponentId, setUploadingComponentId] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<{ url: string; name: string } | null>(null);
+  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+  const [hasPreviewedCurrentProposal, setHasPreviewedCurrentProposal] = useState(false);
   const total = useMemo(() => calculateProposalTotal(components), [components]);
   const hasSellerAccess = user?.role === "admin" || user?.role === "seller";
   const savedProposals = trpc.chargingProposals.list.useQuery(undefined, { enabled: hasSellerAccess });
   const teamUsers = trpc.salesTeam.listUsers.useQuery(undefined, { enabled: user?.role === "admin" });
+  const pdfPreview = trpc.chargingProposals.previewPdf.useQuery({ id: lastSavedProposalId ?? 1 }, {
+    enabled: pdfPreviewOpen && Boolean(lastSavedProposalId),
+    retry: false,
+  });
+  useEffect(() => {
+    if (pdfPreview.data?.dataUrl) setHasPreviewedCurrentProposal(true);
+  }, [pdfPreview.data?.dataUrl]);
   const saveProposal = trpc.chargingProposals.save.useMutation({
     onSuccess: async (result) => {
       setLastSavedProposalId(result.proposalId);
@@ -56,6 +76,21 @@ export default function InteractiveChargingProposal() {
     },
     onError: (error) => toast.error(error.message || "Não foi possível atualizar o perfil."),
   });
+  const duplicateProposal = trpc.chargingProposals.duplicate.useMutation({
+    onSuccess: async (result) => {
+      await savedProposals.refetch();
+      toast.success(`Proposta #${result.proposalId} duplicada como pendente.`);
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível duplicar a proposta."),
+  });
+  const updateProposalStatus = trpc.chargingProposals.updateStatus.useMutation({
+    onSuccess: async () => {
+      await savedProposals.refetch();
+      toast.success("Status comercial atualizado.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível atualizar o status."),
+  });
+  const uploadProductImage = trpc.chargingProposals.uploadProductImage.useMutation();
 
   const updateComponent = (id: string, field: keyof Pick<ProposalComponent, "name" | "quantity" | "unitPrice">, value: string) => {
     setComponents((current) => current.map((component) => {
@@ -96,6 +131,37 @@ export default function InteractiveChargingProposal() {
     });
   };
 
+  const handleProductImageUpload = async (componentId: string, file?: File) => {
+    if (!file) return;
+    if (!file.type.match(/^image\/(png|jpeg|webp)$/)) {
+      toast.error("Selecione uma imagem PNG, JPEG ou WebP.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 5 MB.");
+      return;
+    }
+    try {
+      setUploadingComponentId(componentId);
+      const result = await uploadProductImage.mutateAsync({ fileName: file.name, dataUrl: await readImageAsDataUrl(file) });
+      setComponents((current) => current.map((component) => component.id === componentId ? { ...component, imageUrl: result.url } : component));
+      toast.success("Imagem do produto adicionada ao componente.");
+    } catch (error: any) {
+      toast.error(error.message || "Não foi possível enviar a imagem do produto.");
+    } finally {
+      setUploadingComponentId(null);
+    }
+  };
+
+  const handleOpenPdfPreview = () => {
+    if (!lastSavedProposalId) {
+      toast.error("Salve a proposta antes de gerar a pré-visualização do PDF.");
+      return;
+    }
+    setHasPreviewedCurrentProposal(false);
+    setPdfPreviewOpen(true);
+  };
+
   const handleSend = () => {
     if (!lastSavedProposalId) {
       toast.error("Salve a proposta antes de enviá-la por e-mail.");
@@ -103,6 +169,10 @@ export default function InteractiveChargingProposal() {
     }
     if (!clientEmail.trim()) {
       toast.error("Informe o e-mail da cliente antes de enviar.");
+      return;
+    }
+    if (!hasPreviewedCurrentProposal) {
+      toast.error("Revise a pré-visualização do PDF antes de confirmar o envio.");
       return;
     }
     sendProposal.mutate({ id: lastSavedProposalId });
@@ -168,7 +238,8 @@ export default function InteractiveChargingProposal() {
           </div>
           <div className="flex flex-wrap gap-2 print:hidden">
             <Button onClick={handleSave} disabled={saveProposal.isPending} variant="outline" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50"><Save className="mr-2 h-4 w-4" /> {saveProposal.isPending ? "Salvando…" : "Salvar no painel"}</Button>
-            <Button onClick={handleSend} disabled={!lastSavedProposalId || sendProposal.isPending} variant="outline" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Send className="mr-2 h-4 w-4" /> {sendProposal.isPending ? "Enviando…" : "Enviar PDF por e-mail"}</Button>
+            <Button onClick={handleOpenPdfPreview} disabled={!lastSavedProposalId} variant="outline" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50"><FileImage className="mr-2 h-4 w-4" /> Pré-visualizar PDF</Button>
+            <Button onClick={handleSend} disabled={!lastSavedProposalId || !hasPreviewedCurrentProposal || sendProposal.isPending} variant="outline" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Send className="mr-2 h-4 w-4" /> {sendProposal.isPending ? "Enviando…" : "Enviar PDF por e-mail"}</Button>
             <Button onClick={() => window.print()} className="bg-[#ff6900] text-white hover:bg-[#e35e00]"><FileDown className="mr-2 h-4 w-4" /> Imprimir ou salvar PDF</Button>
           </div>
         </section>
@@ -235,6 +306,14 @@ export default function InteractiveChargingProposal() {
                     <span>{currency.format(calculateLineTotal(component))}</span>
                   </div>
                   <Button aria-label={`Remover ${component.name}`} onClick={() => setComponents((current) => current.filter((item) => item.id !== component.id))} variant="ghost" size="icon" disabled={components.length === 1} className="justify-self-end text-slate-400 hover:bg-red-50 hover:text-red-600 print:hidden"><Trash2 className="h-4 w-4" /></Button>
+                  <div className="flex flex-wrap items-center gap-3 md:col-span-5 print:hidden">
+                    {component.imageUrl ? <img src={component.imageUrl} alt={`Imagem de ${component.name}`} className="h-12 w-16 rounded-md border border-slate-200 object-cover" /> : <div className="flex h-12 w-16 items-center justify-center rounded-md border border-dashed border-slate-300 bg-slate-50 text-slate-400"><ImagePlus className="h-4 w-4" /></div>}
+                    <label className="inline-flex h-9 cursor-pointer items-center rounded-md border border-[#253c7e] px-3 text-sm font-semibold text-[#253c7e] transition-colors hover:bg-blue-50">
+                      <ImagePlus className="mr-2 h-4 w-4" /> {uploadingComponentId === component.id ? "Enviando…" : "Inserir imagem"}
+                      <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={uploadingComponentId === component.id} onChange={(event) => { void handleProductImageUpload(component.id, event.target.files?.[0]); event.currentTarget.value = ""; }} />
+                    </label>
+                    {component.imageUrl && <Button onClick={() => setImagePreview({ url: component.imageUrl!, name: component.name })} type="button" variant="outline" size="sm" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Eye className="mr-2 h-4 w-4" /> Visualizar imagem</Button>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -274,13 +353,18 @@ export default function InteractiveChargingProposal() {
           ) : savedProposals.data?.length ? (
             <div className="divide-y divide-slate-100">
               {savedProposals.data.map((proposal) => (
-                <div key={proposal.id} className="grid gap-2 px-5 py-4 sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-6">
+                <div key={proposal.id} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_auto_auto_auto] sm:items-center sm:gap-4">
                   <div>
                     <p className="font-semibold text-slate-900">{proposal.clientName}</p>
                     <p className="text-sm text-slate-500">{proposal.sellerName} · {new Date(proposal.createdAt).toLocaleDateString("pt-BR")}</p>
                   </div>
-                  <span className={`w-fit rounded-full px-2.5 py-1 text-xs font-bold ${proposal.status === "sent" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-[#253c7e]"}`}>{proposal.status === "sent" ? "Enviada" : "Rascunho"}</span>
+                  <select aria-label={`Status da proposta de ${proposal.clientName}`} value={proposal.status} onChange={(event) => updateProposalStatus.mutate({ id: proposal.id, status: event.target.value as "pending" | "approved" | "rejected" })} disabled={updateProposalStatus.isPending} className={`h-8 rounded-full border-0 px-2.5 text-xs font-bold ${proposal.status === "approved" ? "bg-emerald-100 text-emerald-700" : proposal.status === "rejected" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
+                    <option value="pending">Pendente</option>
+                    <option value="approved">Aprovada</option>
+                    <option value="rejected">Recusada</option>
+                  </select>
                   <p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p>
+                  <Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Duplicar</Button>
                 </div>
               ))}
             </div>
@@ -313,6 +397,19 @@ export default function InteractiveChargingProposal() {
           </section>
         )}
       </main>
+      {imagePreview && <div role="dialog" aria-modal="true" aria-label={`Imagem de ${imagePreview.name}`} className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4" onClick={() => setImagePreview(null)}>
+        <div className="relative max-h-full max-w-4xl rounded-2xl bg-white p-3 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <Button aria-label="Fechar imagem" onClick={() => setImagePreview(null)} variant="ghost" size="icon" className="absolute right-4 top-4 z-10 bg-white/90 text-[#253c7e]"><X className="h-5 w-5" /></Button>
+          <img src={imagePreview.url} alt={imagePreview.name} className="max-h-[80vh] max-w-full rounded-xl object-contain" />
+          <p className="px-2 pb-1 pt-3 text-sm font-semibold text-[#253c7e]">{imagePreview.name}</p>
+        </div>
+      </div>}
+      {pdfPreviewOpen && <div role="dialog" aria-modal="true" aria-label="Pré-visualização do PDF da proposta" className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4">
+        <div className="flex h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl">
+          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4"><div><h3 className="font-bold text-[#253c7e]">Pré-visualização da proposta</h3><p className="text-sm text-slate-500">Revise o PDF antes de confirmar o envio à cliente.</p></div><Button aria-label="Fechar pré-visualização do PDF" onClick={() => setPdfPreviewOpen(false)} variant="ghost" size="icon"><X className="h-5 w-5" /></Button></div>
+          {pdfPreview.isLoading ? <div className="flex flex-1 items-center justify-center text-slate-500">Gerando PDF…</div> : pdfPreview.data?.dataUrl ? <iframe title="Pré-visualização da proposta comercial" src={pdfPreview.data.dataUrl} className="min-h-0 flex-1 bg-slate-100" /> : <div className="flex flex-1 items-center justify-center p-8 text-center text-red-600">Não foi possível gerar a pré-visualização. Feche e tente novamente.</div>}
+        </div>
+      </div>}
     </div>
   );
 }

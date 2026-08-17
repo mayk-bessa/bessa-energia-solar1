@@ -519,3 +519,8 @@
 - [x] Restringir a proposta interativa ao acesso de vendedores autorizados e administradores
 - [x] Salvar propostas de estação de recarga no painel para consulta e acompanhamento
 - [x] Gerar e enviar a proposta comercial em PDF por e-mail para a cliente
+
+- [x] Adicionar status visual de proposta pendente, aprovada ou recusada no painel comercial
+- [x] Criar ação para duplicar propostas com itens semelhantes no painel
+- [x] Permitir inserir e visualizar imagens reais dos produtos incluídos na proposta
+- [x] Exibir pré-visualização do PDF da proposta antes da confirmação de envio por e-mail
