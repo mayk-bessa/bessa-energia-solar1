@@ -561,3 +561,17 @@
 - [x] Adicionar feedback visual de carregamento, sucesso e erro no envio de proposta por e-mail
 - [x] Criar painel de relatórios mensais de propostas para cada vendedor
 - [x] Cobrir histórico, métricas mensais e feedback de envio com testes automatizados
+
+## Novo padrão visual de proposta comercial
+
+- [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados
+- [x] Criar prévia isolada do novo modelo Bessa Energia para propostas fotovoltaicas e de carregadores
+- [x] Substituir a marca do modelo pela identidade Bessa Energia e aplicar a imagem solar enviada
+- [x] Submeter a prévia visual para aprovação antes de alterar a geração oficial de PDFs (aprovado pelo usuário)
+- [x] Atualizar na prévia a chamada para incluir energia para a casa e o veículo
+- [x] Aplicar na prévia a faixa de parceria Bessa Energia e Intelbras enviada pelo usuário
+- [x] Remover o bloco separado de dados e posicionar Revenda sobre a logo Bessa na faixa de parceria
+- [x] Aumentar e centralizar a palavra Revenda sobre a logo Bessa na faixa de parceria
+- [x] Submeter a prévia visual para aprovação antes de alterar a geração oficial de PDFs (aprovado pelo usuário)
+- [x] Aplicar o padrão aprovado Bessa Energia e Intelbras ao gerador oficial de PDFs de propostas
+- [x] Validar a emissão de proposta oficial com logo, faixa de parceria e componentes reais

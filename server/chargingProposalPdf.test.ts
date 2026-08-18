@@ -1,3 +1,4 @@
+import { PDFDocument } from "pdf-lib";
 import { describe, expect, it } from "vitest";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 
@@ -16,6 +17,8 @@ describe("charging proposal PDF", () => {
     });
 
     expect(pdf.subarray(0, 4).toString()).toBe("%PDF");
-    expect(pdf.length).toBeGreaterThan(1000);
+    expect(pdf.length).toBeGreaterThan(1500);
+    const loaded = await PDFDocument.load(pdf);
+    expect(loaded.getPageCount()).toBe(2);
   });
 });
