@@ -26,6 +26,22 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
+ * Credenciais locais para o painel comercial hospedado fora do OAuth Manus.
+ * A senha é armazenada exclusivamente como hash derivado e nunca em texto puro.
+ */
+export const localAccounts = mysqlTable("localAccounts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique().references(() => users.id),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type LocalAccount = typeof localAccounts.$inferSelect;
+export type InsertLocalAccount = typeof localAccounts.$inferInsert;
+
+/**
  * Files table for storing file metadata and S3 references
  */
 export const files = mysqlTable("files", {

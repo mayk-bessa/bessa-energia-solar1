@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { calculateLineTotal, calculateProposalTotal, type ProposalComponent } from "@/lib/proposalCalculator";
 import { ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, LockKeyhole, Minus, Plus, Save, Send, Trash2, X } from "lucide-react";
@@ -32,7 +31,7 @@ function readImageAsDataUrl(file: File) {
 }
 
 export default function InteractiveChargingProposal() {
-  const { user, loading } = useAuth();
+  const { user, loading, refresh } = useAuth();
   const [clientName, setClientName] = useState("RENATA COALHO TEIXEIRA");
   const [clientEmail, setClientEmail] = useState("");
   const [clientPhone, setClientPhone] = useState("");
@@ -43,6 +42,11 @@ export default function InteractiveChargingProposal() {
   const [imagePreview, setImagePreview] = useState<{ url: string; name: string } | null>(null);
   const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
   const [hasPreviewedCurrentProposal, setHasPreviewedCurrentProposal] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [newSellerName, setNewSellerName] = useState("");
+  const [newSellerEmail, setNewSellerEmail] = useState("");
+  const [newSellerPassword, setNewSellerPassword] = useState("");
   const total = useMemo(() => calculateProposalTotal(components), [components]);
   const hasSellerAccess = user?.role === "admin" || user?.role === "seller";
   const savedProposals = trpc.chargingProposals.list.useQuery(undefined, { enabled: hasSellerAccess });
@@ -50,6 +54,13 @@ export default function InteractiveChargingProposal() {
   const pdfPreview = trpc.chargingProposals.previewPdf.useQuery({ id: lastSavedProposalId ?? 1 }, {
     enabled: pdfPreviewOpen && Boolean(lastSavedProposalId),
     retry: false,
+  });
+  const localLogin = trpc.auth.localLogin.useMutation({
+    onSuccess: async () => {
+      await refresh();
+      toast.success("Acesso comercial liberado.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível entrar."),
   });
   useEffect(() => {
     if (pdfPreview.data?.dataUrl) setHasPreviewedCurrentProposal(true);
@@ -75,6 +86,16 @@ export default function InteractiveChargingProposal() {
       toast.success("Perfil de acesso atualizado.");
     },
     onError: (error) => toast.error(error.message || "Não foi possível atualizar o perfil."),
+  });
+  const createLocalSeller = trpc.salesTeam.createLocalSeller.useMutation({
+    onSuccess: async () => {
+      setNewSellerName("");
+      setNewSellerEmail("");
+      setNewSellerPassword("");
+      await teamUsers.refetch();
+      toast.success("Credenciais locais do vendedor criadas.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível criar as credenciais do vendedor."),
   });
   const duplicateProposal = trpc.chargingProposals.duplicate.useMutation({
     onSuccess: async (result) => {
@@ -185,11 +206,15 @@ export default function InteractiveChargingProposal() {
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
-        <section className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl">
+        <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl">
           <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#253c7e] text-white"><LockKeyhole className="h-6 w-6" /></div>
           <h1 className="text-2xl font-bold text-[#253c7e]">Acesso de vendedor</h1>
-          <p className="mt-3 text-slate-600">Entre com sua conta autorizada para elaborar, salvar e enviar propostas comerciais.</p>
-          <Button onClick={() => { window.location.href = getLoginUrl(); }} className="mt-6 w-full bg-[#ff6900] hover:bg-[#e35e00]">Entrar para continuar</Button>
+          <p className="mt-3 text-slate-600">Entre com as credenciais locais fornecidas pelo administrador para elaborar, salvar e enviar propostas comerciais.</p>
+          <form className="mt-6 space-y-4 text-left" onSubmit={(event) => { event.preventDefault(); localLogin.mutate({ email: loginEmail, password: loginPassword }); }}>
+            <div className="space-y-2"><Label htmlFor="local-login-email">E-mail</Label><Input id="local-login-email" type="email" autoComplete="username" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required /></div>
+            <div className="space-y-2"><Label htmlFor="local-login-password">Senha</Label><Input id="local-login-password" type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required /></div>
+            <Button type="submit" disabled={localLogin.isPending} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">{localLogin.isPending ? "Entrando…" : "Entrar para continuar"}</Button>
+          </form>
         </section>
       </div>
     );
@@ -377,8 +402,14 @@ export default function InteractiveChargingProposal() {
           <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
             <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
               <h3 className="font-bold text-[#253c7e]">Perfis de vendedores</h3>
-              <p className="text-sm text-slate-500">Libere o acesso comercial após o usuário realizar o primeiro login.</p>
+              <p className="text-sm text-slate-500">Crie credenciais locais para vendedores que acessarão o painel pelo domínio bessaenergia.com.br.</p>
             </div>
+            <form className="grid gap-3 border-b border-slate-200 p-5 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end" onSubmit={(event) => { event.preventDefault(); createLocalSeller.mutate({ name: newSellerName, email: newSellerEmail, password: newSellerPassword }); }}>
+              <div className="space-y-2"><Label htmlFor="new-seller-name">Nome do vendedor</Label><Input id="new-seller-name" value={newSellerName} onChange={(event) => setNewSellerName(event.target.value)} minLength={2} required /></div>
+              <div className="space-y-2"><Label htmlFor="new-seller-email">E-mail</Label><Input id="new-seller-email" type="email" value={newSellerEmail} onChange={(event) => setNewSellerEmail(event.target.value)} required /></div>
+              <div className="space-y-2"><Label htmlFor="new-seller-password">Senha inicial</Label><Input id="new-seller-password" type="password" value={newSellerPassword} onChange={(event) => setNewSellerPassword(event.target.value)} minLength={16} required /><p className="text-xs text-slate-500">Mínimo de 16 caracteres.</p></div>
+              <Button type="submit" disabled={createLocalSeller.isPending} className="bg-[#ff6900] hover:bg-[#e35e00]">{createLocalSeller.isPending ? "Criando…" : "Criar vendedor"}</Button>
+            </form>
             <div className="divide-y divide-slate-100">
               {teamUsers.data?.map((teamMember) => (
                 <div key={teamMember.id} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_11rem] sm:items-center">

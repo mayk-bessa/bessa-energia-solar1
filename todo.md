@@ -524,3 +524,8 @@
 - [x] Criar ação para duplicar propostas com itens semelhantes no painel
 - [x] Permitir inserir e visualizar imagens reais dos produtos incluídos na proposta
 - [x] Exibir pré-visualização do PDF da proposta antes da confirmação de envio por e-mail
+
+- [ ] Resolver o conflito local de client/index.html no VPS para permitir a atualização segura do repositório
+- [x] Localizar o diretório Git efetivo da aplicação no VPS antes de repetir a sincronização (confirmado: /var/www/bessaenergia.com.br)
+
+- [x] Substituir o redirecionamento OAuth Manus incompatível no VPS por autenticação local de vendedores e administradores

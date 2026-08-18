@@ -1,5 +1,6 @@
 import { COOKIE_NAME } from "@shared/const";
 import { sendChargingProposalEmail, sendPDFReportEmail } from "./emailService";
+import { ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router, protectedProcedure, sellerProcedure } from "./_core/trpc";
@@ -9,9 +10,11 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateChargingProposalStatus, updateUserRole } from "./db";
+import { createChargingProposal, createLocalUserAccount, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateChargingProposalStatus, updateUserRole } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { randomUUID } from "crypto";
+import { sdk } from "./_core/sdk";
+import { authenticateLocalUser, hashLocalPassword } from "./localAuth";
 
 const chargingComponentSchema = z.object({
   id: z.string().min(1).max(120),
@@ -25,6 +28,16 @@ export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
+    localLogin: publicProcedure
+      .input(z.object({ email: z.string().trim().email(), password: z.string().min(1).max(512) }))
+      .mutation(async ({ input, ctx }) => {
+        const user = await authenticateLocalUser(input.email, input.password);
+        if (!user) throw new Error("E-mail ou senha inválidos");
+        const token = await sdk.createSessionToken(user.openId, { name: user.name ?? user.email ?? "Vendedor Bessa" });
+        const cookieOptions = getSessionCookieOptions(ctx.req);
+        ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+        return { id: user.id, name: user.name, email: user.email, role: user.role };
+      }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
@@ -344,6 +357,21 @@ export const appRouter = router({
 
   salesTeam: router({
     listUsers: adminProcedure.query(async () => getUsersForRoleManagement()),
+    createLocalSeller: adminProcedure
+      .input(z.object({
+        name: z.string().trim().min(2).max(120),
+        email: z.string().trim().email(),
+        password: z.string().min(16).max(512),
+      }))
+      .mutation(async ({ input }) => {
+        const user = await createLocalUserAccount({
+          name: input.name,
+          email: input.email,
+          passwordHash: await hashLocalPassword(input.password),
+          role: "seller",
+        });
+        return { success: true, id: user.id };
+      }),
     updateRole: adminProcedure
       .input(z.object({ id: z.number().int().positive(), role: z.enum(["user", "seller", "admin"]) }))
       .mutation(async ({ input }) => {

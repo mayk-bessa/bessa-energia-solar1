@@ -18,6 +18,8 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
+  if (window.location.pathname.startsWith("/proposta-estacao-recarga")) return;
+
   window.location.href = getLoginUrl();
 };
 

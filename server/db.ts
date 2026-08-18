@@ -1,6 +1,6 @@
 import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -87,6 +87,54 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getLocalAccountByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const openId = `local:${email.trim().toLowerCase()}`;
+  const result = await db
+    .select({ user: users, account: localAccounts })
+    .from(users)
+    .innerJoin(localAccounts, eq(localAccounts.userId, users.id))
+    .where(eq(users.openId, openId))
+    .limit(1);
+  return result[0];
+}
+
+export async function createLocalUserAccount(input: {
+  email: string;
+  name: string;
+  passwordHash: string;
+  role: "seller" | "admin";
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para criar o acesso local");
+  const email = input.email.trim().toLowerCase();
+  const openId = `local:${email}`;
+
+  await db.insert(users).values({
+    openId,
+    email,
+    name: input.name.trim(),
+    loginMethod: "local",
+    role: input.role,
+    lastSignedIn: new Date(),
+  }).onDuplicateKeyUpdate({
+    set: { email, name: input.name.trim(), loginMethod: "local", role: input.role, lastSignedIn: new Date() },
+  });
+
+  const user = await getUserByOpenId(openId);
+  if (!user) throw new Error("Não foi possível criar o usuário local");
+  await db.insert(localAccounts).values({ userId: user.id, passwordHash: input.passwordHash, isActive: 1 })
+    .onDuplicateKeyUpdate({ set: { passwordHash: input.passwordHash, isActive: 1 } });
+  return user;
+}
+
+export async function touchLocalUser(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
 }
 
 export async function saveFileMetadata(file: InsertFile) {
