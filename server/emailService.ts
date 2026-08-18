@@ -190,18 +190,20 @@ export async function sendChargingProposalEmail(
   clientEmail: string,
   pdfBuffer: Buffer,
   proposalId: number,
+  signatureUrl?: string,
 ): Promise<boolean> {
   try {
     await getTransporter().sendMail({
       from: process.env.SMTP_USER,
       to: clientEmail,
-      subject: `Proposta Comercial #${proposalId} — Estação de Recarga Intelbras`,
+      subject: `Proposta Comercial #${proposalId} — Bessa Energia`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #1f2937;">
           <div style="border-top: 5px solid #ff6900; padding-top: 20px;"></div>
           <h2 style="color: #253c7e; margin-bottom: 16px;">Olá, ${clientName},</h2>
-          <p>Conforme nosso atendimento, encaminhamos em anexo a proposta comercial para a Estação de Recarga Intelbras Home EVE 0074H.</p>
+          <p>Conforme nosso atendimento, encaminhamos em anexo a proposta comercial Bessa Energia.</p>
           <p>O documento apresenta o escopo estimado, os componentes previstos e o valor total. Após a vistoria técnica, nossa equipe confirmará a infraestrutura e as condições definitivas de instalação.</p>
+          ${signatureUrl ? `<p style="margin: 24px 0;"><a href="${signatureUrl}" style="display: inline-block; padding: 12px 18px; background: #253c7e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold;">Aprovar proposta online</a></p><p style="font-size: 12px; color: #64748b;">Use este link para registrar seu aceite eletrônico durante o prazo de validade da proposta.</p>` : ""}
           <p>Ficamos à disposição para esclarecer dúvidas.</p>
           <p style="margin-top: 24px;"><strong>Bessa Energia Solar</strong><br />(31) 99102-9003<br />contato@bessaenergia.com.br</p>
         </div>

@@ -13,11 +13,21 @@ export type ChargingProposalPdfData = {
   components: ChargingProposalPdfComponent[];
   totalCents: number;
   createdAt: Date;
+  projectType?: "solar" | "ev_charging" | "hybrid";
+  coverArt?: "solar-home-vehicle" | "photovoltaic" | "ev-charging";
+  validUntil?: Date | null;
+  signedAt?: Date | null;
+  signedByName?: string | null;
 };
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const PARTNERSHIP_STRIP_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663417025632/yeqKcLNpdRHjuhLq.png";
 const SOLAR_HERO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663417025632/YfNasSDHHUdiTmIq.png";
+const COVER_ART_URLS: Record<NonNullable<ChargingProposalPdfData["coverArt"]>, string> = {
+  "solar-home-vehicle": "/manus-storage/capa-proposta-hibrida_7c530a92.png",
+  photovoltaic: "/manus-storage/capa-proposta-fotovoltaica_5c09c052.png",
+  "ev-charging": "/manus-storage/capa-proposta-carregamento_540f77e1.png",
+};
 
 function truncate(value: string, limit: number) {
   return value.length > limit ? `${value.slice(0, limit - 1)}…` : value;
@@ -66,7 +76,7 @@ export async function generateChargingProposalPDF(data: ChargingProposalPdfData)
 
   const [partnershipStrip, solarHero] = await Promise.all([
     embedRemotePng(pdf, PARTNERSHIP_STRIP_URL),
-    embedRemotePng(pdf, SOLAR_HERO_URL),
+    embedRemotePng(pdf, COVER_ART_URLS[data.coverArt ?? "solar-home-vehicle"] || SOLAR_HERO_URL),
   ]);
 
   if (partnershipStrip) {
@@ -90,7 +100,7 @@ export async function generateChargingProposalPDF(data: ChargingProposalPdfData)
   [
     ["CLIENTE", truncate(data.clientName, 28)],
     ["PROPOSTA", `#${data.proposalId}`],
-    ["VALIDADE", "10 dias"],
+    ["VALIDADE", data.validUntil ? new Date(data.validUntil).toLocaleDateString("pt-BR") : "10 dias"],
   ].forEach(([label, value], index) => {
     const x = margin + index * 170;
     cover.drawText(label, { x, y: metaY, size: 7, font: bold, color: orange });
@@ -146,6 +156,7 @@ export async function generateChargingProposalPDF(data: ChargingProposalPdfData)
     "Validade e disponibilidade: valores, prazos e equipamentos dependem de confirmação comercial e técnica.",
     "Garantias: aplicáveis conforme os termos dos fabricantes e serviços descritos na proposta final.",
     `Atendimento Bessa: vendedor responsável ${truncate(data.sellerName, 48)}.`,
+    data.signedAt ? `Aceite eletrônico registrado em ${new Date(data.signedAt).toLocaleString("pt-BR")}, por ${truncate(data.signedByName || "cliente", 48)}.` : "Aceite eletrônico: disponível pelo link enviado à cliente durante a validade da proposta.",
   ];
   notes.forEach((note) => {
     page.drawCircle({ x: margin + 8, y: y + 3, size: 7, color: blue });

@@ -14,6 +14,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import GaleriaInstalacoes from "./pages/GaleriaInstalacoes";
 import GaleriaWallBox from "./pages/GaleriaWallBox";
 import InteractiveChargingProposal from "./pages/InteractiveChargingProposal";
+import OnlineProposalSignature from "./pages/OnlineProposalSignature";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -26,6 +27,7 @@ function Router() {
       <Route path={"/galeria-instalacoes"} component={GaleriaInstalacoes} />
       <Route path={"/galeria-wallbox"} component={GaleriaWallBox} />
       <Route path={"/proposta-estacao-recarga"} component={InteractiveChargingProposal} />
+      <Route path={"/aceite-proposta/:token"} component={OnlineProposalSignature} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

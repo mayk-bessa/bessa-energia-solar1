@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>O painel organiza todo o ciclo comercial</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 64px 76px 0; }
+    .top { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-bottom: 26px; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { margin-top: 10px; color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 800; letter-spacing: 2px; }
+    .flow { display: grid; grid-template-columns: 1fr 1fr 1fr; min-height: 365px; margin-top: 62px; }
+    .stage { padding: 0 38px; position: relative; }
+    .stage + .stage { border-left: 2px solid #253c7e; }
+    .num { width: 52px; height: 52px; background: #ff6900; color: white; display: flex; align-items: center; justify-content: center; font-size: 23px; font-weight: 900; }
+    h2 { margin-top: 30px; font-size: 28px; color: #253c7e; line-height: 1.05; font-weight: 900; letter-spacing: -1px; }
+    p { margin-top: 18px; max-width: 260px; font-size: 19px; line-height: 1.35; color: #333; }
+    .line { position: absolute; top: 25px; right: -1px; width: 2px; height: 1px; background: #253c7e; }
+    .footer { border-top: 2px solid #ff6900; padding-top: 22px; font-size: 22px; font-weight: 700; color: #253c7e; }
+    .footer span { color: #ff6900; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="top"><div><div class="eyebrow">Visão geral</div><h1>O painel organiza todo o ciclo comercial</h1></div><div class="page">02 / 12</div></header>
+    <section class="flow">
+      <article class="stage"><div class="num">01</div><h2>Criar e salvar</h2><p>Monte o escopo, registre a cliente e salve a proposta no painel.</p></article>
+      <article class="stage"><div class="num">02</div><h2>Revisar e enviar</h2><p>Confira o PDF, envie por e-mail e disponibilize o aceite online.</p></article>
+      <article class="stage"><div class="num">03</div><h2>Acompanhar e analisar</h2><p>Consulte o histórico, as metas e os resultados mensais.</p></article>
+    </section>
+    <div class="footer"><span>Um fluxo.</span> Da proposta ao acompanhamento comercial.</div>
+  </div>
+</body>
+</html>

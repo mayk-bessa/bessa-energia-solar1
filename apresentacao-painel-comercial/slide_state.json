@@ -1,0 +1,144 @@
+{
+  "project_info": {
+    "title": "Painel Comercial Bessa Energia",
+    "created": 1787093906.393,
+    "last_updated": 1787094072.426,
+    "total_slides": 12
+  },
+  "slides": [
+    {
+      "id": "capa",
+      "state": "edited",
+      "pageNum": 1
+    },
+    {
+      "id": "ciclo",
+      "state": "edited",
+      "pageNum": 2
+    },
+    {
+      "id": "perfis",
+      "state": "edited",
+      "pageNum": 3
+    },
+    {
+      "id": "criar_proposta",
+      "state": "edited",
+      "pageNum": 4
+    },
+    {
+      "id": "revisar_enviar",
+      "state": "edited",
+      "pageNum": 5
+    },
+    {
+      "id": "aceite",
+      "state": "edited",
+      "pageNum": 6
+    },
+    {
+      "id": "historico",
+      "state": "edited",
+      "pageNum": 7
+    },
+    {
+      "id": "relatorios",
+      "state": "edited",
+      "pageNum": 8
+    },
+    {
+      "id": "metas",
+      "state": "edited",
+      "pageNum": 9
+    },
+    {
+      "id": "governanca",
+      "state": "edited",
+      "pageNum": 10
+    },
+    {
+      "id": "rotina",
+      "state": "edited",
+      "pageNum": 11
+    },
+    {
+      "id": "encerramento",
+      "state": "edited",
+      "pageNum": 12
+    }
+  ],
+  "outline": [
+    {
+      "id": "capa",
+      "title": "Painel Comercial Bessa Energia",
+      "summary": "Guia prático para vendedores e administradores utilizarem o painel comercial.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "ciclo",
+      "title": "O painel organiza todo o ciclo comercial",
+      "summary": "Visão geral do fluxo de criação, envio, aceite e análise de propostas.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "perfis",
+      "title": "Perfis definem responsabilidades claras",
+      "summary": "Papéis e responsabilidades de administrador e vendedor.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "criar_proposta",
+      "title": "Crie propostas com dados comerciais completos",
+      "summary": "Preenchimento de cliente, escopo, tipo de projeto, arte e validade.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "revisar_enviar",
+      "title": "Revise antes de enviar ao cliente",
+      "summary": "Salvamento, pré-visualização e envio acompanhado por feedback visual.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "aceite",
+      "title": "O aceite online acelera a resposta",
+      "summary": "Fluxo de aprovação eletrônica da cliente e atualização de status.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "historico",
+      "title": "Histórico filtrado revela oportunidades",
+      "summary": "Busca por cliente, status, período e vendedor.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "relatorios",
+      "title": "Relatórios tornam a operação mensurável",
+      "summary": "Métricas mensais e exportação para CSV e PDF.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "metas",
+      "title": "Metas tornam progresso visível",
+      "summary": "Metas individuais e barras de progresso comercial.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "governanca",
+      "title": "Lixeira e auditoria protegem o histórico",
+      "summary": "Exclusão restrita ao administrador, restauração e registros de auditoria.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "rotina",
+      "title": "Rotina comercial recomendada",
+      "summary": "Cadência diária, semanal e mensal para a operação comercial.",
+      "image_plan": "Use a suitable image if needed"
+    },
+    {
+      "id": "encerramento",
+      "title": "Propostas consistentes. Decisões rápidas.",
+      "summary": "Encerramento com a marca Bessa Energia Solar.",
+      "image_plan": "Use a suitable image if needed"
+    }
+  ]
+}

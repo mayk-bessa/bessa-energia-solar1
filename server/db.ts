@@ -1,6 +1,7 @@
 import { eq, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts, maintenanceJobs, proposalDeletionAudits, proposalGoals, type ProposalDeletionAudit, type ProposalGoal } from "../drizzle/schema";
+import { isNull } from "drizzle-orm";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -347,22 +348,24 @@ export async function getChargingProposals(filters: { sellerId?: number; limit?:
   const db = await getDb();
   if (!db) return [];
 
-  let query = db.select().from(chargingProposals).orderBy(desc(chargingProposals.createdAt));
-  if (filters.sellerId) {
-    query = query.where(eq(chargingProposals.sellerId, filters.sellerId)) as any;
-  }
+  let condition = isNull(chargingProposals.deletedAt);
+  if (filters.sellerId) condition = and(condition, eq(chargingProposals.sellerId, filters.sellerId))!;
+  let query = db.select().from(chargingProposals).where(condition).orderBy(desc(chargingProposals.createdAt));
   if (filters.limit) {
     query = query.limit(filters.limit) as any;
   }
   return await query;
 }
 
-export async function getSentChargingProposalHistory(filters: { sellerId?: number; search?: string; limit?: number } = {}) {
+export async function getSentChargingProposalHistory(filters: { sellerId?: number; search?: string; status?: "pending" | "approved" | "rejected"; startDate?: Date; endDate?: Date; limit?: number } = {}) {
   const db = await getDb();
   if (!db) return [];
 
-  let condition = isNotNull(chargingProposals.sentAt);
+  let condition = and(isNotNull(chargingProposals.sentAt), isNull(chargingProposals.deletedAt))!;
   if (filters.sellerId) condition = and(condition, eq(chargingProposals.sellerId, filters.sellerId))!;
+  if (filters.status) condition = and(condition, eq(chargingProposals.status, filters.status))!;
+  if (filters.startDate) condition = and(condition, gte(chargingProposals.sentAt, filters.startDate))!;
+  if (filters.endDate) condition = and(condition, lt(chargingProposals.sentAt, filters.endDate))!;
   const search = filters.search?.trim();
   if (search) {
     const term = `%${search}%`;
@@ -443,7 +446,7 @@ export async function getMonthlyProposalMetrics(filters: { month: string; seller
   const [year, month] = filters.month.split("-").map(Number);
   const start = new Date(Date.UTC(year, month - 1, 1));
   const end = new Date(Date.UTC(year, month, 1));
-  let condition = and(gte(chargingProposals.createdAt, start), lt(chargingProposals.createdAt, end))!;
+  let condition = and(gte(chargingProposals.createdAt, start), lt(chargingProposals.createdAt, end), isNull(chargingProposals.deletedAt))!;
   if (filters.sellerId) condition = and(condition, eq(chargingProposals.sellerId, filters.sellerId))!;
   const proposals = await db.select({
     sellerId: chargingProposals.sellerId,
@@ -462,6 +465,34 @@ export async function getChargingProposalById(id: number): Promise<ChargingPropo
   return result[0];
 }
 
+export async function getChargingProposalBySignatureToken(signatureToken: string): Promise<ChargingProposal | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  return (await db.select().from(chargingProposals).where(and(eq(chargingProposals.signatureToken, signatureToken), isNull(chargingProposals.deletedAt))).limit(1))[0];
+}
+
+export async function signChargingProposal(input: { id: number; name: string; email: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para registrar o aceite");
+  const signedAt = new Date();
+  await db.update(chargingProposals).set({ status: "approved", signedAt, signedByName: input.name.trim(), signedByEmail: input.email.trim().toLowerCase() }).where(eq(chargingProposals.id, input.id));
+  return signedAt;
+}
+
+export async function getMaintenanceJobByTaskUid(taskUid: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para executar a manutenção agendada");
+  return (await db.select().from(maintenanceJobs).where(eq(maintenanceJobs.scheduleCronTaskUid, taskUid)).limit(1))[0];
+}
+
+export async function saveMaintenanceJobTaskUid(input: { jobKey: string; taskUid: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para configurar a manutenção agendada");
+  await db.insert(maintenanceJobs).values({ jobKey: input.jobKey, scheduleCronTaskUid: input.taskUid }).onDuplicateKeyUpdate({
+    set: { scheduleCronTaskUid: input.taskUid, updatedAt: new Date() },
+  });
+}
+
 export async function markChargingProposalAsSent(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível para atualizar a proposta");
@@ -478,6 +509,51 @@ export async function deleteChargingProposal(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível para excluir a proposta");
   return await db.delete(chargingProposals).where(eq(chargingProposals.id, id));
+}
+
+export async function moveChargingProposalToTrash(input: { proposal: ChargingProposal; deletedBy: number; deletedByName: string; reason?: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para mover a proposta para a lixeira");
+  const deletedAt = new Date();
+  await db.update(chargingProposals).set({ deletedAt, deletedBy: input.deletedBy, deletionReason: input.reason?.trim() || null }).where(eq(chargingProposals.id, input.proposal.id));
+  await db.insert(proposalDeletionAudits).values({ proposalId: input.proposal.id, clientName: input.proposal.clientName, sellerId: input.proposal.sellerId, deletedBy: input.deletedBy, deletedByName: input.deletedByName, reason: input.reason?.trim() || null, deletedAt });
+}
+
+export async function getTrashedChargingProposals(limit = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(chargingProposals).where(isNotNull(chargingProposals.deletedAt)).orderBy(desc(chargingProposals.deletedAt)).limit(limit);
+}
+
+export async function restoreChargingProposal(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para restaurar a proposta");
+  return await db.update(chargingProposals).set({ deletedAt: null, deletedBy: null, deletionReason: null }).where(eq(chargingProposals.id, id));
+}
+
+export async function purgeChargingProposalsDeletedBefore(before: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para limpar a lixeira");
+  return await db.delete(chargingProposals).where(and(isNotNull(chargingProposals.deletedAt), lt(chargingProposals.deletedAt, before))!);
+}
+
+export async function getProposalDeletionAudits(limit = 100): Promise<ProposalDeletionAudit[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return await db.select().from(proposalDeletionAudits).orderBy(desc(proposalDeletionAudits.deletedAt)).limit(limit);
+}
+
+export async function getProposalGoal(sellerId: number, month: string): Promise<ProposalGoal | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  return (await db.select().from(proposalGoals).where(and(eq(proposalGoals.sellerId, sellerId), eq(proposalGoals.month, month))).limit(1))[0];
+}
+
+export async function upsertProposalGoal(input: { sellerId: number; month: string; targetProposals: number; targetCents: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para configurar a meta");
+  await db.insert(proposalGoals).values(input).onDuplicateKeyUpdate({ set: { targetProposals: input.targetProposals, targetCents: input.targetCents } });
+  return await getProposalGoal(input.sellerId, input.month);
 }
 
 export async function getUsersForRoleManagement() {

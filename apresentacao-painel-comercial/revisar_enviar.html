@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Revise antes de enviar ao cliente</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 64px 76px 0; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-top: 0; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; margin-top: 10px; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 900; letter-spacing: 2px; }
+    .content { display: grid; grid-template-columns: 720px 1fr; min-height: 470px; padding-top: 50px; }
+    .steps { position: relative; padding-left: 105px; }
+    .steps:before { content: ""; position: absolute; left: 31px; top: 16px; width: 2px; height: 315px; background: #253c7e; }
+    .step { position: relative; min-height: 110px; }
+    .step-number { position: absolute; left: -105px; top: 0; width: 64px; height: 64px; background: #ff6900; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; }
+    .step h2 { color: #253c7e; font-size: 27px; letter-spacing: -1px; line-height: 1; font-weight: 900; padding-top: 4px; }
+    .step p { color: #333333; font-size: 19px; line-height: 1.32; margin-top: 11px; max-width: 530px; }
+    .confirm { background: #253c7e; color: #ffffff; min-height: 430px; padding: 43px 38px 0; }
+    .confirm-kicker { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    .confirm h2 { font-size: 39px; line-height: .98; letter-spacing: -1.5px; font-weight: 900; margin-top: 22px; }
+    .confirm p { color: #e9eeff; font-size: 20px; line-height: 1.35; margin-top: 28px; }
+    .confirm-rule { width: 100%; height: 2px; background: #ff6900; margin-top: 39px; }
+    .confirm-note { color: #ffffff; font-size: 16px; font-weight: 700; line-height: 1.35; margin-top: 20px; }
+    .footer { color: #253c7e; border-top: 2px solid #ff6900; font-size: 20px; font-weight: 800; padding-top: 18px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <div><div class="eyebrow">Qualidade antes do envio</div><h1>Revise antes de enviar ao cliente</h1></div>
+      <div class="page">05 / 12</div>
+    </header>
+    <section class="content">
+      <div class="steps">
+        <article class="step"><div class="step-number">01</div><h2>Salve a proposta</h2><p>O salvamento registra a proposta no painel e gera o identificador necessário para as próximas ações.</p></article>
+        <article class="step"><div class="step-number">02</div><h2>Pré-visualize o PDF</h2><p>Confira escopo, valores, validade, componentes e apresentação comercial antes de confirmar o envio.</p></article>
+        <article class="step"><div class="step-number">03</div><h2>Envie com acompanhamento</h2><p>O painel informa o progresso da geração, o envio ao servidor de e-mail e qualquer erro que exija nova tentativa.</p></article>
+      </div>
+      <aside class="confirm">
+        <div class="confirm-kicker">Ponto de controle</div>
+        <h2>O envio só acontece depois da revisão.</h2>
+        <p>Essa etapa reduz divergências comerciais e assegura que a cliente receba uma proposta completa e atualizada.</p>
+        <div class="confirm-rule"></div>
+        <div class="confirm-note">Use a pré-visualização como aprovação interna antes de encaminhar a proposta.</div>
+      </aside>
+    </section>
+    <div class="footer">Salvar. Conferir. Enviar.</div>
+  </div>
+</body>
+</html>

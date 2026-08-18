@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Perfis definem responsabilidades claras</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 64px 76px 0; }
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #253c7e; padding-bottom: 26px; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { margin-top: 10px; color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; }
+    .page { font-size: 15px; font-weight: 800; letter-spacing: 2px; color: #253c7e; }
+    .roles { display: grid; grid-template-columns: 1fr 1fr; margin-top: 50px; min-height: 390px; }
+    .role { padding: 36px 45px 0; }
+    .admin { background: #253c7e; color: white; }
+    .seller { background: #ff6900; color: white; }
+    .role-tag { font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; opacity: .86; }
+    h2 { margin-top: 20px; font-size: 39px; line-height: 1; letter-spacing: -1.5px; font-weight: 900; }
+    ul { margin-top: 30px; padding-left: 20px; max-width: 410px; }
+    li { font-size: 20px; line-height: 1.45; margin-top: 10px; }
+    .rule { border-top: 2px solid #253c7e; margin-top: 42px; padding-top: 18px; font-size: 19px; color: #333; }
+    .rule strong { color: #253c7e; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header"><div><div class="eyebrow">Controle de acesso</div><h1>Perfis definem responsabilidades claras</h1></div><div class="page">03 / 12</div></header>
+    <section class="roles">
+      <article class="role admin"><div class="role-tag">Papel 01</div><h2>Administrador</h2><ul><li>Cria, edita, desativa e gerencia contas.</li><li>Visualiza a equipe e filtra propostas por vendedor.</li><li>Controla exclusões, lixeira e auditoria.</li></ul></article>
+      <article class="role seller"><div class="role-tag">Papel 02</div><h2>Vendedor</h2><ul><li>Elabora e salva as próprias propostas.</li><li>Revisa, envia e acompanha o aceite.</li><li>Monitora o histórico e a meta mensal.</li></ul></article>
+    </section>
+    <p class="rule"><strong>Regra comum:</strong> utilize contas individuais e senhas com no mínimo 16 caracteres para preservar a rastreabilidade comercial.</p>
+  </div>
+</body>
+</html>

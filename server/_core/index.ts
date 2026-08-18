@@ -9,6 +9,10 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { getProductImageDirectory } from "../productImageStorage";
+import { getMaintenanceJobByTaskUid, purgeChargingProposalsDeletedBefore } from "../db";
+import { sdk } from "./sdk";
+import { getProposalTrashRetentionCutoff } from "../proposalTrashRetention";
+import { isLoopbackAddress } from "../scheduledRequestSecurity";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -41,6 +45,34 @@ async function startServer() {
   app.use("/uploads/products", express.static(getProductImageDirectory(), { maxAge: "30d", fallthrough: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Manutenção diária: acessível somente pelo acionador agendado autenticado.
+  app.post("/api/scheduled/purge-proposal-trash", async (req, res) => {
+    try {
+      const localInvocation = isLoopbackAddress(req.socket.remoteAddress);
+      const user = await sdk.authenticateRequest(req).catch(() => null);
+      if (!localInvocation && (!user?.isCron || !user.taskUid)) {
+        res.status(403).json({ error: "Acesso restrito ao agendamento de manutenção" });
+        return;
+      }
+      if (!localInvocation && user?.taskUid) {
+        const scheduledJob = await getMaintenanceJobByTaskUid(user.taskUid);
+        if (!scheduledJob) {
+          res.json({ success: true, skipped: "Tarefa agendada sem registro ativo" });
+          return;
+        }
+        if (scheduledJob.jobKey !== "purge-proposal-trash") {
+          res.status(403).json({ error: "Tarefa não autorizada para a limpeza da lixeira" });
+          return;
+        }
+      }
+      const cutoff = getProposalTrashRetentionCutoff();
+      const purged = await purgeChargingProposalsDeletedBefore(cutoff);
+      res.json({ success: true, purged, cutoff: cutoff.toISOString() });
+    } catch (error) {
+      console.error("[Proposal trash cleanup] Falha na limpeza programada", error);
+      res.status(500).json({ error: "Falha ao limpar a lixeira de propostas" });
+    }
+  });
   // tRPC API
   app.use(
     "/api/trpc",

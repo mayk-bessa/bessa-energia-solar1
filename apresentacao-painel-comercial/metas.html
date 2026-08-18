@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Metas tornam progresso visível</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 62px 76px 0; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-top: 0; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { margin-top: 10px; color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 900; letter-spacing: 2px; padding-top: 4px; }
+    .content { display: grid; grid-template-columns: 720px 1fr; min-height: 432px; margin-top: 48px; }
+    .tracking { padding-right: 48px; }
+    .tracking h2 { color: #253c7e; font-size: 26px; line-height: 1; letter-spacing: -1px; font-weight: 900; }
+    .tracking-intro { margin-top: 16px; color: #333; font-size: 19px; line-height: 1.36; max-width: 595px; }
+    .metric { margin-top: 34px; }
+    .metric + .metric { margin-top: 31px; }
+    .metric-top { display: flex; justify-content: space-between; align-items: baseline; }
+    .metric-label { color: #253c7e; font-size: 21px; font-weight: 900; letter-spacing: -.5px; }
+    .metric-status { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; }
+    .track { position: relative; width: 640px; height: 34px; background: #d9d9d9; margin-top: 15px; }
+    .fill-orange { width: 62%; height: 34px; background: #ff6900; }
+    .fill-blue { width: 48%; height: 34px; background: #253c7e; }
+    .metric-note { margin-top: 13px; color: #555; font-size: 16px; line-height: 1.3; }
+    .method { background: #253c7e; color: #fff; min-height: 432px; padding: 36px 38px 0; }
+    .method-kicker { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    .method h2 { margin-top: 18px; font-size: 36px; line-height: 1; letter-spacing: -1.5px; font-weight: 900; }
+    .method-list { margin-top: 33px; }
+    .method-item { display: grid; grid-template-columns: 46px 1fr; gap: 16px; min-height: 77px; border-top: 2px solid rgba(255,255,255,.34); padding-top: 15px; }
+    .method-number { color: #ff6900; font-size: 20px; font-weight: 900; }
+    .method-copy { color: #ffffff; font-size: 18px; line-height: 1.28; font-weight: 700; }
+    .footer { border-top: 2px solid #ff6900; margin-top: 27px; padding-top: 18px; color: #253c7e; font-size: 21px; font-weight: 800; }
+    .footer strong { color: #ff6900; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <div><div class="eyebrow">Gestão individual</div><h1>Metas tornam progresso visível</h1></div>
+      <div class="page">09 / 12</div>
+    </header>
+    <section class="content">
+      <article class="tracking">
+        <h2>Duas metas. Uma leitura imediata.</h2>
+        <p class="tracking-intro">O painel acompanha o avanço comercial de cada vendedor por quantidade de propostas e por valor gerado no mês selecionado.</p>
+        <div class="metric">
+          <div class="metric-top"><div class="metric-label">Meta de propostas</div><div class="metric-status">Progresso atual</div></div>
+          <div class="track"><div class="fill-orange"></div></div>
+          <div class="metric-note">A barra compara as propostas geradas com o objetivo mensal definido.</div>
+        </div>
+        <div class="metric">
+          <div class="metric-top"><div class="metric-label">Meta de valor comercial</div><div class="metric-status">Progresso atual</div></div>
+          <div class="track"><div class="fill-blue"></div></div>
+          <div class="metric-note">A barra compara o valor acumulado das propostas com a meta financeira do período.</div>
+        </div>
+      </article>
+      <aside class="method">
+        <div class="method-kicker">Rotina de gestão</div>
+        <h2>Definir.<br />Acompanhar.<br />Ajustar.</h2>
+        <div class="method-list">
+          <div class="method-item"><div class="method-number">01</div><div class="method-copy">Configure a meta de quantidade e de valor para o mês.</div></div>
+          <div class="method-item"><div class="method-number">02</div><div class="method-copy">Revise as barras de progresso durante a semana.</div></div>
+          <div class="method-item"><div class="method-number">03</div><div class="method-copy">Ajuste prioridades conforme o histórico e as propostas pendentes.</div></div>
+        </div>
+      </aside>
+    </section>
+    <div class="footer"><strong>Boa prática:</strong> transforme o relatório mensal em uma conversa objetiva de evolução comercial.</div>
+  </div>
+</body>
+</html>

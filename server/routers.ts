@@ -10,8 +10,9 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, createLocalUserAccount, deleteChargingProposal, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getMonthlyProposalMetrics, getSentChargingProposalHistory, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
+import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposalBySignatureToken, getChargingProposals, getMonthlyProposalMetrics, getProposalDeletionAudits, getProposalGoal, getSentChargingProposalHistory, getTrashedChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, moveChargingProposalToTrash, restoreChargingProposal, setLocalSellerAccountActive, signChargingProposal, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole, upsertProposalGoal } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
+import { generateMonthlyProposalReportPdf } from "./monthlyProposalReportPdf";
 import { randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
 import { authenticateLocalUser, hashLocalPassword } from "./localAuth";
@@ -24,6 +25,21 @@ const chargingComponentSchema = z.object({
   unitPrice: z.number().min(0).max(10000000),
   imageUrl: z.string().max(2048).optional(),
 });
+
+const proposalStatusSchema = z.enum(["pending", "approved", "rejected"]);
+const reportMonthSchema = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/);
+const dateSchema = z.string().datetime().optional();
+const projectTypeSchema = z.enum(["solar", "ev_charging", "hybrid"]);
+const coverArtSchema = z.enum(["solar-home-vehicle", "photovoltaic", "ev-charging"]);
+
+function resolveSellerScope(ctx: { user: { id: number; role: string } }, requestedSellerId?: number) {
+  return ctx.user.role === "admin" ? requestedSellerId : ctx.user.id;
+}
+
+function csvEscape(value: string | number) {
+  const normalized = String(value).replace(/"/g, '""');
+  return /[;"\n]/.test(normalized) ? `"${normalized}"` : normalized;
+}
 
 export const appRouter = router({
   system: systemRouter,
@@ -207,23 +223,78 @@ export const appRouter = router({
   }),
 
   chargingProposals: router({
-    list: sellerProcedure.query(async ({ ctx }) => {
-      const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
+    getForSignature: publicProcedure
+      .input(z.object({ token: z.string().uuid() }))
+      .query(async ({ input }) => {
+        const proposal = await getChargingProposalBySignatureToken(input.token);
+        if (!proposal) throw new Error("Proposta não encontrada ou indisponível");
+        return proposal;
+      }),
+
+    signOnline: publicProcedure
+      .input(z.object({ token: z.string().uuid(), name: z.string().trim().min(2).max(255), email: z.string().trim().email() }))
+      .mutation(async ({ input }) => {
+        const proposal = await getChargingProposalBySignatureToken(input.token);
+        if (!proposal) throw new Error("Proposta não encontrada ou indisponível");
+        if (proposal.validUntil && proposal.validUntil.getTime() < Date.now()) throw new Error("Esta proposta está expirada e não pode mais ser aprovada online");
+        if (proposal.signedAt) return { success: true, alreadySigned: true, signedAt: proposal.signedAt };
+        if (proposal.clientEmail && proposal.clientEmail.toLowerCase() !== input.email.toLowerCase()) throw new Error("Use o mesmo e-mail informado na proposta para confirmar o aceite");
+        const signedAt = await signChargingProposal({ id: proposal.id, name: input.name, email: input.email });
+        return { success: true, alreadySigned: false, signedAt };
+      }),
+
+    list: sellerProcedure.input(z.object({ sellerId: z.number().int().positive().optional() }).optional()).query(async ({ ctx, input }) => {
+      const sellerId = resolveSellerScope(ctx, input?.sellerId);
       return await getChargingProposals({ sellerId, limit: 100 });
     }),
 
     sentHistory: sellerProcedure
-      .input(z.object({ search: z.string().trim().max(120).optional() }))
+      .input(z.object({ search: z.string().trim().max(120).optional(), status: proposalStatusSchema.optional(), startDate: dateSchema, endDate: dateSchema, sellerId: z.number().int().positive().optional() }))
       .query(async ({ input, ctx }) => {
-        const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
-        return await getSentChargingProposalHistory({ sellerId, search: input.search, limit: 100 });
+        const sellerId = resolveSellerScope(ctx, input.sellerId);
+        return await getSentChargingProposalHistory({ sellerId, search: input.search, status: input.status, startDate: input.startDate ? new Date(input.startDate) : undefined, endDate: input.endDate ? new Date(input.endDate) : undefined, limit: 100 });
       }),
 
     monthlyReport: sellerProcedure
-      .input(z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/) }))
+      .input(z.object({ month: reportMonthSchema, sellerId: z.number().int().positive().optional() }))
       .query(async ({ input, ctx }) => {
-        const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
+        const sellerId = resolveSellerScope(ctx, input.sellerId);
         return await getMonthlyProposalMetrics({ month: input.month, sellerId });
+      }),
+
+    exportMonthlyCsv: sellerProcedure
+      .input(z.object({ month: reportMonthSchema, sellerId: z.number().int().positive().optional() }))
+      .query(async ({ input, ctx }) => {
+        const sellerId = resolveSellerScope(ctx, input.sellerId);
+        const report = await getMonthlyProposalMetrics({ month: input.month, sellerId });
+        const header = ["Mês", "Vendedor", "Propostas geradas", "Propostas enviadas", "Valor gerado (R$)"];
+        const rows = report.bySeller.map((seller) => [report.month, seller.sellerName, seller.totalProposals, seller.sentProposals, (seller.totalCents / 100).toFixed(2).replace(".", ",")]);
+        return { filename: `relatorio-comercial-${report.month}.csv`, content: [header, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n") };
+      }),
+
+    exportMonthlyPdf: sellerProcedure
+      .input(z.object({ month: reportMonthSchema, sellerId: z.number().int().positive().optional() }))
+      .query(async ({ input, ctx }) => {
+        const sellerId = resolveSellerScope(ctx, input.sellerId);
+        const report = await getMonthlyProposalMetrics({ month: input.month, sellerId });
+        const sellerLabel = sellerId ? (report.bySeller[0]?.sellerName ?? "Vendedor") : "Equipe comercial";
+        const pdf = await generateMonthlyProposalReportPdf(report, sellerLabel);
+        return { filename: `relatorio-comercial-${report.month}.pdf`, dataUrl: `data:application/pdf;base64,${pdf.toString("base64")}` };
+      }),
+
+    monthlyGoal: sellerProcedure
+      .input(z.object({ month: reportMonthSchema, sellerId: z.number().int().positive().optional() }))
+      .query(async ({ input, ctx }) => {
+        const sellerId = resolveSellerScope(ctx, input.sellerId) ?? ctx.user.id;
+        return await getProposalGoal(sellerId, input.month);
+      }),
+
+    setMonthlyGoal: sellerProcedure
+      .input(z.object({ month: reportMonthSchema, sellerId: z.number().int().positive().optional(), targetProposals: z.number().int().min(0).max(10000), targetCents: z.number().int().min(0).max(1_000_000_000) }))
+      .mutation(async ({ input, ctx }) => {
+        const sellerId = resolveSellerScope(ctx, input.sellerId) ?? ctx.user.id;
+        const goal = await upsertProposalGoal({ sellerId, month: input.month, targetProposals: input.targetProposals, targetCents: input.targetCents });
+        return { success: true, goal };
       }),
 
     getById: sellerProcedure
@@ -244,6 +315,9 @@ export const appRouter = router({
         clientPhone: z.string().trim().max(20).optional(),
         sellerName: z.string().trim().max(255).optional(),
         components: z.array(chargingComponentSchema).min(1).max(100),
+        projectType: projectTypeSchema.optional(),
+        coverArt: coverArtSchema.optional(),
+        validUntil: dateSchema,
       }))
       .mutation(async ({ input, ctx }) => {
         const totalCents = Math.round(input.components.reduce(
@@ -260,6 +334,10 @@ export const appRouter = router({
           componentsJson: JSON.stringify(input.components),
           totalCents,
           status: "pending",
+          projectType: input.projectType ?? "ev_charging",
+          coverArt: input.coverArt ?? "solar-home-vehicle",
+          validUntil: input.validUntil ? new Date(input.validUntil) : new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+          signatureToken: randomUUID(),
         });
 
         return { success: true, proposalId: result.id, totalCents };
@@ -308,6 +386,10 @@ export const appRouter = router({
           componentsJson: source.componentsJson,
           totalCents: source.totalCents,
           status: "pending",
+          projectType: source.projectType,
+          coverArt: source.coverArt,
+          validUntil: source.validUntil,
+          signatureToken: randomUUID(),
         });
         return { success: true, proposalId: result.id };
       }),
@@ -323,13 +405,29 @@ export const appRouter = router({
       }),
 
     delete: adminProcedure
-      .input(z.object({ id: z.number().int().positive() }))
-      .mutation(async ({ input }) => {
+      .input(z.object({ id: z.number().int().positive(), reason: z.string().trim().max(500).optional() }))
+      .mutation(async ({ input, ctx }) => {
         const proposal = await getChargingProposalById(input.id);
         if (!proposal) throw new Error("Proposta não encontrada");
-        await deleteChargingProposal(input.id);
+        await moveChargingProposalToTrash({
+          proposal,
+          deletedBy: ctx.user.id,
+          deletedByName: ctx.user.name || "Administrador",
+          reason: input.reason,
+        });
         return { success: true };
       }),
+
+    listTrash: adminProcedure.query(async () => getTrashedChargingProposals()),
+
+    restoreFromTrash: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        await restoreChargingProposal(input.id);
+        return { success: true };
+      }),
+
+    listDeletionAudits: adminProcedure.query(async () => getProposalDeletionAudits()),
 
     sendEmail: sellerProcedure
       .input(z.object({ id: z.number().int().positive() }))
@@ -357,8 +455,14 @@ export const appRouter = router({
           components: parsedComponents.data,
           totalCents: proposal.totalCents,
           createdAt: proposal.createdAt,
+          projectType: proposal.projectType,
+          coverArt: proposal.coverArt as "solar-home-vehicle" | "photovoltaic" | "ev-charging",
+          validUntil: proposal.validUntil,
+          signedAt: proposal.signedAt,
+          signedByName: proposal.signedByName,
         });
-        const sent = await sendChargingProposalEmail(proposal.clientName, proposal.clientEmail, pdf, proposal.id);
+        const signatureUrl = proposal.signatureToken ? `https://bessaenergia.com.br/aceite-proposta/${proposal.signatureToken}` : undefined;
+        const sent = await sendChargingProposalEmail(proposal.clientName, proposal.clientEmail, pdf, proposal.id, signatureUrl);
         if (!sent) throw new Error("Não foi possível enviar o e-mail da proposta");
 
         await markChargingProposalAsSent(proposal.id);
@@ -380,6 +484,11 @@ export const appRouter = router({
           components: parsedComponents.data,
           totalCents: proposal.totalCents,
           createdAt: proposal.createdAt,
+          projectType: proposal.projectType,
+          coverArt: proposal.coverArt as "solar-home-vehicle" | "photovoltaic" | "ev-charging",
+          validUntil: proposal.validUntil,
+          signedAt: proposal.signedAt,
+          signedByName: proposal.signedByName,
         });
         return { dataUrl: `data:application/pdf;base64,${pdf.toString("base64")}` };
       }),

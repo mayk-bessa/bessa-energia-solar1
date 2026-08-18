@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crie propostas com dados comerciais completos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 64px 76px 0; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-top: 0; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { margin-top: 10px; color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; max-width: 850px; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 800; letter-spacing: 2px; }
+    /* Reduced top gap and min-height to avoid overflow while keeping typography unchanged */
+    .steps { display: grid; grid-template-columns: 1.08fr 1.08fr 1.08fr 1fr; min-height: 200px; margin-top: 28px; }
+    .step { position: relative; padding: 0 28px; }
+    .step:first-child { padding-left: 0; }
+    .step + .step { border-left: 2px solid #253c7e; }
+    .index { color: #ff6900; font-size: 44px; font-weight: 900; letter-spacing: -2px; }
+    h2 { margin-top: 20px; color: #253c7e; font-size: 27px; line-height: 1.04; letter-spacing: -1px; font-weight: 900; }
+    p { margin-top: 18px; color: #333; font-size: 18px; line-height: 1.38; max-width: 210px; }
+    .marker { position: absolute; top: 0; right: -9px; width: 16px; height: 16px; background: #ff6900; }
+    .step:last-child .marker { display: none; }
+    .footer { margin-top: 20px; min-height: 88px; background: #253c7e; color: #ffffff; display: flex; align-items: center; padding: 0 32px; font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+    .footer strong { color: #ff6900; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <div><div class="eyebrow">Elaboração</div><h1>Crie propostas com dados comerciais completos</h1></div>
+      <div class="page">04 / 12</div>
+    </header>
+    <section class="steps">
+      <article class="step"><div class="index">01</div><h2>Cliente e contato</h2><p>Registre nome, e-mail, telefone e vendedor responsável.</p><div class="marker"></div></article>
+      <article class="step"><div class="index">02</div><h2>Escopo e valores</h2><p>Inclua componentes, quantidades, imagens e valores unitários.</p><div class="marker"></div></article>
+      <article class="step"><div class="index">03</div><h2>Projeto e capa</h2><p>Selecione solar, recarga veicular ou híbrido e a arte correspondente.</p><div class="marker"></div></article>
+      <article class="step"><div class="index">04</div><h2>Validade e salvamento</h2><p>Defina a data final da proposta e salve para gerar o identificador comercial.</p><div class="marker"></div></article>
+    </section>
+    <div class="footer"><strong>Resultado:</strong> uma proposta pronta para revisão, prévia em PDF e envio seguro.</div>
+  </div>
+</body>
+</html>

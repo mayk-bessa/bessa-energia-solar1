@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lixeira e auditoria protegem o histórico</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 62px 76px 0; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-top: 0; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2.2px; text-transform: uppercase; }
+    h1 { color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; margin-top: 10px; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 900; letter-spacing: 2px; padding-top: 4px; }
+    .intro { margin-top: 25px; color: #333; font-size: 20px; line-height: 1.34; max-width: 820px; }
+    .chain { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 46px; min-height: 285px; border-top: 2px solid #ff6900; }
+    .stage { padding: 31px 34px 0; position: relative; }
+    .stage:first-child { padding-left: 0; }
+    .stage + .stage { border-left: 2px solid #253c7e; }
+    .stage-index { color: #ff6900; font-size: 42px; line-height: .9; font-weight: 900; letter-spacing: -2px; }
+    h2 { color: #253c7e; font-size: 27px; line-height: 1.04; letter-spacing: -1px; font-weight: 900; margin-top: 22px; }
+    .stage p { color: #333; font-size: 18px; line-height: 1.38; margin-top: 15px; max-width: 280px; }
+    .chain-marker { position: absolute; top: -9px; right: -9px; width: 16px; height: 16px; background: #ff6900; }
+    .stage:last-child .chain-marker { display: none; }
+    .security { display: grid; grid-template-columns: 236px 1fr; min-height: 126px; margin-top: 36px; background: #253c7e; color: #ffffff; }
+    .security-label { color: #ff6900; border-right: 2px solid #ff6900; padding: 31px 28px 0; font-size: 15px; font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase; }
+    .security-copy { padding: 26px 34px 0; font-size: 23px; line-height: 1.27; font-weight: 700; }
+    .security-copy strong { color: #ff6900; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <div>
+        <div class="eyebrow">Governança comercial</div>
+        <h1>Lixeira e auditoria protegem o histórico</h1>
+      </div>
+      <div class="page">10 / 12</div>
+    </header>
+    <p class="intro">A exclusão de propostas é controlada, reversível e registrada para preservar o contexto comercial da equipe.</p>
+    <section class="chain" aria-label="Fluxo de governança da exclusão de propostas">
+      <article class="stage">
+        <div class="stage-index">01</div>
+        <h2>Exclusão restrita</h2>
+        <p>Somente administradores podem mover uma proposta para a lixeira.</p>
+        <div class="chain-marker"></div>
+      </article>
+      <article class="stage">
+        <div class="stage-index">02</div>
+        <h2>Lixeira por 30 dias</h2>
+        <p>A proposta continua disponível para restauração antes da remoção definitiva.</p>
+        <div class="chain-marker"></div>
+      </article>
+      <article class="stage">
+        <div class="stage-index">03</div>
+        <h2>Auditoria rastreável</h2>
+        <p>O painel registra responsável, data e motivo da movimentação.</p>
+        <div class="chain-marker"></div>
+      </article>
+    </section>
+    <section class="security">
+      <div class="security-label">Princípio</div>
+      <div class="security-copy"><strong>Excluir não é apagar imediatamente.</strong> A operação mantém uma janela de recuperação e um registro administrativo verificável.</div>
+    </section>
+  </div>
+</body>
+</html>

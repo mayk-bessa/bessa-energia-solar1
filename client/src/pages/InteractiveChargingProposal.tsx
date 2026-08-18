@@ -5,7 +5,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { calculateLineTotal, calculateProposalTotal, type ProposalComponent } from "@/lib/proposalCalculator";
 import { formatBrlCurrencyInput, parseBrlCurrencyInput } from "@/lib/currencyMask";
-import { AlertCircle, ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, Loader2, LockKeyhole, Minus, Plus, RefreshCw, Save, Send, Trash2, X } from "lucide-react";
+import { AlertCircle, ArchiveRestore, ArrowLeft, Calculator, CheckCircle2, CirclePlus, ClipboardCheck, Download, Eye, FileDown, FileImage, ImagePlus, Link2, Loader2, LockKeyhole, Minus, Plus, RefreshCw, Save, Send, Target, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
@@ -16,6 +16,12 @@ const INITIAL_COMPONENTS: ProposalComponent[] = [
 ];
 
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const DEFAULT_VALID_UNTIL = () => new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+const COVER_ART_OPTIONS = [
+  { value: "solar-home-vehicle", label: "Solar + veículo", description: "Casa, geração solar e mobilidade elétrica.", image: "/manus-storage/capa-proposta-hibrida_7c530a92.png" },
+  { value: "photovoltaic", label: "Fotovoltaico", description: "Usinas solares para residências e empresas.", image: "/manus-storage/capa-proposta-fotovoltaica_5c09c052.png" },
+  { value: "ev-charging", label: "Recarga veicular", description: "Soluções para carros elétricos e Wallbox.", image: "/manus-storage/capa-proposta-carregamento_540f77e1.png" },
+] as const;
 
 function readImageAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
@@ -33,6 +39,9 @@ export default function InteractiveChargingProposal() {
   const [clientPhone, setClientPhone] = useState("");
   const [sellerName, setSellerName] = useState("");
   const [components, setComponents] = useState<ProposalComponent[]>(INITIAL_COMPONENTS);
+  const [projectType, setProjectType] = useState<"solar" | "ev_charging" | "hybrid">("ev_charging");
+  const [coverArt, setCoverArt] = useState<"solar-home-vehicle" | "photovoltaic" | "ev-charging">("solar-home-vehicle");
+  const [validUntil, setValidUntil] = useState(DEFAULT_VALID_UNTIL);
   const [lastSavedProposalId, setLastSavedProposalId] = useState<number | null>(null);
   const [uploadingComponentId, setUploadingComponentId] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<{ url: string; name: string } | null>(null);
@@ -48,16 +57,37 @@ export default function InteractiveChargingProposal() {
   const [editingSellerEmail, setEditingSellerEmail] = useState("");
   const [editingSellerPassword, setEditingSellerPassword] = useState("");
   const [historySearch, setHistorySearch] = useState("");
+  const [historyStatus, setHistoryStatus] = useState<"pending" | "approved" | "rejected" | "">("");
+  const [historyStartDate, setHistoryStartDate] = useState("");
+  const [historyEndDate, setHistoryEndDate] = useState("");
+  const [sellerFilter, setSellerFilter] = useState("");
   const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [goalTargetProposals, setGoalTargetProposals] = useState("0");
+  const [goalTargetValue, setGoalTargetValue] = useState("0");
   const [emailDeliveryFeedback, setEmailDeliveryFeedback] = useState<{ status: "sending" | "success" | "error"; message: string } | null>(null);
   const total = useMemo(() => calculateProposalTotal(components), [components]);
   const hasSellerAccess = user?.role === "admin" || user?.role === "seller";
-  const historyInput = useMemo(() => ({ search: historySearch.trim() || undefined }), [historySearch]);
-  const reportInput = useMemo(() => ({ month: reportMonth }), [reportMonth]);
-  const savedProposals = trpc.chargingProposals.list.useQuery(undefined, { enabled: hasSellerAccess });
+  const selectedSellerId = sellerFilter ? Number(sellerFilter) : undefined;
+  const sellerScopeInput = useMemo(() => selectedSellerId ? { sellerId: selectedSellerId } : {}, [selectedSellerId]);
+  const historyInput = useMemo(() => ({
+    ...sellerScopeInput,
+    search: historySearch.trim() || undefined,
+    status: historyStatus || undefined,
+    startDate: historyStartDate ? new Date(`${historyStartDate}T00:00:00`).toISOString() : undefined,
+    endDate: historyEndDate ? new Date(`${historyEndDate}T23:59:59`).toISOString() : undefined,
+  }), [sellerScopeInput, historySearch, historyStatus, historyStartDate, historyEndDate]);
+  const reportInput = useMemo(() => ({ month: reportMonth, ...sellerScopeInput }), [reportMonth, sellerScopeInput]);
+  const savedProposals = trpc.chargingProposals.list.useQuery(sellerScopeInput, { enabled: hasSellerAccess });
   const sentHistory = trpc.chargingProposals.sentHistory.useQuery(historyInput, { enabled: hasSellerAccess });
   const monthlyReport = trpc.chargingProposals.monthlyReport.useQuery(reportInput, { enabled: hasSellerAccess });
+  const monthlyGoal = trpc.chargingProposals.monthlyGoal.useQuery(reportInput, { enabled: hasSellerAccess && (user?.role !== "admin" || Boolean(selectedSellerId)) });
+  const exportMonthlyCsv = trpc.chargingProposals.exportMonthlyCsv.useQuery(reportInput, { enabled: false });
+  const exportMonthlyPdf = trpc.chargingProposals.exportMonthlyPdf.useQuery(reportInput, { enabled: false });
+  const trashedProposals = trpc.chargingProposals.listTrash.useQuery(undefined, { enabled: user?.role === "admin" });
+  const deletionAudits = trpc.chargingProposals.listDeletionAudits.useQuery(undefined, { enabled: user?.role === "admin" });
   const teamUsers = trpc.salesTeam.listUsers.useQuery(undefined, { enabled: user?.role === "admin" });
+  const proposalGoalProgress = monthlyGoal.data?.targetProposals ? Math.min(100, Math.round(((monthlyReport.data?.totalProposals ?? 0) / monthlyGoal.data.targetProposals) * 100)) : 0;
+  const revenueGoalProgress = monthlyGoal.data?.targetCents ? Math.min(100, Math.round(((monthlyReport.data?.totalCents ?? 0) / monthlyGoal.data.targetCents) * 100)) : 0;
   const pdfPreview = trpc.chargingProposals.previewPdf.useQuery({ id: lastSavedProposalId ?? 1 }, {
     enabled: pdfPreviewOpen && Boolean(lastSavedProposalId),
     retry: false,
@@ -72,6 +102,12 @@ export default function InteractiveChargingProposal() {
   useEffect(() => {
     if (pdfPreview.data?.dataUrl) setHasPreviewedCurrentProposal(true);
   }, [pdfPreview.data?.dataUrl]);
+  useEffect(() => {
+    if (monthlyGoal.data) {
+      setGoalTargetProposals(String(monthlyGoal.data.targetProposals));
+      setGoalTargetValue(String(monthlyGoal.data.targetCents / 100));
+    }
+  }, [monthlyGoal.data]);
   const saveProposal = trpc.chargingProposals.save.useMutation({
     onSuccess: async (result) => {
       setLastSavedProposalId(result.proposalId);
@@ -163,9 +199,26 @@ export default function InteractiveChargingProposal() {
       await savedProposals.refetch();
       await sentHistory.refetch();
       await monthlyReport.refetch();
-      toast.success("Proposta excluída permanentemente.");
+      await trashedProposals.refetch();
+      await deletionAudits.refetch();
+      toast.success("Proposta enviada para a lixeira por 30 dias.");
     },
     onError: (error) => toast.error(error.message || "Não foi possível excluir a proposta."),
+  });
+  const restoreProposal = trpc.chargingProposals.restoreFromTrash.useMutation({
+    onSuccess: async () => {
+      await trashedProposals.refetch();
+      await savedProposals.refetch();
+      toast.success("Proposta restaurada para o painel.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível restaurar a proposta."),
+  });
+  const setMonthlyGoal = trpc.chargingProposals.setMonthlyGoal.useMutation({
+    onSuccess: async () => {
+      await monthlyGoal.refetch();
+      toast.success("Meta mensal atualizada.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível salvar a meta."),
   });
   const uploadProductImage = trpc.chargingProposals.uploadProductImage.useMutation();
 
@@ -176,6 +229,9 @@ export default function InteractiveChargingProposal() {
     setClientPhone("");
     setSellerName(user?.name || "");
     setComponents(INITIAL_COMPONENTS.map((component) => ({ ...component, id: crypto.randomUUID(), unitPrice: 0, imageUrl: undefined })));
+    setProjectType("ev_charging");
+    setCoverArt("solar-home-vehicle");
+    setValidUntil(DEFAULT_VALID_UNTIL());
     setLastSavedProposalId(null);
     setPdfPreviewOpen(false);
     setHasPreviewedCurrentProposal(false);
@@ -184,7 +240,7 @@ export default function InteractiveChargingProposal() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const cloneProposalForEditing = (proposal: { clientName: string; clientEmail: string | null; clientPhone: string | null; sellerName: string; componentsJson: string }) => {
+  const cloneProposalForEditing = (proposal: { clientName: string; clientEmail: string | null; clientPhone: string | null; sellerName: string; componentsJson: string; projectType?: string; coverArt?: string; validUntil?: Date | null }) => {
     try {
       const sourceComponents = JSON.parse(proposal.componentsJson);
       if (!Array.isArray(sourceComponents)) throw new Error("Itens inválidos");
@@ -193,6 +249,9 @@ export default function InteractiveChargingProposal() {
       setClientPhone(proposal.clientPhone || "");
       setSellerName(user?.name || proposal.sellerName);
       setComponents(sourceComponents.map((component: ProposalComponent) => ({ ...component, id: crypto.randomUUID() })));
+      setProjectType(proposal.projectType === "solar" || proposal.projectType === "hybrid" ? proposal.projectType : "ev_charging");
+      setCoverArt(proposal.coverArt === "photovoltaic" || proposal.coverArt === "ev-charging" ? proposal.coverArt : "solar-home-vehicle");
+      setValidUntil(proposal.validUntil ? new Date(proposal.validUntil).toISOString().slice(0, 10) : DEFAULT_VALID_UNTIL());
       setLastSavedProposalId(null);
       setPdfPreviewOpen(false);
       setHasPreviewedCurrentProposal(false);
@@ -249,6 +308,45 @@ export default function InteractiveChargingProposal() {
       clientPhone: clientPhone.trim() || undefined,
       sellerName: sellerName.trim() || undefined,
       components,
+      projectType,
+      coverArt,
+      validUntil: new Date(`${validUntil}T23:59:59`).toISOString(),
+    });
+  };
+
+  const downloadBlob = (content: BlobPart, filename: string, type: string) => {
+    const href = URL.createObjectURL(new Blob([content], { type }));
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(href);
+  };
+
+  const handleCsvExport = async () => {
+    const result = await exportMonthlyCsv.refetch();
+    if (!result.data) return toast.error("Não foi possível exportar o CSV.");
+    downloadBlob(`\uFEFF${result.data.content}`, result.data.filename, "text/csv;charset=utf-8");
+  };
+
+  const handlePdfExport = async () => {
+    const result = await exportMonthlyPdf.refetch();
+    if (!result.data) return toast.error("Não foi possível exportar o PDF.");
+    const anchor = document.createElement("a");
+    anchor.href = result.data.dataUrl;
+    anchor.download = result.data.filename;
+    anchor.click();
+  };
+
+  const handleSaveMonthlyGoal = () => {
+    if (user?.role === "admin" && !selectedSellerId) {
+      toast.error("Selecione um vendedor no filtro para configurar a meta individual.");
+      return;
+    }
+    setMonthlyGoal.mutate({
+      ...reportInput,
+      targetProposals: Math.max(0, Number.parseInt(goalTargetProposals || "0", 10) || 0),
+      targetCents: Math.max(0, Math.round((Number.parseFloat(goalTargetValue.replace(",", ".")) || 0) * 100)),
     });
   };
 
@@ -399,6 +497,29 @@ export default function InteractiveChargingProposal() {
             <Label htmlFor="client-phone" className="font-semibold text-[#253c7e]">Telefone da cliente</Label>
             <Input id="client-phone" value={clientPhone} onChange={(event) => setClientPhone(event.target.value)} placeholder="(31) 99999-9999" />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="project-type" className="font-semibold text-[#253c7e]">Tipo de projeto</Label>
+            <select id="project-type" value={projectType} onChange={(event) => setProjectType(event.target.value as "solar" | "ev_charging" | "hybrid")} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#253c7e]">
+              <option value="ev_charging">Recarga veicular</option>
+              <option value="solar">Sistema fotovoltaico</option>
+              <option value="hybrid">Solar + recarga veicular</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="proposal-valid-until" className="font-semibold text-[#253c7e]">Válida até</Label>
+            <Input id="proposal-valid-until" type="date" value={validUntil} min={new Date().toISOString().slice(0, 10)} onChange={(event) => setValidUntil(event.target.value)} required />
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm print:hidden">
+          <div className="mb-4"><h3 className="font-bold text-[#253c7e]">Arte de capa da proposta</h3><p className="mt-1 text-sm text-slate-500">Selecione a imagem principal que melhor representa a solução comercial.</p></div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {COVER_ART_OPTIONS.map((option) => <label key={option.value} className={`cursor-pointer overflow-hidden rounded-xl border-2 transition ${coverArt === option.value ? "border-[#ff6900] ring-2 ring-orange-100" : "border-slate-200 hover:border-blue-300"}`}>
+              <input className="sr-only" type="radio" name="cover-art" value={option.value} checked={coverArt === option.value} onChange={() => setCoverArt(option.value)} />
+              <img src={option.image} alt="" className="h-28 w-full object-cover" />
+              <span className="block p-3"><span className="block font-semibold text-[#253c7e]">{option.label}</span><span className="mt-1 block text-xs leading-relaxed text-slate-500">{option.description}</span></span>
+            </label>)}
+          </div>
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
@@ -495,6 +616,7 @@ export default function InteractiveChargingProposal() {
                   <div>
                     <p className="font-semibold text-slate-900">{proposal.clientName}</p>
                     <p className="text-sm text-slate-500">{proposal.sellerName} · {new Date(proposal.createdAt).toLocaleDateString("pt-BR")}</p>
+                    <p className={`mt-1 text-xs font-semibold ${proposal.signedAt ? "text-emerald-700" : "text-slate-500"}`}>{proposal.signedAt ? `Aceite eletrônico em ${new Date(proposal.signedAt).toLocaleDateString("pt-BR")}` : "Aguardando aceite eletrônico"}</p>
                   </div>
                   <select aria-label={`Status da proposta de ${proposal.clientName}`} value={proposal.status} onChange={(event) => updateProposalStatus.mutate({ id: proposal.id, status: event.target.value as "pending" | "approved" | "rejected" })} disabled={updateProposalStatus.isPending} className={`h-8 rounded-full border-0 px-2.5 text-xs font-bold ${proposal.status === "approved" ? "bg-emerald-100 text-emerald-700" : proposal.status === "rejected" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-800"}`}>
                     <option value="pending">Pendente</option>
@@ -502,7 +624,7 @@ export default function InteractiveChargingProposal() {
                     <option value="rejected">Recusada</option>
                   </select>
                   <p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p>
-                  <div className="flex flex-wrap justify-end gap-2"><Button onClick={() => cloneProposalForEditing(proposal)} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Clonar e editar</Button><Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">Duplicar</Button>{user?.role === "admin" && <Button onClick={() => { if (window.confirm(`Excluir permanentemente a proposta #${proposal.id} de ${proposal.clientName}? Esta ação não pode ser desfeita.`)) deleteProposal.mutate({ id: proposal.id }); }} disabled={deleteProposal.isPending} variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">Excluir</Button>}</div>
+                  <div className="flex flex-wrap justify-end gap-2"><Button onClick={() => cloneProposalForEditing(proposal)} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Clonar e editar</Button><Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">Duplicar</Button>{proposal.signatureToken && <a href={`/aceite-proposta/${proposal.signatureToken}`} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-md border border-[#253c7e] px-3 text-sm font-semibold text-[#253c7e] transition hover:bg-blue-50"><Link2 className="mr-2 h-4 w-4" />Aceite</a>}{user?.role === "admin" && <Button onClick={() => { if (window.confirm(`Mover a proposta #${proposal.id} de ${proposal.clientName} para a lixeira? Ela ficará disponível para restauração por 30 dias.`)) deleteProposal.mutate({ id: proposal.id }); }} disabled={deleteProposal.isPending} variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">Excluir</Button>}</div>
                 </div>
               ))}
             </div>
@@ -512,17 +634,41 @@ export default function InteractiveChargingProposal() {
         </section>
 
         <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
-          <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between">
-            <div><h3 className="font-bold text-[#253c7e]">Histórico de propostas enviadas</h3><p className="text-sm text-slate-500">Consulte os envios realizados por cliente, e-mail ou vendedor.</p></div>
-            <div className="w-full md:max-w-sm"><Label htmlFor="proposal-history-search" className="sr-only">Pesquisar histórico</Label><Input id="proposal-history-search" value={historySearch} onChange={(event) => setHistorySearch(event.target.value)} placeholder="Buscar cliente, e-mail ou vendedor" /></div>
+          <div className="grid gap-3 border-b border-slate-200 bg-slate-50 px-5 py-4 lg:grid-cols-[1fr_13rem_10rem_10rem_12rem] lg:items-end">
+            <div><h3 className="font-bold text-[#253c7e]">Histórico de propostas enviadas</h3><p className="text-sm text-slate-500">Consulte os envios por cliente, e-mail, status, período ou vendedor.</p></div>
+            <div className="space-y-1"><Label htmlFor="proposal-history-search" className="text-xs">Pesquisar</Label><Input id="proposal-history-search" value={historySearch} onChange={(event) => setHistorySearch(event.target.value)} placeholder="Cliente ou e-mail" /></div>
+            <div className="space-y-1"><Label htmlFor="history-status" className="text-xs">Status</Label><select id="history-status" value={historyStatus} onChange={(event) => setHistoryStatus(event.target.value as typeof historyStatus)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Todos</option><option value="pending">Pendente</option><option value="approved">Aprovada</option><option value="rejected">Recusada</option></select></div>
+            <div className="space-y-1"><Label htmlFor="history-start-date" className="text-xs">De</Label><Input id="history-start-date" type="date" value={historyStartDate} onChange={(event) => setHistoryStartDate(event.target.value)} /></div>
+            <div className="space-y-1"><Label htmlFor="history-end-date" className="text-xs">Até</Label><Input id="history-end-date" type="date" value={historyEndDate} onChange={(event) => setHistoryEndDate(event.target.value)} /></div>
+            {user?.role === "admin" && <div className="space-y-1 lg:col-start-2"><Label htmlFor="seller-filter" className="text-xs">Vendedor</Label><select id="seller-filter" value={sellerFilter} onChange={(event) => setSellerFilter(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Toda a equipe</option>{teamUsers.data?.filter((member) => member.role === "seller").map((member) => <option value={member.id} key={member.id}>{member.name || member.email || `Vendedor #${member.id}`}</option>)}</select></div>}
           </div>
           {sentHistory.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Carregando histórico de envios…</p> : sentHistory.data?.length ? <div className="divide-y divide-slate-100">{sentHistory.data.map((proposal) => <div key={proposal.id} className="grid gap-3 px-5 py-4 md:grid-cols-[1fr_auto_auto] md:items-center"><div><p className="font-semibold text-slate-900">{proposal.clientName}</p><p className="text-sm text-slate-500">{proposal.clientEmail || "E-mail não informado"} · {proposal.sellerName}</p><p className="mt-1 text-xs font-medium text-emerald-700">Enviada em {proposal.sentAt ? new Date(proposal.sentAt).toLocaleString("pt-BR") : "—"}</p></div><p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p><Button type="button" variant="outline" size="sm" onClick={() => { setLastSavedProposalId(proposal.id); setPdfPreviewOpen(true); }} className="border-[#253c7e] text-[#253c7e]"><Eye className="mr-2 h-4 w-4" />Ver PDF</Button></div>)}</div> : <p className="px-5 py-6 text-sm text-slate-500">Nenhuma proposta enviada corresponde à pesquisa.</p>}
         </section>
 
         <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
-          <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between"><div><h3 className="font-bold text-[#253c7e]">{user?.role === "admin" ? "Relatório mensal da equipe" : "Meu relatório mensal"}</h3><p className="text-sm text-slate-500">Volume de propostas criadas, enviadas e valores do período.</p></div><div><Label htmlFor="proposal-report-month" className="sr-only">Mês do relatório</Label><Input id="proposal-report-month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} className="w-full md:w-44" /></div></div>
+          <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between"><div><h3 className="font-bold text-[#253c7e]">{user?.role === "admin" ? "Relatório mensal da equipe" : "Meu relatório mensal"}</h3><p className="text-sm text-slate-500">Volume de propostas criadas, enviadas e valores do período.</p></div><div className="flex flex-wrap items-end gap-2"><div><Label htmlFor="proposal-report-month" className="sr-only">Mês do relatório</Label><Input id="proposal-report-month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} className="w-full md:w-44" /></div><Button type="button" variant="outline" onClick={() => void handleCsvExport()} disabled={exportMonthlyCsv.isFetching} className="border-[#253c7e] text-[#253c7e]"><Download className="mr-2 h-4 w-4" />CSV</Button><Button type="button" variant="outline" onClick={() => void handlePdfExport()} disabled={exportMonthlyPdf.isFetching} className="border-[#ff6900] text-[#ff6900]"><FileDown className="mr-2 h-4 w-4" />PDF</Button></div></div>
           {monthlyReport.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Calculando relatório mensal…</p> : monthlyReport.data && <div className="p-5"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div className="rounded-xl bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-blue-700">Propostas geradas</p><p className="mt-1 text-2xl font-bold text-[#253c7e]">{monthlyReport.data.totalProposals}</p></div><div className="rounded-xl bg-emerald-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Enviadas</p><p className="mt-1 text-2xl font-bold text-emerald-800">{monthlyReport.data.sentProposals}</p></div><div className="rounded-xl bg-amber-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-amber-700">Pendentes</p><p className="mt-1 text-2xl font-bold text-amber-800">{monthlyReport.data.pendingProposals}</p></div><div className="rounded-xl bg-orange-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-orange-700">Valor gerado</p><p className="mt-1 text-xl font-bold text-[#ff6900]">{currency.format(monthlyReport.data.totalCents / 100)}</p></div></div>{user?.role === "admin" && <div className="mt-5 overflow-x-auto"><table className="w-full text-left text-sm"><caption className="mb-2 text-left font-bold text-[#253c7e]">Resultado por vendedor</caption><thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-2 py-2">Vendedor</th><th className="px-2 py-2 text-right">Geradas</th><th className="px-2 py-2 text-right">Enviadas</th><th className="px-2 py-2 text-right">Valor</th></tr></thead><tbody>{monthlyReport.data.bySeller.map((seller) => <tr key={seller.sellerId} className="border-b border-slate-100"><td className="px-2 py-3 font-medium text-slate-800">{seller.sellerName}</td><td className="px-2 py-3 text-right">{seller.totalProposals}</td><td className="px-2 py-3 text-right">{seller.sentProposals}</td><td className="px-2 py-3 text-right font-semibold text-[#253c7e]">{currency.format(seller.totalCents / 100)}</td></tr>)}</tbody></table></div>}</div>}
         </section>
+
+        <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
+          <div className="flex flex-col gap-2 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between"><div><h3 className="flex items-center gap-2 font-bold text-[#253c7e]"><Target className="h-5 w-5 text-[#ff6900]" />Meta mensal</h3><p className="mt-1 text-sm text-slate-500">Acompanhe o volume e o valor comercial gerado no mês selecionado.</p></div>{user?.role === "admin" && !selectedSellerId && <p className="text-sm font-medium text-amber-800">Selecione um vendedor para definir uma meta individual.</p>}</div>
+          <div className="grid gap-5 p-5 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
+            <div className="space-y-2"><Label htmlFor="goal-proposals">Meta de propostas</Label><Input id="goal-proposals" type="number" min="0" value={goalTargetProposals} onChange={(event) => setGoalTargetProposals(event.target.value)} /><div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#ff6900] transition-all" style={{ width: `${proposalGoalProgress}%` }} /></div><p className="text-xs text-slate-500">{monthlyReport.data?.totalProposals ?? 0} de {monthlyGoal.data?.targetProposals ?? 0} propostas ({proposalGoalProgress}%)</p></div>
+            <div className="space-y-2"><Label htmlFor="goal-value">Meta de valor (R$)</Label><Input id="goal-value" inputMode="decimal" value={goalTargetValue} onChange={(event) => setGoalTargetValue(event.target.value)} /><div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-[#253c7e] transition-all" style={{ width: `${revenueGoalProgress}%` }} /></div><p className="text-xs text-slate-500">{currency.format((monthlyReport.data?.totalCents ?? 0) / 100)} de {currency.format((monthlyGoal.data?.targetCents ?? 0) / 100)} ({revenueGoalProgress}%)</p></div>
+            <Button type="button" onClick={handleSaveMonthlyGoal} disabled={setMonthlyGoal.isPending || (user?.role === "admin" && !selectedSellerId)} className="bg-[#ff6900] hover:bg-[#e35e00]">{setMonthlyGoal.isPending ? "Salvando…" : "Salvar meta"}</Button>
+          </div>
+        </section>
+
+        {user?.role === "admin" && <>
+          <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
+            <div className="border-b border-slate-200 bg-slate-50 px-5 py-4"><h3 className="flex items-center gap-2 font-bold text-[#253c7e]"><ArchiveRestore className="h-5 w-5 text-[#ff6900]" />Lixeira temporária</h3><p className="mt-1 text-sm text-slate-500">Propostas excluídas permanecem disponíveis para restauração por até 30 dias.</p></div>
+            {trashedProposals.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Carregando lixeira…</p> : trashedProposals.data?.length ? <div className="divide-y divide-slate-100">{trashedProposals.data.map((proposal) => <div key={proposal.id} className="flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between"><div><p className="font-semibold text-slate-900">{proposal.clientName}</p><p className="text-sm text-slate-500">Excluída em {proposal.deletedAt ? new Date(proposal.deletedAt).toLocaleString("pt-BR") : "—"} · {proposal.sellerName}</p><p className="mt-1 text-xs text-slate-500">{proposal.deletionReason || "Sem motivo informado"}</p></div><Button type="button" variant="outline" onClick={() => restoreProposal.mutate({ id: proposal.id })} disabled={restoreProposal.isPending} className="border-[#253c7e] text-[#253c7e]"><ArchiveRestore className="mr-2 h-4 w-4" />Restaurar</Button></div>)}</div> : <p className="px-5 py-6 text-sm text-slate-500">A lixeira está vazia.</p>}
+          </section>
+          <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
+            <div className="border-b border-slate-200 bg-slate-50 px-5 py-4"><h3 className="flex items-center gap-2 font-bold text-[#253c7e]"><ClipboardCheck className="h-5 w-5 text-[#ff6900]" />Auditoria de exclusões</h3><p className="mt-1 text-sm text-slate-500">Registro administrativo das movimentações de propostas para a lixeira.</p></div>
+            {deletionAudits.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Carregando auditoria…</p> : deletionAudits.data?.length ? <div className="divide-y divide-slate-100">{deletionAudits.data.map((audit) => <div key={audit.id} className="px-5 py-4"><p className="font-semibold text-slate-900">Proposta #{audit.proposalId} · {audit.clientName}</p><p className="text-sm text-slate-500">Excluída por {audit.deletedByName} em {new Date(audit.deletedAt).toLocaleString("pt-BR")}</p>{audit.reason && <p className="mt-1 text-sm text-slate-600">Motivo: {audit.reason}</p>}</div>)}</div> : <p className="px-5 py-6 text-sm text-slate-500">Ainda não há exclusões registradas.</p>}
+          </section>
+        </>}
 
         {user?.role === "admin" && (
           <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">

@@ -571,6 +571,23 @@
 - [x] Permitir exclusão permanente de propostas somente para administradores, com confirmação explícita
 - [x] Cobrir a exclusão administrativa de propostas com testes de autorização e integridade
 
+## Ampliação do painel comercial e governança
+
+- [x] Gerar apresentação em slides com o passo a passo de gestão de vendedores e propostas
+- [x] Manter histórico pesquisável de propostas enviadas aos clientes
+- [x] Manter feedback visual de carregamento, sucesso e erro no envio por e-mail
+- [x] Manter relatório mensal de propostas para cada vendedor
+- [x] Exportar relatórios mensais de desempenho para CSV e PDF
+- [x] Incluir filtros avançados de status e período no histórico de propostas
+- [x] Criar metas mensais e progresso visual para cada vendedor
+- [x] Permitir configurar a data de validade antes de gerar a proposta
+- [x] Implementar assinatura digital para aprovação online da proposta
+- [x] Permitir selecionar artes de capa por tipo de projeto
+- [x] Registrar auditoria de exclusões de propostas feitas por administradores
+- [x] Implementar lixeira temporária de propostas com retenção de trinta dias
+- [x] Permitir filtro por vendedor no painel administrativo de propostas
+- [x] Cobrir os novos fluxos de relatórios, propostas, assinatura e governança com testes automatizados
+
 ## Novo padrão visual de proposta comercial
 
 - [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados

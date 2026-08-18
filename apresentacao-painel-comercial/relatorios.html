@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Relatórios tornam a operação mensurável</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    .slide-container { width: 1280px; min-height: 720px; background: #f4f4f4; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; padding: 62px 76px 0; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #253c7e; padding-top: 0; }
+    .eyebrow { color: #ff6900; font-size: 14px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { margin-top: 10px; color: #253c7e; font-size: 48px; line-height: 1; letter-spacing: -2px; font-weight: 900; }
+    .page { color: #253c7e; font-size: 15px; font-weight: 900; letter-spacing: 2px; padding-top: 4px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 44px; border-top: 2px solid #ff6900; border-bottom: 2px solid #253c7e; }
+    .metric { min-height: 190px; padding: 26px 24px 0; }
+    .metric + .metric { border-left: 2px solid #253c7e; }
+    .metric-label { font-size: 13px; font-weight: 900; letter-spacing: 1.3px; color: #333; text-transform: uppercase; }
+    .metric-number { margin-top: 28px; color: #253c7e; font-size: 45px; line-height: .9; letter-spacing: -2px; font-weight: 900; }
+    .metric-sub { margin-top: 12px; color: #666; font-size: 16px; line-height: 1.2; }
+    .lower { display: grid; grid-template-columns: 1.45fr .85fr; min-height: 225px; margin-top: 48px; }
+    .reading { padding: 10px 40px 0 0; }
+    .export { border-left: 2px solid #253c7e; padding: 10px 0 0 42px; }
+    h2 { color: #253c7e; font-size: 25px; line-height: 1; letter-spacing: -1px; font-weight: 900; }
+    .reading p { margin-top: 20px; max-width: 610px; font-size: 20px; line-height: 1.38; color: #333; }
+    .sequence { display: flex; margin-top: 28px; align-items: center; gap: 14px; }
+    .step { background: #253c7e; color: #fff; min-width: 155px; min-height: 52px; padding: 16px 18px 0; font-size: 15px; font-weight: 900; text-align: center; }
+    .arrow { color: #ff6900; font-size: 28px; font-weight: 900; }
+    .export p { margin-top: 18px; font-size: 18px; line-height: 1.35; color: #333; }
+    .formats { display: flex; gap: 14px; margin-top: 24px; }
+    .format { min-width: 110px; min-height: 62px; padding: 21px 16px 0; color: #fff; font-size: 19px; font-weight: 900; text-align: center; }
+    .csv { background: #253c7e; }
+    .pdf { background: #ff6900; }
+  </style>
+</head>
+<body>
+  <div class="slide-container">
+    <header class="header">
+      <div><div class="eyebrow">Gestão mensal</div><h1>Relatórios tornam a operação mensurável</h1></div>
+      <div class="page">08 / 12</div>
+    </header>
+    <section class="metrics" aria-label="Indicadores do relatório mensal">
+      <article class="metric"><div class="metric-label">Indicador 01</div><div class="metric-number">01</div><div class="metric-sub">Propostas<br />geradas</div></article>
+      <article class="metric"><div class="metric-label">Indicador 02</div><div class="metric-number">02</div><div class="metric-sub">Propostas<br />enviadas</div></article>
+      <article class="metric"><div class="metric-label">Indicador 03</div><div class="metric-number">03</div><div class="metric-sub">Propostas<br />pendentes</div></article>
+      <article class="metric"><div class="metric-label">Indicador 04</div><div class="metric-number">R$</div><div class="metric-sub">Valor comercial<br />gerado</div></article>
+    </section>
+    <section class="lower">
+      <article class="reading">
+        <h2>Leitura simples do período</h2>
+        <p>Selecione o mês de referência para acompanhar o volume de propostas, a evolução de envios, os pendentes e o valor total mobilizado pela operação.</p>
+        <div class="sequence"><div class="step">Selecionar mês</div><div class="arrow">→</div><div class="step">Ler indicadores</div><div class="arrow">→</div><div class="step">Definir ação</div></div>
+      </article>
+      <article class="export">
+        <h2>Exportar para decidir</h2>
+        <p>Leve o resultado para análises detalhadas ou compartilhamento gerencial, mantendo o mesmo período selecionado.</p>
+        <div class="formats"><div class="format csv">CSV</div><div class="format pdf">PDF</div></div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, unique, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -126,10 +126,59 @@ export const chargingProposals = mysqlTable("chargingProposals", {
   componentsJson: text("componentsJson").notNull(),
   totalCents: int("totalCents").notNull(),
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  projectType: mysqlEnum("projectType", ["solar", "ev_charging", "hybrid"]).default("ev_charging").notNull(),
+  coverArt: varchar("coverArt", { length: 64 }).default("solar-home-vehicle").notNull(),
+  validUntil: timestamp("validUntil"),
+  signatureToken: varchar("signatureToken", { length: 96 }).unique(),
+  signedAt: timestamp("signedAt"),
+  signedByName: varchar("signedByName", { length: 255 }),
+  signedByEmail: varchar("signedByEmail", { length: 320 }),
   sentAt: timestamp("sentAt"),
+  deletedAt: timestamp("deletedAt"),
+  deletedBy: int("deletedBy").references(() => users.id),
+  deletionReason: varchar("deletionReason", { length: 500 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export type ChargingProposal = typeof chargingProposals.$inferSelect;
 export type InsertChargingProposal = typeof chargingProposals.$inferInsert;
+
+/** Metas mensais configuradas por vendedor para o acompanhamento comercial. */
+export const proposalGoals = mysqlTable("proposalGoals", {
+  id: int("id").autoincrement().primaryKey(),
+  sellerId: int("sellerId").notNull().references(() => users.id),
+  month: varchar("month", { length: 7 }).notNull(),
+  targetProposals: int("targetProposals").default(0).notNull(),
+  targetCents: int("targetCents").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [unique("proposalGoals_seller_month_unique").on(table.sellerId, table.month)]);
+
+export type ProposalGoal = typeof proposalGoals.$inferSelect;
+export type InsertProposalGoal = typeof proposalGoals.$inferInsert;
+
+/** Registro imutável de exclusões administrativas para auditoria comercial. */
+export const proposalDeletionAudits = mysqlTable("proposalDeletionAudits", {
+  id: int("id").autoincrement().primaryKey(),
+  proposalId: int("proposalId").notNull(),
+  clientName: varchar("clientName", { length: 255 }).notNull(),
+  sellerId: int("sellerId").notNull(),
+  deletedBy: int("deletedBy").notNull(),
+  deletedByName: varchar("deletedByName", { length: 255 }).notNull(),
+  reason: varchar("reason", { length: 500 }),
+  deletedAt: timestamp("deletedAt").defaultNow().notNull(),
+});
+
+export type ProposalDeletionAudit = typeof proposalDeletionAudits.$inferSelect;
+
+/** Registro durável de rotinas de manutenção operacionais administradas pela plataforma. */
+export const maintenanceJobs = mysqlTable("maintenanceJobs", {
+  id: int("id").autoincrement().primaryKey(),
+  jobKey: varchar("jobKey", { length: 100 }).notNull().unique(),
+  scheduleCronTaskUid: varchar("scheduleCronTaskUid", { length: 65 }).unique(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MaintenanceJob = typeof maintenanceJobs.$inferSelect;
