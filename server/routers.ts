@@ -15,6 +15,7 @@ import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
 import { authenticateLocalUser, hashLocalPassword } from "./localAuth";
+import { storeProductImageLocally } from "./productImageStorage";
 
 const chargingComponentSchema = z.object({
   id: z.string().min(1).max(120),
@@ -263,11 +264,17 @@ export const appRouter = router({
         if (!buffer.length || buffer.length > 5 * 1024 * 1024) throw new Error("A imagem deve ter no máximo 5 MB");
 
         const extension = contentType === "image/png" ? "png" : contentType === "image/webp" ? "webp" : "jpg";
-        const stored = await storagePut(
-          `charging-proposals/${ctx.user.id}/products/${randomUUID()}.${extension}`,
-          buffer,
-          contentType,
-        );
+        let stored: { key: string; url: string };
+        try {
+          stored = await storagePut(
+            `charging-proposals/${ctx.user.id}/products/${randomUUID()}.${extension}`,
+            buffer,
+            contentType,
+          );
+        } catch (error) {
+          console.warn("[Product images] Storage remoto indisponível; usando armazenamento local do VPS.", error);
+          stored = await storeProductImageLocally(buffer, extension);
+        }
         return { url: stored.url, key: stored.key };
       }),
 

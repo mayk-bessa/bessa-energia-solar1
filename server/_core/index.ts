@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { getProductImageDirectory } from "../productImageStorage";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,6 +37,8 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // Storage proxy for /manus-storage/* paths
   registerStorageProxy(app);
+  // Imagens de produtos recebem fallback em disco no VPS quando o storage remoto não estiver disponível.
+  app.use("/uploads/products", express.static(getProductImageDirectory(), { maxAge: "30d", fallthrough: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // tRPC API

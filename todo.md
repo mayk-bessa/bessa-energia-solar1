@@ -538,6 +538,8 @@
 - [x] Permitir desativar ou excluir com segurança contas de vendedores no painel administrativo
 - [x] Cobrir o gerenciamento de contas locais com testes automatizados de permissões e integridade
 - [ ] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS
+- [x] Corrigir o upload de imagens de produtos que falha no VPS com Storage upload failed 400 record not found
+- [x] Corrigir o salvamento de propostas que exibe Proposta undefined no painel do VPS
 
 ## Controles adicionais do painel comercial
 

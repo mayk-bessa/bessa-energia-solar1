@@ -328,7 +328,19 @@ export async function createChargingProposal(proposal: InsertChargingProposal) {
   if (!db) throw new Error("Banco de dados indisponível para salvar a proposta");
 
   const result = await db.insert(chargingProposals).values(proposal);
-  return { id: (result as any).insertId || (result as any)[0]?.id };
+  const id = extractInsertId(result);
+  if (!id) throw new Error("O banco de dados não retornou o identificador da proposta salva");
+  return { id };
+}
+
+export function extractInsertId(result: unknown): number | undefined {
+  const values = Array.isArray(result) ? [result[0], result] : [result];
+  for (const value of values) {
+    const candidate = (value as { insertId?: unknown } | undefined)?.insertId;
+    const id = typeof candidate === "bigint" ? Number(candidate) : Number(candidate);
+    if (Number.isSafeInteger(id) && id > 0) return id;
+  }
+  return undefined;
 }
 
 export async function getChargingProposals(filters: { sellerId?: number; limit?: number } = {}) {
