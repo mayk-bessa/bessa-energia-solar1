@@ -525,7 +525,7 @@
 - [x] Permitir inserir e visualizar imagens reais dos produtos incluídos na proposta
 - [x] Exibir pré-visualização do PDF da proposta antes da confirmação de envio por e-mail
 
-- [ ] Resolver o conflito local de client/index.html no VPS para permitir a atualização segura do repositório
+- [x] Resolver o conflito local de client/index.html no VPS para permitir a atualização segura do repositório (status limpo e VPS sincronizado no commit 1937ac0)
 - [x] Preparar roteiro reutilizável de atualização do VPS com backup do conflito, migração e reinicialização segura
 - [x] Corrigir a configuração das variáveis de administrador local no VPS após erro de credenciais inválidas informado no login (senha de bootstrap corrigida, PM2 reiniciado e painel validado pelo usuário)
 - [x] Localizar o diretório Git efetivo da aplicação no VPS antes de repetir a sincronização (confirmado: /var/www/bessaenergia.com.br)
