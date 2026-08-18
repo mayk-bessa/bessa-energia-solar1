@@ -566,6 +566,11 @@
 
 - [x] Revisar e reforçar carregamento, sucesso e erro exibidos no envio de proposta por e-mail
 
+## Exclusão administrativa de propostas
+
+- [x] Permitir exclusão permanente de propostas somente para administradores, com confirmação explícita
+- [x] Cobrir a exclusão administrativa de propostas com testes de autorização e integridade
+
 ## Novo padrão visual de proposta comercial
 
 - [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados

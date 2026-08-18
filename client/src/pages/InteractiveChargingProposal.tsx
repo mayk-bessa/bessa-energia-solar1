@@ -153,6 +153,20 @@ export default function InteractiveChargingProposal() {
     },
     onError: (error) => toast.error(error.message || "Não foi possível atualizar o status."),
   });
+  const deleteProposal = trpc.chargingProposals.delete.useMutation({
+    onSuccess: async (_result, input) => {
+      if (lastSavedProposalId === input.id) {
+        setLastSavedProposalId(null);
+        setPdfPreviewOpen(false);
+        setHasPreviewedCurrentProposal(false);
+      }
+      await savedProposals.refetch();
+      await sentHistory.refetch();
+      await monthlyReport.refetch();
+      toast.success("Proposta excluída permanentemente.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível excluir a proposta."),
+  });
   const uploadProductImage = trpc.chargingProposals.uploadProductImage.useMutation();
 
   const startNewProposal = () => {
@@ -488,7 +502,7 @@ export default function InteractiveChargingProposal() {
                     <option value="rejected">Recusada</option>
                   </select>
                   <p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p>
-                  <div className="flex flex-wrap justify-end gap-2"><Button onClick={() => cloneProposalForEditing(proposal)} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Clonar e editar</Button><Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">Duplicar</Button></div>
+                  <div className="flex flex-wrap justify-end gap-2"><Button onClick={() => cloneProposalForEditing(proposal)} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Clonar e editar</Button><Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">Duplicar</Button>{user?.role === "admin" && <Button onClick={() => { if (window.confirm(`Excluir permanentemente a proposta #${proposal.id} de ${proposal.clientName}? Esta ação não pode ser desfeita.`)) deleteProposal.mutate({ id: proposal.id }); }} disabled={deleteProposal.isPending} variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">Excluir</Button>}</div>
                 </div>
               ))}
             </div>

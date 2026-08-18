@@ -10,7 +10,7 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getMonthlyProposalMetrics, getSentChargingProposalHistory, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
+import { createChargingProposal, createLocalUserAccount, deleteChargingProposal, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getMonthlyProposalMetrics, getSentChargingProposalHistory, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
@@ -319,6 +319,15 @@ export const appRouter = router({
         if (!proposal) throw new Error("Proposta não encontrada");
         if (ctx.user.role !== "admin" && proposal.sellerId !== ctx.user.id) throw new Error("Unauthorized");
         await updateChargingProposalStatus(input.id, input.status);
+        return { success: true };
+      }),
+
+    delete: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        const proposal = await getChargingProposalById(input.id);
+        if (!proposal) throw new Error("Proposta não encontrada");
+        await deleteChargingProposal(input.id);
         return { success: true };
       }),
 

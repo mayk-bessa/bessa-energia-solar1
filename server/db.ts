@@ -474,6 +474,12 @@ export async function updateChargingProposalStatus(id: number, status: "pending"
   return await db.update(chargingProposals).set({ status }).where(eq(chargingProposals.id, id));
 }
 
+export async function deleteChargingProposal(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para excluir a proposta");
+  return await db.delete(chargingProposals).where(eq(chargingProposals.id, id));
+}
+
 export async function getUsersForRoleManagement() {
   const db = await getDb();
   if (!db) return [];
