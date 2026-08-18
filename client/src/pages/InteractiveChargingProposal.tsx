@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { calculateLineTotal, calculateProposalTotal, type ProposalComponent } from "@/lib/proposalCalculator";
+import { formatBrlCurrencyInput, parseBrlCurrencyInput } from "@/lib/currencyMask";
 import { ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, LockKeyhole, Minus, Plus, Save, Send, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -15,11 +16,6 @@ const INITIAL_COMPONENTS: ProposalComponent[] = [
 ];
 
 const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-
-function parseCurrencyValue(value: string) {
-  const normalized = value.replace(/\./g, "").replace(",", ".").replace(/[^0-9.-]/g, "");
-  return Number.isFinite(Number(normalized)) ? Math.max(0, Number(normalized)) : 0;
-}
 
 function readImageAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
@@ -189,7 +185,7 @@ export default function InteractiveChargingProposal() {
       if (component.id !== id) return component;
       if (field === "name") return { ...component, name: value };
       if (field === "quantity") return { ...component, quantity: Math.max(0, Number.parseInt(value || "0", 10) || 0) };
-      return { ...component, unitPrice: parseCurrencyValue(value) };
+      return { ...component, unitPrice: parseBrlCurrencyInput(value) };
     }));
   };
 
@@ -394,7 +390,7 @@ export default function InteractiveChargingProposal() {
                     <Label className="text-xs font-bold uppercase tracking-wide text-slate-500 md:hidden">Valor unitário</Label>
                     <div className="flex items-center rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                       <span className="select-none border-r border-input px-2 text-sm font-semibold text-slate-500">R$</span>
-                      <Input aria-label={`Valor unitário de ${component.name}`} type="number" min="0" step="0.01" inputMode="decimal" value={component.unitPrice === 0 ? "" : component.unitPrice} onChange={(event) => updateComponent(component.id, "unitPrice", event.target.value)} placeholder="0,00" className="border-0 shadow-none focus-visible:ring-0" />
+                      <Input aria-label={`Valor unitário de ${component.name}`} type="text" inputMode="numeric" value={formatBrlCurrencyInput(component.unitPrice)} onChange={(event) => updateComponent(component.id, "unitPrice", event.target.value)} placeholder="0,00" className="border-0 shadow-none focus-visible:ring-0" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 font-bold text-[#253c7e] md:justify-end md:bg-transparent md:px-0">

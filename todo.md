@@ -540,9 +540,14 @@
 - [ ] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS
 - [x] Corrigir o upload de imagens de produtos que falha no VPS com Storage upload failed 400 record not found
 - [x] Corrigir o salvamento de propostas que exibe Proposta undefined no painel do VPS
+- [ ] Corrigir a falha de envio de e-mail após a pré-visualização de proposta no VPS
 
 ## Controles adicionais do painel comercial
 
 - [x] Adicionar saída segura da sessão de vendedor ou administrador
 - [x] Adicionar ação para iniciar uma nova proposta em branco
 - [x] Permitir clonar uma proposta salva para edição imediata no formulário
+
+## Ajuste de valores comerciais
+
+- [x] Aplicar máscara de moeda brasileira no campo de valor unitário dos componentes
