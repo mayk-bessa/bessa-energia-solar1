@@ -538,3 +538,9 @@
 - [x] Permitir desativar ou excluir com segurança contas de vendedores no painel administrativo
 - [x] Cobrir o gerenciamento de contas locais com testes automatizados de permissões e integridade
 - [ ] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS
+
+## Controles adicionais do painel comercial
+
+- [x] Adicionar saída segura da sessão de vendedor ou administrador
+- [x] Adicionar ação para iniciar uma nova proposta em branco
+- [x] Permitir clonar uma proposta salva para edição imediata no formulário

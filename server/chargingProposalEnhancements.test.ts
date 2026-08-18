@@ -22,5 +22,10 @@ describe("charging proposal enhancements", () => {
     expect(pageSource).toContain("Aprovada");
     expect(pageSource).toContain("Recusada");
     expect(pageSource).toContain("Duplicar");
+    expect(pageSource).toContain("Clonar e editar");
+    expect(pageSource).toContain("Nova proposta");
+    expect(pageSource).toContain("Sair com segurança");
+    expect(pageSource).toContain("cloneProposalForEditing");
+    expect(pageSource).toContain("handleSecureLogout");
   });
 });

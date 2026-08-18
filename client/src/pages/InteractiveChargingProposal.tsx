@@ -31,7 +31,7 @@ function readImageAsDataUrl(file: File) {
 }
 
 export default function InteractiveChargingProposal() {
-  const { user, loading, refresh } = useAuth();
+  const { user, loading, refresh, logout } = useAuth();
   const [clientName, setClientName] = useState("RENATA COALHO TEIXEIRA");
   const [clientEmail, setClientEmail] = useState("");
   const [clientPhone, setClientPhone] = useState("");
@@ -141,6 +141,48 @@ export default function InteractiveChargingProposal() {
     onError: (error) => toast.error(error.message || "Não foi possível atualizar o status."),
   });
   const uploadProductImage = trpc.chargingProposals.uploadProductImage.useMutation();
+
+  const startNewProposal = () => {
+    if (lastSavedProposalId && !window.confirm("Iniciar uma nova proposta? Os dados exibidos no formulário atual serão substituídos.")) return;
+    setClientName("");
+    setClientEmail("");
+    setClientPhone("");
+    setSellerName(user?.name || "");
+    setComponents(INITIAL_COMPONENTS.map((component) => ({ ...component, id: crypto.randomUUID(), unitPrice: 0, imageUrl: undefined })));
+    setLastSavedProposalId(null);
+    setPdfPreviewOpen(false);
+    setHasPreviewedCurrentProposal(false);
+    toast.success("Novo formulário de proposta iniciado.");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const cloneProposalForEditing = (proposal: { clientName: string; clientEmail: string | null; clientPhone: string | null; sellerName: string; componentsJson: string }) => {
+    try {
+      const sourceComponents = JSON.parse(proposal.componentsJson);
+      if (!Array.isArray(sourceComponents)) throw new Error("Itens inválidos");
+      setClientName(`${proposal.clientName} — cópia`);
+      setClientEmail(proposal.clientEmail || "");
+      setClientPhone(proposal.clientPhone || "");
+      setSellerName(user?.name || proposal.sellerName);
+      setComponents(sourceComponents.map((component: ProposalComponent) => ({ ...component, id: crypto.randomUUID() })));
+      setLastSavedProposalId(null);
+      setPdfPreviewOpen(false);
+      setHasPreviewedCurrentProposal(false);
+      toast.success("Proposta clonada no formulário. Revise os dados e salve como uma nova proposta.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      toast.error("Não foi possível carregar os itens desta proposta para clonagem.");
+    }
+  };
+
+  const handleSecureLogout = async () => {
+    try {
+      await logout();
+      toast.success("Sessão encerrada com segurança.");
+    } catch (error: any) {
+      toast.error(error.message || "Não foi possível encerrar a sessão.");
+    }
+  };
 
   const updateComponent = (id: string, field: keyof Pick<ProposalComponent, "name" | "quantity" | "unitPrice">, value: string) => {
     setComponents((current) => current.map((component) => {
@@ -275,11 +317,11 @@ export default function InteractiveChargingProposal() {
               <h1 className="text-xl font-bold sm:text-2xl">Proposta Interativa</h1>
             </div>
           </div>
-          <Link href="/">
-            <Button variant="outline" className="border-white/70 bg-transparent text-white hover:bg-white hover:text-[#253c7e] print:hidden">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao site
-            </Button>
-          </Link>
+          <div className="flex flex-wrap justify-end gap-2 print:hidden">
+            <Button type="button" onClick={startNewProposal} variant="outline" className="border-white/70 bg-transparent text-white hover:bg-white hover:text-[#253c7e]">Nova proposta</Button>
+            <Button type="button" onClick={handleSecureLogout} variant="outline" className="border-orange-200 bg-orange-500 text-white hover:bg-white hover:text-[#253c7e]">Sair com segurança</Button>
+            <Link href="/"><Button variant="outline" className="border-white/70 bg-transparent text-white hover:bg-white hover:text-[#253c7e]"><ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao site</Button></Link>
+          </div>
         </div>
       </header>
 
@@ -418,7 +460,7 @@ export default function InteractiveChargingProposal() {
                     <option value="rejected">Recusada</option>
                   </select>
                   <p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p>
-                  <Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Duplicar</Button>
+                  <div className="flex flex-wrap justify-end gap-2"><Button onClick={() => cloneProposalForEditing(proposal)} variant="outline" size="sm" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50">Clonar e editar</Button><Button onClick={() => duplicateProposal.mutate({ id: proposal.id })} disabled={duplicateProposal.isPending} variant="outline" size="sm" className="border-slate-300 text-slate-700 hover:bg-slate-50">Duplicar</Button></div>
                 </div>
               ))}
             </div>
