@@ -537,10 +537,13 @@
 - [x] Permitir editar dados e redefinir a senha das contas locais de vendedores no painel administrativo
 - [x] Permitir desativar ou excluir com segurança contas de vendedores no painel administrativo
 - [x] Cobrir o gerenciamento de contas locais com testes automatizados de permissões e integridade
-- [ ] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS
+- [x] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS (PDF pré-visualizado e e-mail recebido no teste final)
 - [x] Corrigir o upload de imagens de produtos que falha no VPS com Storage upload failed 400 record not found
 - [x] Corrigir o salvamento de propostas que exibe Proposta undefined no painel do VPS
-- [ ] Corrigir a falha de envio de e-mail após a pré-visualização de proposta no VPS
+- [x] Corrigir a falha de envio de e-mail após a pré-visualização de proposta no VPS
+- [x] Configurar um provedor SMTP válido para o domínio bessaenergia.com.br no VPS (Hostinger SMTP via STARTTLS na porta 587)
+- [x] Investigar entrega de proposta aceita pelo SMTP mas não recebida na caixa de destino (Gmail recusava por SPF/DKIM ausentes)
+- [x] Configurar SPF e DKIM da Hostinger para bessaenergia.com.br após rejeição 550 5.7.26 do Gmail (e-mail recebido no teste final)
 
 ## Controles adicionais do painel comercial
 
