@@ -10,7 +10,7 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, createLocalUserAccount, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, updateChargingProposalStatus, updateUserRole } from "./db";
+import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
@@ -371,6 +371,34 @@ export const appRouter = router({
           role: "seller",
         });
         return { success: true, id: user.id };
+      }),
+    updateLocalSeller: adminProcedure
+      .input(z.object({
+        id: z.number().int().positive(),
+        name: z.string().trim().min(2).max(120),
+        email: z.string().trim().email(),
+        password: z.string().min(16).max(512).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        await updateLocalSellerAccount({
+          id: input.id,
+          name: input.name,
+          email: input.email,
+          passwordHash: input.password ? await hashLocalPassword(input.password) : undefined,
+        });
+        return { success: true };
+      }),
+    setLocalSellerActive: adminProcedure
+      .input(z.object({ id: z.number().int().positive(), isActive: z.boolean() }))
+      .mutation(async ({ input }) => {
+        await setLocalSellerAccountActive(input.id, input.isActive);
+        return { success: true };
+      }),
+    deleteLocalSeller: adminProcedure
+      .input(z.object({ id: z.number().int().positive() }))
+      .mutation(async ({ input }) => {
+        await deleteLocalSellerAccount(input.id);
+        return { success: true };
       }),
     updateRole: adminProcedure
       .input(z.object({ id: z.number().int().positive(), role: z.enum(["user", "seller", "admin"]) }))

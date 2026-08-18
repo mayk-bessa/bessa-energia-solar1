@@ -531,3 +531,10 @@
 - [x] Localizar o diretório Git efetivo da aplicação no VPS antes de repetir a sincronização (confirmado: /var/www/bessaenergia.com.br)
 
 - [x] Substituir o redirecionamento OAuth Manus incompatível no VPS por autenticação local de vendedores e administradores
+
+## Gestão de vendedores e validação comercial
+
+- [x] Permitir editar dados e redefinir a senha das contas locais de vendedores no painel administrativo
+- [x] Permitir desativar ou excluir com segurança contas de vendedores no painel administrativo
+- [x] Cobrir o gerenciamento de contas locais com testes automatizados de permissões e integridade
+- [ ] Validar o fluxo completo de criação, pré-visualização e envio de uma proposta comercial no VPS

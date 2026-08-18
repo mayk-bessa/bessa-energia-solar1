@@ -372,12 +372,64 @@ export async function getUsersForRoleManagement() {
     name: users.name,
     email: users.email,
     role: users.role,
+    loginMethod: users.loginMethod,
     createdAt: users.createdAt,
-  }).from(users).orderBy(desc(users.createdAt));
+    isLocalAccountActive: localAccounts.isActive,
+  }).from(users).leftJoin(localAccounts, eq(localAccounts.userId, users.id)).orderBy(desc(users.createdAt));
 }
 
 export async function updateUserRole(id: number, role: "user" | "seller" | "admin") {
   const db = await getDb();
   if (!db) throw new Error("Banco de dados indisponível para atualizar o perfil");
   return await db.update(users).set({ role }).where(eq(users.id, id));
+}
+
+async function getSellerForManagement(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para gerenciar o vendedor");
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  const user = result[0];
+  if (!user || user.role !== "seller" || user.loginMethod !== "local") {
+    throw new Error("Apenas contas locais de vendedores podem ser gerenciadas nesta área");
+  }
+  return { db, user };
+}
+
+export async function updateLocalSellerAccount(input: {
+  id: number;
+  name: string;
+  email: string;
+  passwordHash?: string;
+}) {
+  const { db } = await getSellerForManagement(input.id);
+  const email = input.email.trim().toLowerCase();
+  const existing = await getLocalAccountByEmail(email);
+  if (existing && existing.user.id !== input.id) {
+    throw new Error("Já existe uma conta local cadastrada com este e-mail");
+  }
+  await db.update(users).set({
+    name: input.name.trim(),
+    email,
+    openId: `local:${email}`,
+    lastSignedIn: new Date(),
+  }).where(eq(users.id, input.id));
+  if (input.passwordHash) {
+    await db.update(localAccounts).set({ passwordHash: input.passwordHash }).where(eq(localAccounts.userId, input.id));
+  }
+}
+
+export async function setLocalSellerAccountActive(id: number, isActive: boolean) {
+  const { db } = await getSellerForManagement(id);
+  await db.update(localAccounts).set({ isActive: isActive ? 1 : 0 }).where(eq(localAccounts.userId, id));
+}
+
+export async function deleteLocalSellerAccount(id: number) {
+  const { db } = await getSellerForManagement(id);
+  const [proposal] = await db.select({ id: chargingProposals.id }).from(chargingProposals).where(eq(chargingProposals.sellerId, id)).limit(1);
+  const [file] = await db.select({ id: files.id }).from(files).where(eq(files.userId, id)).limit(1);
+  if (proposal || file) {
+    throw new Error("Esta conta possui propostas ou arquivos associados. Desative-a para preservar o histórico comercial.");
+  }
+  await db.delete(localAccounts).where(eq(localAccounts.userId, id));
+  await db.delete(users).where(eq(users.id, id));
 }

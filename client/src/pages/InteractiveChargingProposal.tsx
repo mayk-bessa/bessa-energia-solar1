@@ -47,6 +47,10 @@ export default function InteractiveChargingProposal() {
   const [newSellerName, setNewSellerName] = useState("");
   const [newSellerEmail, setNewSellerEmail] = useState("");
   const [newSellerPassword, setNewSellerPassword] = useState("");
+  const [editingSellerId, setEditingSellerId] = useState<number | null>(null);
+  const [editingSellerName, setEditingSellerName] = useState("");
+  const [editingSellerEmail, setEditingSellerEmail] = useState("");
+  const [editingSellerPassword, setEditingSellerPassword] = useState("");
   const total = useMemo(() => calculateProposalTotal(components), [components]);
   const hasSellerAccess = user?.role === "admin" || user?.role === "seller";
   const savedProposals = trpc.chargingProposals.list.useQuery(undefined, { enabled: hasSellerAccess });
@@ -96,6 +100,31 @@ export default function InteractiveChargingProposal() {
       toast.success("Credenciais locais do vendedor criadas.");
     },
     onError: (error) => toast.error(error.message || "Não foi possível criar as credenciais do vendedor."),
+  });
+  const updateLocalSeller = trpc.salesTeam.updateLocalSeller.useMutation({
+    onSuccess: async () => {
+      setEditingSellerId(null);
+      setEditingSellerName("");
+      setEditingSellerEmail("");
+      setEditingSellerPassword("");
+      await teamUsers.refetch();
+      toast.success("Conta local do vendedor atualizada.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível atualizar a conta do vendedor."),
+  });
+  const setLocalSellerActive = trpc.salesTeam.setLocalSellerActive.useMutation({
+    onSuccess: async (_result, input) => {
+      await teamUsers.refetch();
+      toast.success(input.isActive ? "Conta de vendedor reativada." : "Conta de vendedor desativada.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível alterar o estado da conta."),
+  });
+  const deleteLocalSeller = trpc.salesTeam.deleteLocalSeller.useMutation({
+    onSuccess: async () => {
+      await teamUsers.refetch();
+      toast.success("Conta de vendedor excluída permanentemente.");
+    },
+    onError: (error) => toast.error(error.message || "Não foi possível excluir a conta. Se houver histórico comercial, desative-a."),
   });
   const duplicateProposal = trpc.chargingProposals.duplicate.useMutation({
     onSuccess: async (result) => {
@@ -411,23 +440,37 @@ export default function InteractiveChargingProposal() {
               <Button type="submit" disabled={createLocalSeller.isPending} className="bg-[#ff6900] hover:bg-[#e35e00]">{createLocalSeller.isPending ? "Criando…" : "Criar vendedor"}</Button>
             </form>
             <div className="divide-y divide-slate-100">
-              {teamUsers.data?.map((teamMember) => (
-                <div key={teamMember.id} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_11rem] sm:items-center">
+              {teamUsers.data?.map((teamMember) => {
+                const isManageableLocalSeller = teamMember.role === "seller" && teamMember.loginMethod === "local" && teamMember.isLocalAccountActive !== null;
+                const isActive = teamMember.isLocalAccountActive === 1;
+                return <div key={teamMember.id} className="grid gap-3 px-5 py-4 lg:grid-cols-[1fr_11rem_auto] lg:items-center">
                   <div>
-                    <p className="font-semibold text-slate-900">{teamMember.name || "Usuário sem nome"}</p>
-                    <p className="text-sm text-slate-500">{teamMember.email || "E-mail não informado"}</p>
+                    <div className="flex flex-wrap items-center gap-2"><p className="font-semibold text-slate-900">{teamMember.name || "Usuário sem nome"}</p>{isManageableLocalSeller && <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${isActive ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>{isActive ? "Ativa" : "Desativada"}</span>}</div>
+                    <p className="text-sm text-slate-500">{teamMember.email || "E-mail não informado"}{isManageableLocalSeller ? " · conta local" : ""}</p>
                   </div>
                   <select aria-label={`Perfil de ${teamMember.name || teamMember.id}`} value={teamMember.role} onChange={(event) => updateRole.mutate({ id: teamMember.id, role: event.target.value as "user" | "seller" | "admin" })} disabled={updateRole.isPending} className="h-10 rounded-md border border-input bg-background px-3 text-sm font-semibold text-[#253c7e] focus:outline-none focus:ring-2 focus:ring-[#253c7e]">
                     <option value="user">Usuário</option>
                     <option value="seller">Vendedor</option>
                     <option value="admin">Administrador</option>
                   </select>
-                </div>
-              ))}
+                  {isManageableLocalSeller && <div className="flex flex-wrap gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={() => { setEditingSellerId(teamMember.id); setEditingSellerName(teamMember.name || ""); setEditingSellerEmail(teamMember.email || ""); setEditingSellerPassword(""); }} className="border-[#253c7e] text-[#253c7e]">Editar</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setLocalSellerActive.mutate({ id: teamMember.id, isActive: !isActive })} disabled={setLocalSellerActive.isPending} className="border-amber-500 text-amber-700">{isActive ? "Desativar" : "Reativar"}</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => { if (window.confirm(`Excluir permanentemente a conta de ${teamMember.name || teamMember.email}? Esta ação não pode ser desfeita.`)) deleteLocalSeller.mutate({ id: teamMember.id }); }} disabled={deleteLocalSeller.isPending} className="border-red-300 text-red-700 hover:bg-red-50">Excluir</Button>
+                  </div>}
+                </div>;
+              })}
             </div>
           </section>
         )}
       </main>
+      {editingSellerId !== null && <div role="dialog" aria-modal="true" aria-label="Editar conta de vendedor" className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4">
+        <form className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl" onSubmit={(event) => { event.preventDefault(); updateLocalSeller.mutate({ id: editingSellerId, name: editingSellerName, email: editingSellerEmail, password: editingSellerPassword || undefined }); }}>
+          <div className="flex items-start justify-between gap-4"><div><h3 className="text-lg font-bold text-[#253c7e]">Editar vendedor</h3><p className="mt-1 text-sm text-slate-500">Deixe a senha em branco para mantê-la inalterada.</p></div><Button type="button" variant="ghost" size="icon" aria-label="Fechar edição de vendedor" onClick={() => setEditingSellerId(null)}><X className="h-5 w-5" /></Button></div>
+          <div className="mt-5 space-y-4"><div className="space-y-2"><Label htmlFor="edit-seller-name">Nome</Label><Input id="edit-seller-name" value={editingSellerName} onChange={(event) => setEditingSellerName(event.target.value)} minLength={2} required /></div><div className="space-y-2"><Label htmlFor="edit-seller-email">E-mail</Label><Input id="edit-seller-email" type="email" value={editingSellerEmail} onChange={(event) => setEditingSellerEmail(event.target.value)} required /></div><div className="space-y-2"><Label htmlFor="edit-seller-password">Nova senha opcional</Label><Input id="edit-seller-password" type="password" value={editingSellerPassword} onChange={(event) => setEditingSellerPassword(event.target.value)} minLength={editingSellerPassword ? 16 : undefined} /><p className="text-xs text-slate-500">Se informada, deve ter pelo menos 16 caracteres.</p></div></div>
+          <div className="mt-6 flex justify-end gap-3"><Button type="button" variant="outline" onClick={() => setEditingSellerId(null)}>Cancelar</Button><Button type="submit" disabled={updateLocalSeller.isPending} className="bg-[#ff6900] hover:bg-[#e35e00]">{updateLocalSeller.isPending ? "Salvando…" : "Salvar alterações"}</Button></div>
+        </form>
+      </div>}
       {imagePreview && <div role="dialog" aria-modal="true" aria-label={`Imagem de ${imagePreview.name}`} className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4" onClick={() => setImagePreview(null)}>
         <div className="relative max-h-full max-w-4xl rounded-2xl bg-white p-3 shadow-2xl" onClick={(event) => event.stopPropagation()}>
           <Button aria-label="Fechar imagem" onClick={() => setImagePreview(null)} variant="ghost" size="icon" className="absolute right-4 top-4 z-10 bg-white/90 text-[#253c7e]"><X className="h-5 w-5" /></Button>
