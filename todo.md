@@ -588,6 +588,10 @@
 - [x] Permitir filtro por vendedor no painel administrativo de propostas
 - [x] Cobrir os novos fluxos de relatórios, propostas, assinatura e governança com testes automatizados
 
+## Correção de operação no VPS
+
+- [x] Corrigir a detecção da porta do processo PM2 no roteiro de instalação da limpeza automática da lixeira
+
 ## Novo padrão visual de proposta comercial
 
 - [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados

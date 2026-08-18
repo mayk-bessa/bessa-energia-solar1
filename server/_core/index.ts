@@ -46,6 +46,14 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // Manutenção diária: acessível somente pelo acionador agendado autenticado.
+  app.get("/api/scheduled/purge-proposal-trash", (req, res) => {
+    if (!isLoopbackAddress(req.socket.remoteAddress)) {
+      res.status(403).json({ error: "Verificação restrita ao servidor local" });
+      return;
+    }
+    res.json({ success: true, service: "proposal-trash-cleanup" });
+  });
+
   app.post("/api/scheduled/purge-proposal-trash", async (req, res) => {
     try {
       const localInvocation = isLoopbackAddress(req.socket.remoteAddress);
