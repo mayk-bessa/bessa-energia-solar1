@@ -10,7 +10,7 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
+import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposals, getMonthlyProposalMetrics, getSentChargingProposalHistory, getUsersForRoleManagement, markChargingProposalAsSent, setLocalSellerAccountActive, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
@@ -211,6 +211,20 @@ export const appRouter = router({
       const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
       return await getChargingProposals({ sellerId, limit: 100 });
     }),
+
+    sentHistory: sellerProcedure
+      .input(z.object({ search: z.string().trim().max(120).optional() }))
+      .query(async ({ input, ctx }) => {
+        const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
+        return await getSentChargingProposalHistory({ sellerId, search: input.search, limit: 100 });
+      }),
+
+    monthlyReport: sellerProcedure
+      .input(z.object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/) }))
+      .query(async ({ input, ctx }) => {
+        const sellerId = ctx.user.role === "admin" ? undefined : ctx.user.id;
+        return await getMonthlyProposalMetrics({ month: input.month, sellerId });
+      }),
 
     getById: sellerProcedure
       .input(z.object({ id: z.number().int().positive() }))

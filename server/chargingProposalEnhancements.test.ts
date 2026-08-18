@@ -27,5 +27,15 @@ describe("charging proposal enhancements", () => {
     expect(pageSource).toContain("Sair com segurança");
     expect(pageSource).toContain("cloneProposalForEditing");
     expect(pageSource).toContain("handleSecureLogout");
+    expect(pageSource).toContain("Histórico de propostas enviadas");
+    expect(pageSource).toContain("Relatório mensal da equipe");
+    expect(pageSource).toContain("Meu relatório mensal");
+    expect(pageSource).toContain("emailDeliveryFeedback");
+    expect(pageSource).toContain("Enviando a proposta e o PDF para a cliente");
+  });
+
+  it("exposes restricted queries for sent history and monthly reporting", () => {
+    expect(routerSource).toContain("sentHistory: sellerProcedure");
+    expect(routerSource).toContain("monthlyReport: sellerProcedure");
   });
 });

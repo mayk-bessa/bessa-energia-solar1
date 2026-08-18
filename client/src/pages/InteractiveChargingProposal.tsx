@@ -47,9 +47,16 @@ export default function InteractiveChargingProposal() {
   const [editingSellerName, setEditingSellerName] = useState("");
   const [editingSellerEmail, setEditingSellerEmail] = useState("");
   const [editingSellerPassword, setEditingSellerPassword] = useState("");
+  const [historySearch, setHistorySearch] = useState("");
+  const [reportMonth, setReportMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [emailDeliveryFeedback, setEmailDeliveryFeedback] = useState<{ status: "sending" | "success" | "error"; message: string } | null>(null);
   const total = useMemo(() => calculateProposalTotal(components), [components]);
   const hasSellerAccess = user?.role === "admin" || user?.role === "seller";
+  const historyInput = useMemo(() => ({ search: historySearch.trim() || undefined }), [historySearch]);
+  const reportInput = useMemo(() => ({ month: reportMonth }), [reportMonth]);
   const savedProposals = trpc.chargingProposals.list.useQuery(undefined, { enabled: hasSellerAccess });
+  const sentHistory = trpc.chargingProposals.sentHistory.useQuery(historyInput, { enabled: hasSellerAccess });
+  const monthlyReport = trpc.chargingProposals.monthlyReport.useQuery(reportInput, { enabled: hasSellerAccess });
   const teamUsers = trpc.salesTeam.listUsers.useQuery(undefined, { enabled: user?.role === "admin" });
   const pdfPreview = trpc.chargingProposals.previewPdf.useQuery({ id: lastSavedProposalId ?? 1 }, {
     enabled: pdfPreviewOpen && Boolean(lastSavedProposalId),
@@ -74,11 +81,21 @@ export default function InteractiveChargingProposal() {
     onError: (error) => toast.error(error.message || "Não foi possível salvar a proposta"),
   });
   const sendProposal = trpc.chargingProposals.sendEmail.useMutation({
+    onMutate: () => {
+      setEmailDeliveryFeedback({ status: "sending", message: "Enviando a proposta e o PDF para a cliente…" });
+    },
     onSuccess: async () => {
       await savedProposals.refetch();
+      await sentHistory.refetch();
+      await monthlyReport.refetch();
+      setEmailDeliveryFeedback({ status: "success", message: "Proposta enviada por e-mail com sucesso. Verifique a caixa da cliente." });
       toast.success("Proposta enviada por e-mail à cliente.");
     },
-    onError: (error) => toast.error(error.message || "Não foi possível enviar a proposta."),
+    onError: (error) => {
+      const message = error.message || "Não foi possível enviar a proposta.";
+      setEmailDeliveryFeedback({ status: "error", message });
+      toast.error(message);
+    },
   });
   const updateRole = trpc.salesTeam.updateRole.useMutation({
     onSuccess: async () => {
@@ -334,6 +351,10 @@ export default function InteractiveChargingProposal() {
             <Button onClick={handleSend} disabled={!lastSavedProposalId || !hasPreviewedCurrentProposal || sendProposal.isPending} variant="outline" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Send className="mr-2 h-4 w-4" /> {sendProposal.isPending ? "Enviando…" : "Enviar PDF por e-mail"}</Button>
             <Button onClick={() => window.print()} className="bg-[#ff6900] text-white hover:bg-[#e35e00]"><FileDown className="mr-2 h-4 w-4" /> Imprimir ou salvar PDF</Button>
           </div>
+          {emailDeliveryFeedback && <div aria-live="polite" className={`mt-4 flex items-start gap-3 rounded-xl border px-4 py-3 text-sm font-medium ${emailDeliveryFeedback.status === "sending" ? "border-blue-200 bg-blue-50 text-blue-800" : emailDeliveryFeedback.status === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>
+            {emailDeliveryFeedback.status === "sending" ? <span className="mt-0.5 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : emailDeliveryFeedback.status === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <X className="mt-0.5 h-4 w-4 shrink-0" />}
+            <span>{emailDeliveryFeedback.message}</span>
+          </div>}
         </section>
 
         <section className="mb-6 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-2">
@@ -463,6 +484,19 @@ export default function InteractiveChargingProposal() {
           ) : (
             <p className="px-5 py-6 text-sm text-slate-500">Nenhuma proposta foi salva por este perfil ainda.</p>
           )}
+        </section>
+
+        <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
+          <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between">
+            <div><h3 className="font-bold text-[#253c7e]">Histórico de propostas enviadas</h3><p className="text-sm text-slate-500">Consulte os envios realizados por cliente, e-mail ou vendedor.</p></div>
+            <div className="w-full md:max-w-sm"><Label htmlFor="proposal-history-search" className="sr-only">Pesquisar histórico</Label><Input id="proposal-history-search" value={historySearch} onChange={(event) => setHistorySearch(event.target.value)} placeholder="Buscar cliente, e-mail ou vendedor" /></div>
+          </div>
+          {sentHistory.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Carregando histórico de envios…</p> : sentHistory.data?.length ? <div className="divide-y divide-slate-100">{sentHistory.data.map((proposal) => <div key={proposal.id} className="grid gap-3 px-5 py-4 md:grid-cols-[1fr_auto_auto] md:items-center"><div><p className="font-semibold text-slate-900">{proposal.clientName}</p><p className="text-sm text-slate-500">{proposal.clientEmail || "E-mail não informado"} · {proposal.sellerName}</p><p className="mt-1 text-xs font-medium text-emerald-700">Enviada em {proposal.sentAt ? new Date(proposal.sentAt).toLocaleString("pt-BR") : "—"}</p></div><p className="font-bold text-[#253c7e]">{currency.format(proposal.totalCents / 100)}</p><Button type="button" variant="outline" size="sm" onClick={() => { setLastSavedProposalId(proposal.id); setPdfPreviewOpen(true); }} className="border-[#253c7e] text-[#253c7e]"><Eye className="mr-2 h-4 w-4" />Ver PDF</Button></div>)}</div> : <p className="px-5 py-6 text-sm text-slate-500">Nenhuma proposta enviada corresponde à pesquisa.</p>}
+        </section>
+
+        <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print:hidden">
+          <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 md:flex-row md:items-center md:justify-between"><div><h3 className="font-bold text-[#253c7e]">{user?.role === "admin" ? "Relatório mensal da equipe" : "Meu relatório mensal"}</h3><p className="text-sm text-slate-500">Volume de propostas criadas, enviadas e valores do período.</p></div><div><Label htmlFor="proposal-report-month" className="sr-only">Mês do relatório</Label><Input id="proposal-report-month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} className="w-full md:w-44" /></div></div>
+          {monthlyReport.isLoading ? <p className="px-5 py-6 text-sm text-slate-500">Calculando relatório mensal…</p> : monthlyReport.data && <div className="p-5"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div className="rounded-xl bg-blue-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-blue-700">Propostas geradas</p><p className="mt-1 text-2xl font-bold text-[#253c7e]">{monthlyReport.data.totalProposals}</p></div><div className="rounded-xl bg-emerald-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Enviadas</p><p className="mt-1 text-2xl font-bold text-emerald-800">{monthlyReport.data.sentProposals}</p></div><div className="rounded-xl bg-amber-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-amber-700">Pendentes</p><p className="mt-1 text-2xl font-bold text-amber-800">{monthlyReport.data.pendingProposals}</p></div><div className="rounded-xl bg-orange-50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-orange-700">Valor gerado</p><p className="mt-1 text-xl font-bold text-[#ff6900]">{currency.format(monthlyReport.data.totalCents / 100)}</p></div></div>{user?.role === "admin" && <div className="mt-5 overflow-x-auto"><table className="w-full text-left text-sm"><caption className="mb-2 text-left font-bold text-[#253c7e]">Resultado por vendedor</caption><thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-2 py-2">Vendedor</th><th className="px-2 py-2 text-right">Geradas</th><th className="px-2 py-2 text-right">Enviadas</th><th className="px-2 py-2 text-right">Valor</th></tr></thead><tbody>{monthlyReport.data.bySeller.map((seller) => <tr key={seller.sellerId} className="border-b border-slate-100"><td className="px-2 py-3 font-medium text-slate-800">{seller.sellerName}</td><td className="px-2 py-3 text-right">{seller.totalProposals}</td><td className="px-2 py-3 text-right">{seller.sentProposals}</td><td className="px-2 py-3 text-right font-semibold text-[#253c7e]">{currency.format(seller.totalCents / 100)}</td></tr>)}</tbody></table></div>}</div>}
         </section>
 
         {user?.role === "admin" && (

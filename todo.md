@@ -554,3 +554,10 @@
 ## Ajuste de valores comerciais
 
 - [x] Aplicar máscara de moeda brasileira no campo de valor unitário dos componentes
+
+## Histórico e relatórios comerciais
+
+- [x] Criar tela de histórico pesquisável de propostas enviadas aos clientes
+- [x] Adicionar feedback visual de carregamento, sucesso e erro no envio de proposta por e-mail
+- [x] Criar painel de relatórios mensais de propostas para cada vendedor
+- [x] Cobrir histórico, métricas mensais e feedback de envio com testes automatizados

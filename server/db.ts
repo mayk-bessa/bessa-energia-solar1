@@ -1,4 +1,4 @@
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { eq, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -355,6 +355,104 @@ export async function getChargingProposals(filters: { sellerId?: number; limit?:
     query = query.limit(filters.limit) as any;
   }
   return await query;
+}
+
+export async function getSentChargingProposalHistory(filters: { sellerId?: number; search?: string; limit?: number } = {}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let condition = isNotNull(chargingProposals.sentAt);
+  if (filters.sellerId) condition = and(condition, eq(chargingProposals.sellerId, filters.sellerId))!;
+  const search = filters.search?.trim();
+  if (search) {
+    const term = `%${search}%`;
+    condition = and(condition, or(
+      like(chargingProposals.clientName, term),
+      like(chargingProposals.clientEmail, term),
+      like(chargingProposals.sellerName, term),
+    ))!;
+  }
+  let query = db.select().from(chargingProposals).where(condition).orderBy(desc(chargingProposals.sentAt));
+  if (filters.limit) query = query.limit(filters.limit) as any;
+  return await query;
+}
+
+export type MonthlyProposalMetrics = {
+  month: string;
+  totalProposals: number;
+  sentProposals: number;
+  pendingProposals: number;
+  approvedProposals: number;
+  rejectedProposals: number;
+  totalCents: number;
+  sentTotalCents: number;
+  bySeller: Array<{
+    sellerId: number;
+    sellerName: string;
+    totalProposals: number;
+    sentProposals: number;
+    totalCents: number;
+  }>;
+};
+
+export function buildMonthlyProposalMetrics(
+  month: string,
+  proposals: Array<Pick<ChargingProposal, "sellerId" | "sellerName" | "totalCents" | "sentAt" | "status">>,
+): MonthlyProposalMetrics {
+  const bySeller = new Map<number, MonthlyProposalMetrics["bySeller"][number]>();
+  const initial: MonthlyProposalMetrics = {
+    month,
+    totalProposals: proposals.length,
+    sentProposals: 0,
+    pendingProposals: 0,
+    approvedProposals: 0,
+    rejectedProposals: 0,
+    totalCents: 0,
+    sentTotalCents: 0,
+    bySeller: [],
+  };
+  for (const proposal of proposals) {
+    initial.totalCents += proposal.totalCents;
+    if (proposal.sentAt) {
+      initial.sentProposals += 1;
+      initial.sentTotalCents += proposal.totalCents;
+    }
+    if (proposal.status === "approved") initial.approvedProposals += 1;
+    else if (proposal.status === "rejected") initial.rejectedProposals += 1;
+    else initial.pendingProposals += 1;
+
+    const seller = bySeller.get(proposal.sellerId) ?? {
+      sellerId: proposal.sellerId,
+      sellerName: proposal.sellerName,
+      totalProposals: 0,
+      sentProposals: 0,
+      totalCents: 0,
+    };
+    seller.totalProposals += 1;
+    seller.totalCents += proposal.totalCents;
+    if (proposal.sentAt) seller.sentProposals += 1;
+    bySeller.set(proposal.sellerId, seller);
+  }
+  initial.bySeller = Array.from(bySeller.values()).sort((a, b) => b.totalProposals - a.totalProposals || a.sellerName.localeCompare(b.sellerName));
+  return initial;
+}
+
+export async function getMonthlyProposalMetrics(filters: { month: string; sellerId?: number }) {
+  const db = await getDb();
+  if (!db) return buildMonthlyProposalMetrics(filters.month, []);
+  const [year, month] = filters.month.split("-").map(Number);
+  const start = new Date(Date.UTC(year, month - 1, 1));
+  const end = new Date(Date.UTC(year, month, 1));
+  let condition = and(gte(chargingProposals.createdAt, start), lt(chargingProposals.createdAt, end))!;
+  if (filters.sellerId) condition = and(condition, eq(chargingProposals.sellerId, filters.sellerId))!;
+  const proposals = await db.select({
+    sellerId: chargingProposals.sellerId,
+    sellerName: chargingProposals.sellerName,
+    totalCents: chargingProposals.totalCents,
+    sentAt: chargingProposals.sentAt,
+    status: chargingProposals.status,
+  }).from(chargingProposals).where(condition);
+  return buildMonthlyProposalMetrics(filters.month, proposals);
 }
 
 export async function getChargingProposalById(id: number): Promise<ChargingProposal | undefined> {
