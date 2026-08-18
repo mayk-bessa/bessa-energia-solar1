@@ -31,7 +31,10 @@ describe("charging proposal enhancements", () => {
     expect(pageSource).toContain("Relatório mensal da equipe");
     expect(pageSource).toContain("Meu relatório mensal");
     expect(pageSource).toContain("emailDeliveryFeedback");
-    expect(pageSource).toContain("Enviando a proposta e o PDF para a cliente");
+    expect(pageSource).toContain("Preparando o PDF e enviando a proposta");
+    expect(pageSource).toContain("Envio confirmado");
+    expect(pageSource).toContain("Tentar novamente");
+    expect(pageSource).toContain('aria-busy={sendProposal.isPending}');
   });
 
   it("exposes restricted queries for sent history and monthly reporting", () => {

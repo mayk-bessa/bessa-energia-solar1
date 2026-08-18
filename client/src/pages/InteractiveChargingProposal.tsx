@@ -5,7 +5,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { calculateLineTotal, calculateProposalTotal, type ProposalComponent } from "@/lib/proposalCalculator";
 import { formatBrlCurrencyInput, parseBrlCurrencyInput } from "@/lib/currencyMask";
-import { ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, LockKeyhole, Minus, Plus, Save, Send, Trash2, X } from "lucide-react";
+import { AlertCircle, ArrowLeft, Calculator, CheckCircle2, CirclePlus, Eye, FileDown, FileImage, ImagePlus, Loader2, LockKeyhole, Minus, Plus, RefreshCw, Save, Send, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "wouter";
@@ -82,13 +82,13 @@ export default function InteractiveChargingProposal() {
   });
   const sendProposal = trpc.chargingProposals.sendEmail.useMutation({
     onMutate: () => {
-      setEmailDeliveryFeedback({ status: "sending", message: "Enviando a proposta e o PDF para a cliente…" });
+      setEmailDeliveryFeedback({ status: "sending", message: "Preparando o PDF e enviando a proposta. Não feche esta página até a confirmação." });
     },
     onSuccess: async () => {
       await savedProposals.refetch();
       await sentHistory.refetch();
       await monthlyReport.refetch();
-      setEmailDeliveryFeedback({ status: "success", message: "Proposta enviada por e-mail com sucesso. Verifique a caixa da cliente." });
+      setEmailDeliveryFeedback({ status: "success", message: "Proposta enviada ao servidor de e-mail com sucesso. A entrega pode levar alguns minutos; peça à cliente que verifique também a pasta de spam." });
       toast.success("Proposta enviada por e-mail à cliente.");
     },
     onError: (error) => {
@@ -165,6 +165,7 @@ export default function InteractiveChargingProposal() {
     setLastSavedProposalId(null);
     setPdfPreviewOpen(false);
     setHasPreviewedCurrentProposal(false);
+    setEmailDeliveryFeedback(null);
     toast.success("Novo formulário de proposta iniciado.");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -181,6 +182,7 @@ export default function InteractiveChargingProposal() {
       setLastSavedProposalId(null);
       setPdfPreviewOpen(false);
       setHasPreviewedCurrentProposal(false);
+      setEmailDeliveryFeedback(null);
       toast.success("Proposta clonada no formulário. Revise os dados e salve como uma nova proposta.");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -269,15 +271,21 @@ export default function InteractiveChargingProposal() {
 
   const handleSend = () => {
     if (!lastSavedProposalId) {
-      toast.error("Salve a proposta antes de enviá-la por e-mail.");
+      const message = "Salve a proposta antes de enviá-la por e-mail.";
+      setEmailDeliveryFeedback({ status: "error", message });
+      toast.error(message);
       return;
     }
     if (!clientEmail.trim()) {
-      toast.error("Informe o e-mail da cliente antes de enviar.");
+      const message = "Informe o e-mail da cliente antes de enviar.";
+      setEmailDeliveryFeedback({ status: "error", message });
+      toast.error(message);
       return;
     }
     if (!hasPreviewedCurrentProposal) {
-      toast.error("Revise a pré-visualização do PDF antes de confirmar o envio.");
+      const message = "Revise a pré-visualização do PDF antes de confirmar o envio.";
+      setEmailDeliveryFeedback({ status: "error", message });
+      toast.error(message);
       return;
     }
     sendProposal.mutate({ id: lastSavedProposalId });
@@ -348,12 +356,15 @@ export default function InteractiveChargingProposal() {
           <div className="flex flex-wrap gap-2 print:hidden">
             <Button onClick={handleSave} disabled={saveProposal.isPending} variant="outline" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50"><Save className="mr-2 h-4 w-4" /> {saveProposal.isPending ? "Salvando…" : "Salvar no painel"}</Button>
             <Button onClick={handleOpenPdfPreview} disabled={!lastSavedProposalId} variant="outline" className="border-[#253c7e] text-[#253c7e] hover:bg-blue-50"><FileImage className="mr-2 h-4 w-4" /> Pré-visualizar PDF</Button>
-            <Button onClick={handleSend} disabled={!lastSavedProposalId || !hasPreviewedCurrentProposal || sendProposal.isPending} variant="outline" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Send className="mr-2 h-4 w-4" /> {sendProposal.isPending ? "Enviando…" : "Enviar PDF por e-mail"}</Button>
+            <Button onClick={handleSend} aria-busy={sendProposal.isPending} disabled={!lastSavedProposalId || !hasPreviewedCurrentProposal || sendProposal.isPending} variant="outline" className="border-[#ff6900] text-[#ff6900] hover:bg-orange-50"><Send className="mr-2 h-4 w-4" /> {sendProposal.isPending ? "Enviando…" : "Enviar PDF por e-mail"}</Button>
             <Button onClick={() => window.print()} className="bg-[#ff6900] text-white hover:bg-[#e35e00]"><FileDown className="mr-2 h-4 w-4" /> Imprimir ou salvar PDF</Button>
           </div>
-          {emailDeliveryFeedback && <div aria-live="polite" className={`mt-4 flex items-start gap-3 rounded-xl border px-4 py-3 text-sm font-medium ${emailDeliveryFeedback.status === "sending" ? "border-blue-200 bg-blue-50 text-blue-800" : emailDeliveryFeedback.status === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>
-            {emailDeliveryFeedback.status === "sending" ? <span className="mt-0.5 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : emailDeliveryFeedback.status === "success" ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <X className="mt-0.5 h-4 w-4 shrink-0" />}
-            <span>{emailDeliveryFeedback.message}</span>
+          {emailDeliveryFeedback && <div role={emailDeliveryFeedback.status === "error" ? "alert" : "status"} aria-live={emailDeliveryFeedback.status === "error" ? "assertive" : "polite"} className={`mt-4 flex items-start justify-between gap-4 rounded-xl border px-4 py-4 text-sm ${emailDeliveryFeedback.status === "sending" ? "border-blue-200 bg-blue-50 text-blue-800" : emailDeliveryFeedback.status === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>
+            <div className="flex items-start gap-3">
+              {emailDeliveryFeedback.status === "sending" ? <Loader2 className="mt-0.5 h-5 w-5 shrink-0 animate-spin" aria-hidden="true" /> : emailDeliveryFeedback.status === "success" ? <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" /> : <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />}
+              <div><p className="font-bold">{emailDeliveryFeedback.status === "sending" ? "Enviando proposta…" : emailDeliveryFeedback.status === "success" ? "Envio confirmado" : "Não foi possível concluir o envio"}</p><p className="mt-1 leading-relaxed">{emailDeliveryFeedback.message}</p></div>
+            </div>
+            {emailDeliveryFeedback.status === "error" ? <Button type="button" size="sm" variant="outline" onClick={handleSend} disabled={sendProposal.isPending} className="shrink-0 border-red-300 text-red-800 hover:bg-red-100"><RefreshCw className="mr-2 h-4 w-4" />Tentar novamente</Button> : emailDeliveryFeedback.status === "success" ? <Button type="button" size="sm" variant="ghost" onClick={() => setEmailDeliveryFeedback(null)} className="shrink-0 text-emerald-800 hover:bg-emerald-100">Fechar</Button> : null}
           </div>}
         </section>
 

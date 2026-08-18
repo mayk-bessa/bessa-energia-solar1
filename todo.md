@@ -562,6 +562,10 @@
 - [x] Criar painel de relatórios mensais de propostas para cada vendedor
 - [x] Cobrir histórico, métricas mensais e feedback de envio com testes automatizados
 
+## Feedback de envio de proposta
+
+- [x] Revisar e reforçar carregamento, sucesso e erro exibidos no envio de proposta por e-mail
+
 ## Novo padrão visual de proposta comercial
 
 - [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados
