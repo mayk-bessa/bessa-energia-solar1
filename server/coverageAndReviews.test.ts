@@ -71,7 +71,9 @@ describe('Coverage map and legitimate reviews', () => {
     expect(adminSource).toContain('Página {pendingReviewPage.page} de {pendingReviewPage.totalPages}');
     expect(reviewsSource).toContain('Cliente verificado');
     expect(reviewsSource).toContain('review.verifiedAt');
-    expect(adminSource).toContain('useEffect(() => {');
-    expect(adminSource).toContain('if (user && user.role !== "admin")');
+    expect(adminSource).toContain('Acesso administrativo');
+    expect(adminSource).toContain('trpc.auth.localLogin.useMutation');
+    expect(adminSource).toContain('Entrar no painel');
+    expect(adminSource).toContain('Acesso não autorizado');
   });
 });

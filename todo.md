@@ -600,6 +600,9 @@
 - [x] Adicionar carregamento e confirmação amigável ao envio público de avaliações
 - [x] Exibir selo visual de cliente verificado nos depoimentos aprovados
 - [x] Adicionar paginação à lista de avaliações pendentes no painel de moderação
+- [x] Corrigir o acesso ao painel administrativo de avaliações no site publicado
+- [x] Identificar a porta ativa do processo PM2 no VPS para validar a rota administrativa
+- [x] Corrigir o redirecionamento de /admin para a página inicial quando a sessão administrativa local não for reconhecida
 
 ## Novo padrão visual de proposta comercial
 

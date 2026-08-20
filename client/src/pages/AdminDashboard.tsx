@@ -1,12 +1,12 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronRight, Search } from "lucide-react";
+import { Loader2, ChevronRight, LockKeyhole, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "wouter";
 
 const statusColors: Record<string, string> = {
   new: "bg-blue-100 text-blue-800",
@@ -25,8 +25,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
-  const [, navigate] = useLocation();
+  const { user, loading, refresh } = useAuth();
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
@@ -34,25 +33,18 @@ export default function AdminDashboard() {
   const [reviewSearch, setReviewSearch] = useState("");
   const [reviewSort, setReviewSort] = useState<"newest" | "oldest" | "highest_rating" | "lowest_rating">("newest");
   const [reviewPage, setReviewPage] = useState(1);
-
-  useEffect(() => {
-    if (user && user.role !== "admin") {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
-  if (!user || user.role !== "admin") {
-    return null;
-  }
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const hasAdminAccess = user?.role === "admin";
 
   const { data: budgets, isLoading, refetch } = trpc.admin.budgets.list.useQuery({
     status: selectedStatus || undefined,
     limit: 50,
-  });
+  }, { enabled: hasAdminAccess });
 
   const { data: selectedBudgetData } = trpc.admin.budgets.getById.useQuery(
     { id: selectedBudget! },
-    { enabled: !!selectedBudget }
+    { enabled: hasAdminAccess && !!selectedBudget }
   );
 
   const updateStatusMutation = trpc.admin.budgets.updateStatus.useMutation({
@@ -65,8 +57,13 @@ export default function AdminDashboard() {
   });
 
   const reviewFilters = useMemo(() => ({ search: reviewSearch || undefined, sort: reviewSort, page: reviewPage, pageSize: 10 }), [reviewSearch, reviewSort, reviewPage]);
-  const { data: pendingReviewPage, isLoading: isLoadingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery(reviewFilters);
+  const { data: pendingReviewPage, isLoading: isLoadingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery(reviewFilters, { enabled: hasAdminAccess });
   const pendingReviews = pendingReviewPage?.reviews ?? [];
+  const localLogin = trpc.auth.localLogin.useMutation({
+    onSuccess: async () => {
+      await refresh();
+    },
+  });
   const moderateReviewMutation = trpc.reviews.moderate.useMutation({
     onSuccess: () => refetchReviews(),
   });
@@ -85,6 +82,45 @@ export default function AdminDashboard() {
       notes: notes || undefined,
     });
   };
+
+  if (loading) {
+    return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-[#253c7e]">Verificando acesso administrativo…</div>;
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+        <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl">
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#253c7e] text-white"><LockKeyhole className="h-6 w-6" /></div>
+          <h1 className="text-2xl font-bold text-[#253c7e]">Acesso administrativo</h1>
+          <p className="mt-3 text-slate-600">Entre com as credenciais locais de administrador para moderar avaliações e gerenciar solicitações.</p>
+          <form className="mt-6 space-y-4 text-left" onSubmit={(event) => { event.preventDefault(); localLogin.mutate({ email: loginEmail, password: loginPassword }); }}>
+            <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-email">E-mail
+              <Input id="admin-login-email" className="mt-2" type="email" autoComplete="username" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
+            </label>
+            <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-password">Senha
+              <Input id="admin-login-password" className="mt-2" type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
+            </label>
+            {localLogin.error ? <p className="text-sm text-red-600">{localLogin.error.message || "Não foi possível entrar com essas credenciais."}</p> : null}
+            <Button type="submit" disabled={localLogin.isPending} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">{localLogin.isPending ? "Entrando…" : "Entrar no painel"}</Button>
+          </form>
+        </section>
+      </div>
+    );
+  }
+
+  if (!hasAdminAccess) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+        <section className="max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl">
+          <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-[#ff6900]"><LockKeyhole className="h-6 w-6" /></div>
+          <h1 className="text-2xl font-bold text-[#253c7e]">Acesso não autorizado</h1>
+          <p className="mt-3 text-slate-600">Sua conta está autenticada, mas não possui perfil de administrador para moderar avaliações.</p>
+          <a href="/"><Button variant="outline" className="mt-6 border-[#253c7e] text-[#253c7e]">Voltar ao site</Button></a>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
