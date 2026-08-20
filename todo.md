@@ -595,6 +595,9 @@
 ## Correção de avaliações
 
 - [x] Corrigir o formulário público para salvar depoimentos como avaliações pendentes de moderação
+- [x] Notificar a equipe por e-mail quando uma nova avaliação for enviada
+- [x] Adicionar busca e ordenação ao painel de moderação de avaliações
+- [x] Adicionar carregamento e confirmação amigável ao envio público de avaliações
 
 ## Novo padrão visual de proposta comercial
 

@@ -6,8 +6,10 @@
 import nodemailer from "nodemailer";
 import {
   getCustomerConfirmationEmail,
+  getReviewModerationNotificationEmail,
   getSalesTeamNotificationEmail,
   getVisitScheduledEmail,
+  type ReviewNotificationInput,
 } from "./emailTemplates";
 
 let transporter: nodemailer.Transporter | null = null;
@@ -85,6 +87,24 @@ export async function sendSalesTeamNotification(
     return true;
   } catch (error) {
     console.error("[Email] Failed to send sales team notification:", error);
+    return false;
+  }
+}
+
+export async function sendReviewModerationNotification(review: ReviewNotificationInput): Promise<boolean> {
+  try {
+    const template = getReviewModerationNotificationEmail(review);
+    const recipient = process.env.REVIEW_NOTIFICATION_EMAIL || "vendas@bessaenergia.com.br";
+    await getTransporter().sendMail({
+      from: process.env.SMTP_USER,
+      to: recipient,
+      subject: template.subject,
+      html: template.html,
+    });
+    console.log(`[Email] Review moderation notification sent to ${recipient}`);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send review moderation notification:", error);
     return false;
   }
 }

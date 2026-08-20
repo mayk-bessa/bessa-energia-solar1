@@ -1,5 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
-import { sendChargingProposalEmail, sendPDFReportEmail } from "./emailService";
+import { sendChargingProposalEmail, sendPDFReportEmail, sendReviewModerationNotification } from "./emailService";
 import { ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
@@ -560,12 +560,18 @@ export const appRouter = router({
       }))
       .mutation(async ({ input }) => {
         const result = await createReview({ ...input, status: "pending" });
-        return { success: true, reviewId: result?.id };
+        const notificationSent = await sendReviewModerationNotification(input);
+        return { success: true, reviewId: result.id, notificationSent };
       }),
 
-    listPending: protectedProcedure.query(async ({ ctx }) => {
+    listPending: protectedProcedure
+      .input(z.object({
+        search: z.string().trim().max(255).optional(),
+        sort: z.enum(["newest", "oldest", "highest_rating", "lowest_rating"]).optional(),
+      }).optional())
+      .query(async ({ ctx, input }) => {
       if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
-      return await getPendingReviews();
+      return await getPendingReviews(input);
     }),
 
     moderate: protectedProcedure

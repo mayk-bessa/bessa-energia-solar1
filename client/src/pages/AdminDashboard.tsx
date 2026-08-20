@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Loader2, ChevronRight, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 
 const statusColors: Record<string, string> = {
@@ -31,6 +31,8 @@ export default function AdminDashboard() {
   const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
+  const [reviewSearch, setReviewSearch] = useState("");
+  const [reviewSort, setReviewSort] = useState<"newest" | "oldest" | "highest_rating" | "lowest_rating">("newest");
 
   useEffect(() => {
     if (user && user.role !== "admin") {
@@ -61,7 +63,8 @@ export default function AdminDashboard() {
     },
   });
 
-  const { data: pendingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery();
+  const reviewFilters = useMemo(() => ({ search: reviewSearch || undefined, sort: reviewSort }), [reviewSearch, reviewSort]);
+  const { data: pendingReviews, isLoading: isLoadingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery(reviewFilters);
   const moderateReviewMutation = trpc.reviews.moderate.useMutation({
     onSuccess: () => refetchReviews(),
   });
@@ -266,10 +269,24 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Avaliações pendentes</CardTitle>
-              <CardDescription>Somente avaliações aprovadas são exibidas no site.</CardDescription>
+              <CardDescription>Somente avaliações aprovadas são exibidas no site. {pendingReviews?.length ?? 0} encontrada(s).</CardDescription>
             </CardHeader>
             <CardContent>
-              {pendingReviews?.length ? (
+              <div className="mb-5 grid gap-3 md:grid-cols-[1fr_220px]">
+                <label className="relative block">
+                  <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <input value={reviewSearch} onChange={(event) => setReviewSearch(event.target.value)} placeholder="Buscar por cliente, cidade, projeto ou depoimento" className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" />
+                </label>
+                <select value={reviewSort} onChange={(event) => setReviewSort(event.target.value as typeof reviewSort)} className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" aria-label="Ordenar avaliações pendentes">
+                  <option value="newest">Mais recentes primeiro</option>
+                  <option value="oldest">Mais antigas primeiro</option>
+                  <option value="highest_rating">Maior nota primeiro</option>
+                  <option value="lowest_rating">Menor nota primeiro</option>
+                </select>
+              </div>
+              {isLoadingReviews ? (
+                <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-orange-500" /></div>
+              ) : pendingReviews?.length ? (
                 <div className="space-y-4">
                   {pendingReviews.map((review) => (
                     <div key={review.id} className="rounded-lg border border-gray-200 p-4">

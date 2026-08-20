@@ -1,4 +1,4 @@
-import { eq, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
+import { eq, asc, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts, maintenanceJobs, proposalDeletionAudits, proposalGoals, type ProposalDeletionAudit, type ProposalGoal } from "../drizzle/schema";
 import { isNull } from "drizzle-orm";
@@ -320,10 +320,30 @@ export async function getApprovedReviews() {
   return await db.select().from(reviews).where(eq(reviews.status, "approved")).orderBy(desc(reviews.createdAt));
 }
 
-export async function getPendingReviews() {
+export type PendingReviewFilters = {
+  search?: string;
+  sort?: "newest" | "oldest" | "highest_rating" | "lowest_rating";
+};
+
+export async function getPendingReviews(filters: PendingReviewFilters = {}) {
   const db = await getDb();
   if (!db) return [];
-  return await db.select().from(reviews).where(eq(reviews.status, "pending")).orderBy(desc(reviews.createdAt));
+  const conditions = [eq(reviews.status, "pending")];
+  const search = filters.search?.trim();
+  if (search) {
+    const pattern = `%${search}%`;
+    conditions.push(or(
+      like(reviews.name, pattern),
+      like(reviews.city, pattern),
+      like(reviews.comment, pattern),
+      like(reviews.projectType, pattern),
+    )!);
+  }
+  const order = filters.sort === "oldest" ? asc(reviews.createdAt)
+    : filters.sort === "highest_rating" ? desc(reviews.rating)
+    : filters.sort === "lowest_rating" ? asc(reviews.rating)
+    : desc(reviews.createdAt);
+  return await db.select().from(reviews).where(and(...conditions)).orderBy(order, desc(reviews.createdAt));
 }
 
 export async function updateReviewStatus(id: number, status: "approved" | "rejected") {

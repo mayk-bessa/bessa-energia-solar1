@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { Loader2, Send, Star } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Send, Star } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 const initialForm = {
@@ -10,19 +10,30 @@ const initialForm = {
   comment: '',
 };
 
+type ReviewFeedback = {
+  kind: 'success' | 'error';
+  message: string;
+};
+
 export default function ClientReviews() {
   const utils = trpc.useUtils();
   const { data: reviews, isLoading } = trpc.reviews.listApproved.useQuery();
   const submitReview = trpc.reviews.submit.useMutation({
     onSuccess: async () => {
       setForm(initialForm);
-      setFeedback('Obrigado. Sua avaliação foi enviada e será exibida após validação.');
+      setFeedback({
+        kind: 'success',
+        message: 'Obrigado por compartilhar sua experiência. Sua avaliação foi recebida com carinho e será publicada após a validação da nossa equipe.',
+      });
       await utils.reviews.listApproved.invalidate();
     },
-    onError: () => setFeedback('Não foi possível registrar sua avaliação. Nenhum depoimento foi salvo; tente novamente em instantes.'),
+    onError: () => setFeedback({
+      kind: 'error',
+      message: 'Não foi possível registrar sua avaliação. Nenhum depoimento foi salvo; tente novamente em instantes.',
+    }),
   });
   const [form, setForm] = useState(initialForm);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState<ReviewFeedback | null>(null);
 
   const averageRating = useMemo(() => {
     if (!reviews?.length) return 0;
@@ -31,7 +42,7 @@ export default function ClientReviews() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setFeedback('');
+    setFeedback(null);
     submitReview.mutate({
       name: form.name,
       city: form.city,
@@ -95,11 +106,18 @@ export default function ClientReviews() {
                 <input value={form.projectType} onChange={(event) => setForm({ ...form, projectType: event.target.value })} placeholder="Tipo de projeto (opcional)" aria-label="Tipo de projeto" className="rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
               </div>
               <textarea required minLength={10} maxLength={1000} value={form.comment} onChange={(event) => setForm({ ...form, comment: event.target.value })} placeholder="Escreva sua avaliação" aria-label="Avaliação" rows={5} className="w-full resize-none rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-gray-400 focus:border-orange-400 focus:outline-none" />
-              <button type="submit" disabled={submitReview.isPending} className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60">
+              <button type="submit" disabled={submitReview.isPending} className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60" aria-busy={submitReview.isPending}>
                 {submitReview.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-                Enviar avaliação
+                {submitReview.isPending ? 'Enviando sua experiência...' : 'Enviar avaliação'}
               </button>
-              {feedback ? <p role="status" aria-live="polite" className="text-sm text-orange-200">{feedback}</p> : null}
+              {feedback ? (
+                <div role="status" aria-live="polite" className={`animate-in fade-in slide-in-from-bottom-1 rounded-lg border p-4 text-sm duration-300 ${feedback.kind === 'success' ? 'border-emerald-300/50 bg-emerald-500/15 text-emerald-50' : 'border-red-300/50 bg-red-500/15 text-red-100'}`}>
+                  <div className="flex gap-3">
+                    {feedback.kind === 'success' ? <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-300" /> : <AlertCircle className="h-5 w-5 shrink-0 text-red-200" />}
+                    <p className="leading-relaxed">{feedback.message}</p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </form>
         </div>

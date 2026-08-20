@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   getCustomerConfirmationEmail,
+  getReviewModerationNotificationEmail,
   getSalesTeamNotificationEmail,
   getVisitScheduledEmail,
 } from "./emailTemplates";
@@ -127,6 +128,37 @@ describe("Email Templates", () => {
 
       expect(email.html).toContain("(31) 99102-9003");
       expect(email.html).toContain("Bessa Energia");
+    });
+  });
+
+  describe("getReviewModerationNotificationEmail", () => {
+    it("gera um aviso de moderação com os dados da avaliação", () => {
+      const email = getReviewModerationNotificationEmail({
+        name: "Maria Silva",
+        city: "Belo Horizonte/MG",
+        rating: 5,
+        projectType: "Usina residencial",
+        comment: "Atendimento atencioso e instalação muito organizada.",
+      });
+
+      expect(email.subject).toContain("Nova avaliação pendente de moderação");
+      expect(email.html).toContain("Maria Silva");
+      expect(email.html).toContain("Belo Horizonte/MG");
+      expect(email.html).toContain("5/5");
+      expect(email.html).toContain("Usina residencial");
+    });
+
+    it("escapa o conteúdo da avaliação antes de inseri-lo no HTML", () => {
+      const email = getReviewModerationNotificationEmail({
+        name: "<cliente>",
+        city: "BH",
+        rating: 4,
+        comment: "<script>alert('x')</script>",
+      });
+
+      expect(email.html).toContain("&lt;cliente&gt;");
+      expect(email.html).toContain("&lt;script&gt;");
+      expect(email.html).not.toContain("<script>alert");
     });
   });
 

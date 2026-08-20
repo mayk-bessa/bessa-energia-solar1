@@ -200,3 +200,64 @@ export function getVisitScheduledEmail(
     `,
   };
 }
+
+export type ReviewNotificationInput = {
+  name: string;
+  city: string;
+  rating: number;
+  comment: string;
+  projectType?: string;
+};
+
+function escapeReviewHtml(value: string) {
+  return value.replace(/[&<>'"]/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[character] ?? character);
+}
+
+export function getReviewModerationNotificationEmail(review: ReviewNotificationInput): EmailTemplate {
+  const name = escapeReviewHtml(review.name);
+  const city = escapeReviewHtml(review.city);
+  const comment = escapeReviewHtml(review.comment);
+  const projectType = review.projectType ? escapeReviewHtml(review.projectType) : "Não informado";
+
+  return {
+    subject: `Nova avaliação pendente de moderação — ${review.name}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #253c7e; color: #ffffff; padding: 22px; }
+            .content { background: #f4f6f8; border-left: 4px solid #ff6900; margin: 20px 0; padding: 20px; }
+            .rating { color: #ff6900; font-size: 20px; font-weight: bold; }
+            .comment { background: #ffffff; padding: 15px; margin-top: 16px; }
+            .footer { color: #5e6875; font-size: 12px; margin-top: 25px; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header"><h1>Nova avaliação recebida</h1></div>
+            <div class="content">
+              <p>Uma nova avaliação foi registrada no site e está aguardando moderação.</p>
+              <p><strong>Cliente:</strong> ${name}<br />
+              <strong>Cidade:</strong> ${city}<br />
+              <strong>Projeto:</strong> ${projectType}<br />
+              <strong>Nota:</strong> <span class="rating">${review.rating}/5</span></p>
+              <div class="comment"><strong>Depoimento:</strong><br />“${comment}”</div>
+              <p>Entre no painel administrativo para aprovar ou rejeitar o conteúdo.</p>
+            </div>
+            <div class="footer">© 2026 Bessa Energia Solar · Notificação automática de moderação</div>
+          </div>
+        </body>
+      </html>
+    `,
+  };
+}

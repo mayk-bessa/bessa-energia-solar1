@@ -45,8 +45,10 @@ describe('Coverage map and legitimate reviews', () => {
     expect(reviewsSource).not.toContain('4.9★');
     expect(reviewsSource).toContain('trpc.reviews.listApproved.useQuery()');
     expect(reviewsSource).toContain('trpc.reviews.submit.useMutation');
-    expect(reviewsSource).toContain('será exibida após validação');
+    expect(reviewsSource).toContain('Sua avaliação ficará pendente até ser revisada pela equipe.');
     expect(reviewsSource).toContain('Nenhum depoimento foi salvo');
+    expect(reviewsSource).toContain('Enviando sua experiência...');
+    expect(reviewsSource).toContain('CheckCircle2');
   });
 
   it('defines pending moderation and approved-only public review procedures', () => {
@@ -57,6 +59,11 @@ describe('Coverage map and legitimate reviews', () => {
     expect(routerSource).toContain('moderate: protectedProcedure');
     expect(routerSource).toContain('status: "pending"');
     expect(routerSource).toContain('createReview({ ...input, status: "pending" })');
+    expect(routerSource).toContain('sendReviewModerationNotification(input)');
+    expect(routerSource).toContain('highest_rating');
+    expect(adminSource).toContain('reviewSearch');
+    expect(adminSource).toContain('reviewSort');
+    expect(adminSource).toContain('Buscar por cliente, cidade, projeto ou depoimento');
     expect(adminSource).toContain('useEffect(() => {');
     expect(adminSource).toContain('if (user && user.role !== "admin")');
   });
