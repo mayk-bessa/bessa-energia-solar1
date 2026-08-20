@@ -301,9 +301,17 @@ export async function getTechnicalVisitsByBudgetId(budgetRequestId: number) {
 
 export async function createReview(review: InsertReview) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) {
+    throw new Error("Banco de dados indisponível para registrar a avaliação");
+  }
   const result = await db.insert(reviews).values(review);
-  return { id: (result as any).insertId || (result as any)[0]?.id };
+  return { id: getConfirmedReviewId(result) };
+}
+
+export function getConfirmedReviewId(result: unknown): number {
+  const id = extractInsertId(result);
+  if (!id) throw new Error("O banco de dados não confirmou o salvamento da avaliação");
+  return id;
 }
 
 export async function getApprovedReviews() {

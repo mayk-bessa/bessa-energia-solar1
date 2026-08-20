@@ -592,6 +592,10 @@
 
 - [x] Corrigir a detecção da porta do processo PM2 no roteiro de instalação da limpeza automática da lixeira
 
+## Correção de avaliações
+
+- [x] Corrigir o formulário público para salvar depoimentos como avaliações pendentes de moderação
+
 ## Novo padrão visual de proposta comercial
 
 - [x] Analisar o modelo ASTOLFO anexado e mapear seus elementos visuais preservados

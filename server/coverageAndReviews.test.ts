@@ -46,6 +46,7 @@ describe('Coverage map and legitimate reviews', () => {
     expect(reviewsSource).toContain('trpc.reviews.listApproved.useQuery()');
     expect(reviewsSource).toContain('trpc.reviews.submit.useMutation');
     expect(reviewsSource).toContain('será exibida após validação');
+    expect(reviewsSource).toContain('Nenhum depoimento foi salvo');
   });
 
   it('defines pending moderation and approved-only public review procedures', () => {
@@ -55,6 +56,7 @@ describe('Coverage map and legitimate reviews', () => {
     expect(routerSource).toContain('listPending: protectedProcedure');
     expect(routerSource).toContain('moderate: protectedProcedure');
     expect(routerSource).toContain('status: "pending"');
+    expect(routerSource).toContain('createReview({ ...input, status: "pending" })');
     expect(adminSource).toContain('useEffect(() => {');
     expect(adminSource).toContain('if (user && user.role !== "admin")');
   });

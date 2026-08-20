@@ -19,7 +19,7 @@ export default function ClientReviews() {
       setFeedback('Obrigado. Sua avaliação foi enviada e será exibida após validação.');
       await utils.reviews.listApproved.invalidate();
     },
-    onError: () => setFeedback('Não foi possível enviar sua avaliação. Revise os campos e tente novamente.'),
+    onError: () => setFeedback('Não foi possível registrar sua avaliação. Nenhum depoimento foi salvo; tente novamente em instantes.'),
   });
   const [form, setForm] = useState(initialForm);
   const [feedback, setFeedback] = useState('');
@@ -99,7 +99,7 @@ export default function ClientReviews() {
                 {submitReview.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                 Enviar avaliação
               </button>
-              {feedback ? <p role="status" className="text-sm text-orange-200">{feedback}</p> : null}
+              {feedback ? <p role="status" aria-live="polite" className="text-sm text-orange-200">{feedback}</p> : null}
             </div>
           </form>
         </div>
