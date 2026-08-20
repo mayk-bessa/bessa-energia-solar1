@@ -105,6 +105,8 @@ export const reviews = mysqlTable("reviews", {
   comment: text("comment").notNull(),
   projectType: varchar("projectType", { length: 120 }),
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  verifiedAt: timestamp("verifiedAt"),
+  verifiedBy: int("verifiedBy").references(() => users.id),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "0eeb1886-b83e-4436-ba6e-3ff36484065a",
-  "prevId": "c45fdfc1-c5e3-4c52-a2f6-92d3f260f5eb",
+  "id": "b5ac75af-81ba-4267-ae28-096c65bae5a9",
+  "prevId": "0eeb1886-b83e-4436-ba6e-3ff36484065a",
   "tables": {
     "budgetRequests": {
       "name": "budgetRequests",
@@ -776,6 +776,20 @@
           "autoincrement": false,
           "default": "'pending'"
         },
+        "verifiedAt": {
+          "name": "verifiedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "verifiedBy": {
+          "name": "verifiedBy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -795,7 +809,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "reviews_verifiedBy_users_id_fk": {
+          "name": "reviews_verifiedBy_users_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "users",
+          "columnsFrom": [
+            "verifiedBy"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "reviews_id": {
           "name": "reviews_id",

@@ -598,6 +598,8 @@
 - [x] Notificar a equipe por e-mail quando uma nova avaliação for enviada
 - [x] Adicionar busca e ordenação ao painel de moderação de avaliações
 - [x] Adicionar carregamento e confirmação amigável ao envio público de avaliações
+- [x] Exibir selo visual de cliente verificado nos depoimentos aprovados
+- [x] Adicionar paginação à lista de avaliações pendentes no painel de moderação
 
 ## Novo padrão visual de proposta comercial
 

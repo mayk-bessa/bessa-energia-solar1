@@ -1,4 +1,4 @@
-import { eq, asc, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
+import { eq, asc, count, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts, maintenanceJobs, proposalDeletionAudits, proposalGoals, type ProposalDeletionAudit, type ProposalGoal } from "../drizzle/schema";
 import { isNull } from "drizzle-orm";
@@ -323,11 +323,13 @@ export async function getApprovedReviews() {
 export type PendingReviewFilters = {
   search?: string;
   sort?: "newest" | "oldest" | "highest_rating" | "lowest_rating";
+  page?: number;
+  pageSize?: number;
 };
 
 export async function getPendingReviews(filters: PendingReviewFilters = {}) {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) return { reviews: [], total: 0, page: 1, pageSize: 10, totalPages: 1 };
   const conditions = [eq(reviews.status, "pending")];
   const search = filters.search?.trim();
   if (search) {
@@ -343,13 +345,24 @@ export async function getPendingReviews(filters: PendingReviewFilters = {}) {
     : filters.sort === "highest_rating" ? desc(reviews.rating)
     : filters.sort === "lowest_rating" ? asc(reviews.rating)
     : desc(reviews.createdAt);
-  return await db.select().from(reviews).where(and(...conditions)).orderBy(order, desc(reviews.createdAt));
+  const pageSize = Math.min(Math.max(filters.pageSize ?? 10, 5), 50);
+  const page = Math.max(filters.page ?? 1, 1);
+  const where = and(...conditions);
+  const [reviewRows, totalRows] = await Promise.all([
+    db.select().from(reviews).where(where).orderBy(order, desc(reviews.createdAt)).limit(pageSize).offset((page - 1) * pageSize),
+    db.select({ total: count() }).from(reviews).where(where),
+  ]);
+  const total = Number(totalRows[0]?.total ?? 0);
+  return { reviews: reviewRows, total, page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
 }
 
-export async function updateReviewStatus(id: number, status: "approved" | "rejected") {
+export async function updateReviewStatus(id: number, status: "approved" | "rejected", verifiedBy?: number) {
   const db = await getDb();
   if (!db) return undefined;
-  return await db.update(reviews).set({ status }).where(eq(reviews.id, id));
+  const update = status === "approved" && verifiedBy
+    ? { status, verifiedAt: new Date(), verifiedBy }
+    : { status };
+  return await db.update(reviews).set(update).where(eq(reviews.id, id));
 }
 
 export async function createChargingProposal(proposal: InsertChargingProposal) {

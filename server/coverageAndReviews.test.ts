@@ -54,6 +54,8 @@ describe('Coverage map and legitimate reviews', () => {
   it('defines pending moderation and approved-only public review procedures', () => {
     expect(schemaSource).toContain('export const reviews = mysqlTable');
     expect(schemaSource).toContain('status: mysqlEnum("status", ["pending", "approved", "rejected"])');
+    expect(schemaSource).toContain('verifiedAt: timestamp("verifiedAt")');
+    expect(schemaSource).toContain('verifiedBy: int("verifiedBy")');
     expect(routerSource).toContain('listApproved: publicProcedure');
     expect(routerSource).toContain('listPending: protectedProcedure');
     expect(routerSource).toContain('moderate: protectedProcedure');
@@ -61,9 +63,14 @@ describe('Coverage map and legitimate reviews', () => {
     expect(routerSource).toContain('createReview({ ...input, status: "pending" })');
     expect(routerSource).toContain('sendReviewModerationNotification(input)');
     expect(routerSource).toContain('highest_rating');
+    expect(routerSource).toContain('verified: z.boolean().optional()');
     expect(adminSource).toContain('reviewSearch');
     expect(adminSource).toContain('reviewSort');
     expect(adminSource).toContain('Buscar por cliente, cidade, projeto ou depoimento');
+    expect(adminSource).toContain('Verificar e aprovar');
+    expect(adminSource).toContain('Página {pendingReviewPage.page} de {pendingReviewPage.totalPages}');
+    expect(reviewsSource).toContain('Cliente verificado');
+    expect(reviewsSource).toContain('review.verifiedAt');
     expect(adminSource).toContain('useEffect(() => {');
     expect(adminSource).toContain('if (user && user.role !== "admin")');
   });

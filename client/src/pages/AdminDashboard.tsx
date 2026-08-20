@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [notes, setNotes] = useState<string>("");
   const [reviewSearch, setReviewSearch] = useState("");
   const [reviewSort, setReviewSort] = useState<"newest" | "oldest" | "highest_rating" | "lowest_rating">("newest");
+  const [reviewPage, setReviewPage] = useState(1);
 
   useEffect(() => {
     if (user && user.role !== "admin") {
@@ -63,11 +64,18 @@ export default function AdminDashboard() {
     },
   });
 
-  const reviewFilters = useMemo(() => ({ search: reviewSearch || undefined, sort: reviewSort }), [reviewSearch, reviewSort]);
-  const { data: pendingReviews, isLoading: isLoadingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery(reviewFilters);
+  const reviewFilters = useMemo(() => ({ search: reviewSearch || undefined, sort: reviewSort, page: reviewPage, pageSize: 10 }), [reviewSearch, reviewSort, reviewPage]);
+  const { data: pendingReviewPage, isLoading: isLoadingReviews, refetch: refetchReviews } = trpc.reviews.listPending.useQuery(reviewFilters);
+  const pendingReviews = pendingReviewPage?.reviews ?? [];
   const moderateReviewMutation = trpc.reviews.moderate.useMutation({
     onSuccess: () => refetchReviews(),
   });
+
+  useEffect(() => {
+    if (pendingReviewPage && reviewPage > pendingReviewPage.totalPages) {
+      setReviewPage(pendingReviewPage.totalPages);
+    }
+  }, [pendingReviewPage?.totalPages, reviewPage]);
 
   const handleUpdateStatus = () => {
     if (!selectedBudget || !newStatus) return;
@@ -269,15 +277,15 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Avaliações pendentes</CardTitle>
-              <CardDescription>Somente avaliações aprovadas são exibidas no site. {pendingReviews?.length ?? 0} encontrada(s).</CardDescription>
+              <CardDescription>Somente avaliações aprovadas são exibidas no site. {pendingReviewPage?.total ?? 0} encontrada(s).</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-5 grid gap-3 md:grid-cols-[1fr_220px]">
                 <label className="relative block">
                   <Search className="pointer-events-none absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <input value={reviewSearch} onChange={(event) => setReviewSearch(event.target.value)} placeholder="Buscar por cliente, cidade, projeto ou depoimento" className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" />
+                  <input value={reviewSearch} onChange={(event) => { setReviewSearch(event.target.value); setReviewPage(1); }} placeholder="Buscar por cliente, cidade, projeto ou depoimento" className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-3 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" />
                 </label>
-                <select value={reviewSort} onChange={(event) => setReviewSort(event.target.value as typeof reviewSort)} className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" aria-label="Ordenar avaliações pendentes">
+                <select value={reviewSort} onChange={(event) => { setReviewSort(event.target.value as typeof reviewSort); setReviewPage(1); }} className="rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100" aria-label="Ordenar avaliações pendentes">
                   <option value="newest">Mais recentes primeiro</option>
                   <option value="oldest">Mais antigas primeiro</option>
                   <option value="highest_rating">Maior nota primeiro</option>
@@ -286,8 +294,9 @@ export default function AdminDashboard() {
               </div>
               {isLoadingReviews ? (
                 <div className="flex items-center justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-orange-500" /></div>
-              ) : pendingReviews?.length ? (
-                <div className="space-y-4">
+              ) : pendingReviews.length ? (
+                <>
+                  <div className="space-y-4">
                   {pendingReviews.map((review) => (
                     <div key={review.id} className="rounded-lg border border-gray-200 p-4">
                       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -297,13 +306,24 @@ export default function AdminDashboard() {
                           <p className="mt-2 text-gray-700">“{review.comment}”</p>
                         </div>
                         <div className="flex gap-2">
-                          <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'approved' })} className="bg-green-600 hover:bg-green-700">Aprovar</Button>
+                          <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'approved', verified: true })} className="bg-green-600 hover:bg-green-700">Verificar e aprovar</Button>
+                          <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'approved' })} variant="outline" className="border-green-300 text-green-700 hover:bg-green-50">Aprovar</Button>
                           <Button disabled={moderateReviewMutation.isPending} onClick={() => moderateReviewMutation.mutate({ id: review.id, status: 'rejected' })} variant="outline" className="border-red-300 text-red-700 hover:bg-red-50">Rejeitar</Button>
                         </div>
                       </div>
                     </div>
                   ))}
-                </div>
+                  </div>
+                  {pendingReviewPage && pendingReviewPage.totalPages > 1 ? (
+                    <div className="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-sm text-gray-600">Página {pendingReviewPage.page} de {pendingReviewPage.totalPages} · {pendingReviewPage.total} avaliação(ões)</p>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" disabled={reviewPage <= 1} onClick={() => setReviewPage((page) => Math.max(1, page - 1))}>Anterior</Button>
+                        <Button size="sm" variant="outline" disabled={reviewPage >= pendingReviewPage.totalPages} onClick={() => setReviewPage((page) => page + 1)}>Próxima</Button>
+                      </div>
+                    </div>
+                  ) : null}
+                </>
               ) : (
                 <p className="py-6 text-center text-gray-500">Nenhuma avaliação pendente.</p>
               )}

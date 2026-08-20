@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { AlertCircle, CheckCircle2, Loader2, Send, Star } from 'lucide-react';
+import { AlertCircle, BadgeCheck, CheckCircle2, Loader2, Send, Star } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 const initialForm = {
@@ -74,7 +74,15 @@ export default function ClientReviews() {
                       {Array.from({ length: review.rating }).map((_, index) => <Star key={index} className="h-5 w-5 fill-yellow-400 text-yellow-400" />)}
                     </div>
                     <blockquote className="mb-5 text-gray-700">“{review.comment}”</blockquote>
-                    <p className="font-semibold text-gray-900">{review.name}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold text-gray-900">{review.name}</p>
+                      {review.verifiedAt ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-[#253c7e]" title="Cliente confirmado pela equipe Bessa Energia">
+                          <BadgeCheck className="h-4 w-4 text-[#ff6900]" aria-hidden="true" />
+                          Cliente verificado
+                        </span>
+                      ) : null}
+                    </div>
                     <p className="text-sm text-gray-500">{review.city}{review.projectType ? ` · ${review.projectType}` : ''}</p>
                   </article>
                 ))}

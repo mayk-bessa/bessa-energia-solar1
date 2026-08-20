@@ -568,6 +568,8 @@ export const appRouter = router({
       .input(z.object({
         search: z.string().trim().max(255).optional(),
         sort: z.enum(["newest", "oldest", "highest_rating", "lowest_rating"]).optional(),
+        page: z.number().int().min(1).max(100000).optional(),
+        pageSize: z.number().int().min(5).max(50).optional(),
       }).optional())
       .query(async ({ ctx, input }) => {
       if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
@@ -575,10 +577,10 @@ export const appRouter = router({
     }),
 
     moderate: protectedProcedure
-      .input(z.object({ id: z.number(), status: z.enum(["approved", "rejected"]) }))
+      .input(z.object({ id: z.number(), status: z.enum(["approved", "rejected"]), verified: z.boolean().optional() }))
       .mutation(async ({ input, ctx }) => {
         if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
-        await updateReviewStatus(input.id, input.status);
+        await updateReviewStatus(input.id, input.status, input.verified ? ctx.user.id : undefined);
         return { success: true };
       }),
   }),
