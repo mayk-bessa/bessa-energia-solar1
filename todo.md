@@ -604,6 +604,10 @@
 - [x] Identificar a porta ativa do processo PM2 no VPS para validar a rota administrativa
 - [x] Corrigir o redirecionamento de /admin para a página inicial quando a sessão administrativa local não for reconhecida
 - [x] Adicionar botão para encerrar a sessão atual e entrar com uma conta administradora válida no painel de moderação
+- [x] Implementar recuperação de senha administrativa diretamente no login local do painel
+- [x] Criar uma seção dedicada para moderar avaliações pendentes no painel administrativo
+- [x] Exibir um indicador visual de carregamento durante o encerramento e a troca de conta administrativa
+- [x] Implementar autenticação em duas etapas com Google Authenticator para contas administrativas locais
 
 ## Novo padrão visual de proposta comercial
 

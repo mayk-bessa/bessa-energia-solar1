@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { CalculatorProvider } from "./contexts/CalculatorContext";
 import Home from "./pages/Home";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminPasswordReset from "./pages/AdminPasswordReset";
 import AdvancedCalculator from "./components/AdvancedCalculator";
 import Dashboard from "./pages/Dashboard";
 import WhatsAppButton from "./components/WhatsAppButton";
@@ -22,6 +23,7 @@ function Router() {
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/admin"} component={AdminDashboard} />
+      <Route path={"/redefinir-senha-admin"} component={AdminPasswordReset} />
       <Route path={"/calculadora-avancada"} component={AdvancedCalculator} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/galeria-instalacoes"} component={GaleriaInstalacoes} />

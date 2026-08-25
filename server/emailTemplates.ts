@@ -261,3 +261,40 @@ export function getReviewModerationNotificationEmail(review: ReviewNotificationI
     `,
   };
 }
+
+export function getAdminPasswordResetEmail(input: { name?: string | null; resetUrl: string }): EmailTemplate {
+  const name = escapeReviewHtml(input.name?.trim() || "Administrador");
+  const resetUrl = escapeReviewHtml(input.resetUrl);
+  return {
+    subject: "Redefinição de senha administrativa — Bessa Energia",
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #1a1a1a; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: #253c7e; color: #ffffff; padding: 22px; }
+            .content { background: #f4f6f8; border-left: 4px solid #ff6900; margin: 20px 0; padding: 20px; }
+            .button { display: inline-block; background: #ff6900; color: #ffffff !important; padding: 13px 20px; text-decoration: none; font-weight: bold; }
+            .footer { color: #5e6875; font-size: 12px; margin-top: 25px; text-align: center; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header"><h1>Redefinição de senha</h1></div>
+            <div class="content">
+              <p>Olá, <strong>${name}</strong>.</p>
+              <p>Recebemos uma solicitação para redefinir a senha da sua conta administrativa da Bessa Energia.</p>
+              <p><a class="button" href="${resetUrl}">Criar nova senha</a></p>
+              <p>Este link é individual, expira em 30 minutos e deixa de funcionar após o uso.</p>
+              <p>Se você não solicitou esta alteração, ignore este e-mail. Sua senha atual continuará válida.</p>
+            </div>
+            <div class="footer">© 2026 Bessa Energia Solar · Segurança de acesso administrativo</div>
+          </div>
+        </body>
+      </html>
+    `,
+  };
+}

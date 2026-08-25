@@ -1,5 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
-import { sendChargingProposalEmail, sendPDFReportEmail, sendReviewModerationNotification } from "./emailService";
+import { sendAdminPasswordResetEmail, sendChargingProposalEmail, sendPDFReportEmail, sendReviewModerationNotification } from "./emailService";
 import { ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
@@ -10,13 +10,14 @@ import { storagePut } from "./storage";
 import { sendCustomerConfirmationEmail, sendSalesTeamNotification, sendVisitScheduledEmail } from "./emailService";
 import { createReview, getApprovedReviews, getPendingReviews, updateReviewStatus } from "./db";
 import { generateSolarReportPDF, type SolarCalculationData } from "./pdfGenerator";
-import { createChargingProposal, createLocalUserAccount, deleteLocalSellerAccount, getChargingProposalById, getChargingProposalBySignatureToken, getChargingProposals, getMonthlyProposalMetrics, getProposalDeletionAudits, getProposalGoal, getSentChargingProposalHistory, getTrashedChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, moveChargingProposalToTrash, restoreChargingProposal, setLocalSellerAccountActive, signChargingProposal, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole, upsertProposalGoal } from "./db";
+import { createChargingProposal, createLocalUserAccount, createPasswordResetToken, deleteLocalSellerAccount, disableLocalTotp, enableLocalTotp, getActiveLocalAdminByEmail, getChargingProposalById, getChargingProposalBySignatureToken, getChargingProposals, getLocalTotpConfig, getMonthlyProposalMetrics, getProposalDeletionAudits, getProposalGoal, getSentChargingProposalHistory, getTrashedChargingProposals, getUsersForRoleManagement, markChargingProposalAsSent, moveChargingProposalToTrash, resetLocalAdminPasswordWithToken, restoreChargingProposal, setLocalSellerAccountActive, setPendingLocalTotpSecret, signChargingProposal, updateChargingProposalStatus, updateLocalSellerAccount, updateUserRole, upsertProposalGoal } from "./db";
 import { generateChargingProposalPDF } from "./chargingProposalPdf";
 import { generateMonthlyProposalReportPdf } from "./monthlyProposalReportPdf";
-import { randomUUID } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 import { sdk } from "./_core/sdk";
-import { authenticateLocalUser, hashLocalPassword } from "./localAuth";
+import { authenticateLocalUser, ensureBootstrapLocalAdmin, hashLocalPassword } from "./localAuth";
 import { storeProductImageLocally } from "./productImageStorage";
+import { createTotpSetup, decryptTotpSecret, encryptTotpSecret, verifyTotpCode } from "./totpAuth";
 
 const chargingComponentSchema = z.object({
   id: z.string().min(1).max(120),
@@ -46,14 +47,83 @@ export const appRouter = router({
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     localLogin: publicProcedure
-      .input(z.object({ email: z.string().trim().email(), password: z.string().min(1).max(512) }))
+      .input(z.object({ email: z.string().trim().email(), password: z.string().min(1).max(512), totpCode: z.string().trim().regex(/^\d{6}$/).optional() }))
       .mutation(async ({ input, ctx }) => {
         const user = await authenticateLocalUser(input.email, input.password);
         if (!user) throw new Error("E-mail ou senha inválidos");
+        const totpConfig = await getLocalTotpConfig(user.id);
+        if (totpConfig?.secretEncrypted && totpConfig.enabledAt) {
+          if (!input.totpCode) throw new Error("Informe o código de 6 dígitos do Google Authenticator");
+          if (!verifyTotpCode(decryptTotpSecret(totpConfig.secretEncrypted), input.totpCode)) {
+            throw new Error("Código do Google Authenticator inválido ou expirado");
+          }
+        }
         const token = await sdk.createSessionToken(user.openId, { name: user.name ?? user.email ?? "Vendedor Bessa" });
         const cookieOptions = getSessionCookieOptions(ctx.req);
         ctx.res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: ONE_YEAR_MS });
         return { id: user.id, name: user.name, email: user.email, role: user.role };
+      }),
+    requestAdminPasswordReset: publicProcedure
+      .input(z.object({ email: z.string().trim().email() }))
+      .mutation(async ({ input }) => {
+        await ensureBootstrapLocalAdmin();
+        const admin = await getActiveLocalAdminByEmail(input.email);
+        if (admin?.user.email) {
+          const token = randomBytes(32).toString("base64url");
+          const tokenHash = createHash("sha256").update(token).digest("hex");
+          await createPasswordResetToken({
+            userId: admin.user.id,
+            tokenHash,
+            expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+          });
+          const baseUrl = (process.env.PUBLIC_APP_URL || "https://bessaenergia.com.br").replace(/\/$/, "");
+          const delivered = await sendAdminPasswordResetEmail(admin.user.email, admin.user.name, `${baseUrl}/redefinir-senha-admin?token=${encodeURIComponent(token)}`);
+          if (!delivered) throw new Error("Não foi possível enviar o e-mail de recuperação agora");
+        }
+        return { success: true };
+      }),
+    resetLocalAdminPassword: publicProcedure
+      .input(z.object({ token: z.string().min(32).max(256), password: z.string().min(16).max(512) }))
+      .mutation(async ({ input }) => {
+        const tokenHash = createHash("sha256").update(input.token).digest("hex");
+        const updated = await resetLocalAdminPasswordWithToken({ tokenHash, passwordHash: await hashLocalPassword(input.password) });
+        if (!updated) throw new Error("Este link de recuperação é inválido, expirou ou já foi utilizado.");
+        return { success: true };
+      }),
+    getAdminTotpStatus: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+      const config = await getLocalTotpConfig(ctx.user.id);
+      return { enabled: Boolean(config?.secretEncrypted && config.enabledAt), pending: Boolean(config?.pendingSecretEncrypted) };
+    }),
+    setupAdminTotp: protectedProcedure.mutation(async ({ ctx }) => {
+      if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+      const config = await getLocalTotpConfig(ctx.user.id);
+      if (!config) throw new Error("A autenticação em duas etapas exige uma conta local administrativa");
+      const setup = createTotpSetup(ctx.user.email || ctx.user.name || "Administrador Bessa");
+      await setPendingLocalTotpSecret(ctx.user.id, encryptTotpSecret(setup.base32Secret));
+      return { otpauthUrl: setup.otpauthUrl, manualKey: setup.base32Secret };
+    }),
+    confirmAdminTotp: protectedProcedure
+      .input(z.object({ code: z.string().trim().regex(/^\d{6}$/) }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+        const config = await getLocalTotpConfig(ctx.user.id);
+        if (!config?.pendingSecretEncrypted) throw new Error("Inicie a configuração do Google Authenticator antes de confirmar");
+        const secret = decryptTotpSecret(config.pendingSecretEncrypted);
+        if (!verifyTotpCode(secret, input.code)) throw new Error("Código do Google Authenticator inválido ou expirado");
+        await enableLocalTotp(ctx.user.id, encryptTotpSecret(secret));
+        return { success: true };
+      }),
+    disableAdminTotp: protectedProcedure
+      .input(z.object({ code: z.string().trim().regex(/^\d{6}$/) }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user?.role !== "admin") throw new Error("Unauthorized");
+        const config = await getLocalTotpConfig(ctx.user.id);
+        if (!config?.secretEncrypted || !verifyTotpCode(decryptTotpSecret(config.secretEncrypted), input.code)) {
+          throw new Error("Informe um código válido do Google Authenticator para desativar a proteção");
+        }
+        await disableLocalTotp(ctx.user.id);
+        return { success: true };
       }),
     logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);

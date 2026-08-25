@@ -5,6 +5,7 @@
 
 import nodemailer from "nodemailer";
 import {
+  getAdminPasswordResetEmail,
   getCustomerConfirmationEmail,
   getReviewModerationNotificationEmail,
   getSalesTeamNotificationEmail,
@@ -105,6 +106,23 @@ export async function sendReviewModerationNotification(review: ReviewNotificatio
     return true;
   } catch (error) {
     console.error("[Email] Failed to send review moderation notification:", error);
+    return false;
+  }
+}
+
+export async function sendAdminPasswordResetEmail(email: string, name: string | null, resetUrl: string): Promise<boolean> {
+  try {
+    const template = getAdminPasswordResetEmail({ name, resetUrl });
+    await getTransporter().sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: template.subject,
+      html: template.html,
+    });
+    console.log(`[Email] Password reset sent to ${email}`);
+    return true;
+  } catch (error) {
+    console.error("[Email] Failed to send password reset:", error);
     return false;
   }
 }

@@ -1,6 +1,6 @@
-import { eq, asc, count, desc, and, gte, lte, lt, like, or, isNotNull } from "drizzle-orm";
+import { eq, asc, count, desc, and, gte, gt, lte, lt, like, or, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts, maintenanceJobs, proposalDeletionAudits, proposalGoals, type ProposalDeletionAudit, type ProposalGoal } from "../drizzle/schema";
+import { InsertUser, users, files, InsertFile, budgetRequests, InsertBudgetRequest, BudgetRequest, technicalVisits, InsertTechnicalVisit, reviews, InsertReview, chargingProposals, InsertChargingProposal, ChargingProposal, localAccounts, maintenanceJobs, passwordResetTokens, proposalDeletionAudits, proposalGoals, type ProposalDeletionAudit, type ProposalGoal } from "../drizzle/schema";
 import { isNull } from "drizzle-orm";
 import { ENV } from './_core/env';
 
@@ -136,6 +136,89 @@ export async function touchLocalUser(userId: number) {
   const db = await getDb();
   if (!db) return;
   await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
+}
+
+export async function getActiveLocalAdminByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const normalized = email.trim().toLowerCase();
+  const [result] = await db
+    .select({ user: users, account: localAccounts })
+    .from(users)
+    .innerJoin(localAccounts, eq(localAccounts.userId, users.id))
+    .where(and(eq(users.openId, `local:${normalized}`), eq(users.role, "admin"), eq(localAccounts.isActive, 1)))
+    .limit(1);
+  return result;
+}
+
+export async function createPasswordResetToken(input: { userId: number; tokenHash: string; expiresAt: Date }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para recuperar a senha");
+  const now = new Date();
+  await db.update(passwordResetTokens).set({ usedAt: now })
+    .where(and(eq(passwordResetTokens.userId, input.userId), isNull(passwordResetTokens.usedAt)));
+  await db.insert(passwordResetTokens).values({
+    userId: input.userId,
+    tokenHash: input.tokenHash,
+    expiresAt: input.expiresAt,
+  });
+}
+
+export async function resetLocalAdminPasswordWithToken(input: { tokenHash: string; passwordHash: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para redefinir a senha");
+  const now = new Date();
+  const [record] = await db.select({ token: passwordResetTokens, user: users })
+    .from(passwordResetTokens)
+    .innerJoin(users, eq(users.id, passwordResetTokens.userId))
+    .where(eq(passwordResetTokens.tokenHash, input.tokenHash))
+    .limit(1);
+  if (!record || record.user.role !== "admin" || record.token.usedAt || record.token.expiresAt <= now) return false;
+
+  const result = await db.update(passwordResetTokens).set({ usedAt: now })
+    .where(and(eq(passwordResetTokens.id, record.token.id), isNull(passwordResetTokens.usedAt), gt(passwordResetTokens.expiresAt, now)));
+  const metadata = Array.isArray(result) ? result[0] : result;
+  if (!Number((metadata as { affectedRows?: number }).affectedRows ?? 0)) return false;
+
+  await db.update(localAccounts).set({ passwordHash: input.passwordHash }).where(eq(localAccounts.userId, record.user.id));
+  return true;
+}
+
+export async function getLocalTotpConfig(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const [account] = await db.select({
+    secretEncrypted: localAccounts.totpSecretEncrypted,
+    pendingSecretEncrypted: localAccounts.totpPendingSecretEncrypted,
+    enabledAt: localAccounts.totpEnabledAt,
+  }).from(localAccounts).where(eq(localAccounts.userId, userId)).limit(1);
+  return account;
+}
+
+export async function setPendingLocalTotpSecret(userId: number, encryptedSecret: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para configurar a autenticação em duas etapas");
+  await db.update(localAccounts).set({ totpPendingSecretEncrypted: encryptedSecret }).where(eq(localAccounts.userId, userId));
+}
+
+export async function enableLocalTotp(userId: number, encryptedSecret: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para ativar a autenticação em duas etapas");
+  await db.update(localAccounts).set({
+    totpSecretEncrypted: encryptedSecret,
+    totpPendingSecretEncrypted: null,
+    totpEnabledAt: new Date(),
+  }).where(eq(localAccounts.userId, userId));
+}
+
+export async function disableLocalTotp(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Banco de dados indisponível para desativar a autenticação em duas etapas");
+  await db.update(localAccounts).set({
+    totpSecretEncrypted: null,
+    totpPendingSecretEncrypted: null,
+    totpEnabledAt: null,
+  }).where(eq(localAccounts.userId, userId));
 }
 
 export async function saveFileMetadata(file: InsertFile) {

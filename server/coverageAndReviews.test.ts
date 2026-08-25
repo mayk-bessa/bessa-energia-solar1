@@ -77,5 +77,12 @@ describe('Coverage map and legitimate reviews', () => {
     expect(adminSource).toContain('Acesso não autorizado');
     expect(adminSource).toContain('Entrar com uma conta administradora');
     expect(adminSource).toContain('handleSwitchToAdminAccount');
+    expect(adminSource).toContain('Esqueci minha senha');
+    expect(adminSource).toContain('Google Authenticator');
+    expect(adminSource).toContain('Central de moderação de avaliações');
+    expect(routerSource).toContain('requestAdminPasswordReset');
+    expect(routerSource).toContain('resetLocalAdminPassword');
+    expect(routerSource).toContain('setupAdminTotp');
+    expect(routerSource).toContain('confirmAdminTotp');
   });
 });

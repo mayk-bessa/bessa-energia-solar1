@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronRight, LockKeyhole, LogOut, Search } from "lucide-react";
+import { Loader2, ChevronRight, LockKeyhole, LogOut, Search, ShieldCheck } from "lucide-react";
+import QRCode from "react-qr-code";
 import { useEffect, useMemo, useState } from "react";
 
 const statusColors: Record<string, string> = {
@@ -37,6 +38,13 @@ export default function AdminDashboard() {
   const [loginPassword, setLoginPassword] = useState("");
   const [switchAccountError, setSwitchAccountError] = useState<string | null>(null);
   const [isSwitchingAccount, setIsSwitchingAccount] = useState(false);
+  const [showPasswordRecovery, setShowPasswordRecovery] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoveryFeedback, setRecoveryFeedback] = useState<string | null>(null);
+  const [loginTotpCode, setLoginTotpCode] = useState("");
+  const [totpCode, setTotpCode] = useState("");
+  const [totpSetup, setTotpSetup] = useState<{ otpauthUrl: string; manualKey: string } | null>(null);
+  const [totpFeedback, setTotpFeedback] = useState<string | null>(null);
   const hasAdminAccess = user?.role === "admin";
 
   const { data: budgets, isLoading, refetch } = trpc.admin.budgets.list.useQuery({
@@ -65,6 +73,23 @@ export default function AdminDashboard() {
     onSuccess: async () => {
       await refresh();
     },
+  });
+  const requestAdminPasswordReset = trpc.auth.requestAdminPasswordReset.useMutation({
+    onSuccess: () => setRecoveryFeedback("Se houver uma conta administrativa ativa com esse e-mail, enviaremos um link de recuperação. Verifique também a pasta de spam."),
+    onError: () => setRecoveryFeedback("Não foi possível processar a solicitação agora. Tente novamente em instantes."),
+  });
+  const totpStatus = trpc.auth.getAdminTotpStatus.useQuery(undefined, { enabled: hasAdminAccess });
+  const setupAdminTotp = trpc.auth.setupAdminTotp.useMutation({
+    onSuccess: (setup) => { setTotpSetup(setup); setTotpCode(""); setTotpFeedback(null); },
+    onError: (error) => setTotpFeedback(error.message || "Não foi possível iniciar a configuração."),
+  });
+  const confirmAdminTotp = trpc.auth.confirmAdminTotp.useMutation({
+    onSuccess: async () => { setTotpSetup(null); setTotpCode(""); setTotpFeedback("Google Authenticator ativado para esta conta."); await totpStatus.refetch(); },
+    onError: (error) => setTotpFeedback(error.message || "Não foi possível validar o código."),
+  });
+  const disableAdminTotp = trpc.auth.disableAdminTotp.useMutation({
+    onSuccess: async () => { setTotpCode(""); setTotpFeedback("Google Authenticator desativado para esta conta."); await totpStatus.refetch(); },
+    onError: (error) => setTotpFeedback(error.message || "Não foi possível desativar a proteção."),
   });
   const moderateReviewMutation = trpc.reviews.moderate.useMutation({
     onSuccess: () => refetchReviews(),
@@ -99,6 +124,18 @@ export default function AdminDashboard() {
     }
   };
 
+  if (isSwitchingAccount) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+        <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-xl" role="status" aria-live="polite">
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#253c7e] text-white"><Loader2 className="h-7 w-7 animate-spin" /></div>
+          <h1 className="text-2xl font-bold text-[#253c7e]">Trocando de conta</h1>
+          <p className="mt-3 text-slate-600">Estamos encerrando a sessão atual com segurança e preparando o login administrativo.</p>
+        </section>
+      </div>
+    );
+  }
+
   if (loading) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-[#253c7e]">Verificando acesso administrativo…</div>;
   }
@@ -110,16 +147,31 @@ export default function AdminDashboard() {
           <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#253c7e] text-white"><LockKeyhole className="h-6 w-6" /></div>
           <h1 className="text-2xl font-bold text-[#253c7e]">Acesso administrativo</h1>
           <p className="mt-3 text-slate-600">Entre com as credenciais locais de administrador para moderar avaliações e gerenciar solicitações.</p>
-          <form className="mt-6 space-y-4 text-left" onSubmit={(event) => { event.preventDefault(); localLogin.mutate({ email: loginEmail, password: loginPassword }); }}>
-            <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-email">E-mail
-              <Input id="admin-login-email" className="mt-2" type="email" autoComplete="username" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
-            </label>
-            <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-password">Senha
-              <Input id="admin-login-password" className="mt-2" type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
-            </label>
-            {localLogin.error ? <p className="text-sm text-red-600">{localLogin.error.message || "Não foi possível entrar com essas credenciais."}</p> : null}
-            <Button type="submit" disabled={localLogin.isPending} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">{localLogin.isPending ? "Entrando…" : "Entrar no painel"}</Button>
-          </form>
+          {showPasswordRecovery ? (
+            <form className="mt-6 space-y-4 text-left" onSubmit={(event) => { event.preventDefault(); requestAdminPasswordReset.mutate({ email: recoveryEmail }); }}>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="admin-recovery-email">E-mail administrativo
+                <Input id="admin-recovery-email" className="mt-2" type="email" autoComplete="email" value={recoveryEmail} onChange={(event) => setRecoveryEmail(event.target.value)} required />
+              </label>
+              {recoveryFeedback ? <p className="rounded-lg bg-blue-50 p-3 text-sm leading-relaxed text-[#253c7e]">{recoveryFeedback}</p> : null}
+              <Button type="submit" disabled={requestAdminPasswordReset.isPending} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">{requestAdminPasswordReset.isPending ? "Enviando link…" : "Enviar link de recuperação"}</Button>
+              <Button type="button" variant="outline" className="w-full" onClick={() => { setShowPasswordRecovery(false); setRecoveryFeedback(null); }}>Voltar ao login</Button>
+            </form>
+          ) : (
+            <form className="mt-6 space-y-4 text-left" onSubmit={(event) => { event.preventDefault(); localLogin.mutate({ email: loginEmail, password: loginPassword, totpCode: loginTotpCode || undefined }); }}>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-email">E-mail
+                <Input id="admin-login-email" className="mt-2" type="email" autoComplete="username" value={loginEmail} onChange={(event) => setLoginEmail(event.target.value)} required />
+              </label>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-password">Senha
+                <Input id="admin-login-password" className="mt-2" type="password" autoComplete="current-password" value={loginPassword} onChange={(event) => setLoginPassword(event.target.value)} required />
+              </label>
+              <label className="block text-sm font-medium text-slate-700" htmlFor="admin-login-totp">Código do Google Authenticator <span className="font-normal text-slate-500">(se ativado)</span>
+                <Input id="admin-login-totp" className="mt-2 tracking-[0.35em]" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={loginTotpCode} onChange={(event) => setLoginTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="000000" />
+              </label>
+              {localLogin.error ? <p className="text-sm text-red-600">{localLogin.error.message || "Não foi possível entrar com essas credenciais."}</p> : null}
+              <Button type="submit" disabled={localLogin.isPending} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">{localLogin.isPending ? "Entrando…" : "Entrar no painel"}</Button>
+              <button type="button" className="w-full text-sm font-medium text-[#253c7e] underline underline-offset-4" onClick={() => { setShowPasswordRecovery(true); setRecoveryFeedback(null); }}>Esqueci minha senha</button>
+            </form>
+          )}
         </section>
       </div>
     );
@@ -150,6 +202,29 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Painel Administrativo</h1>
           <p className="text-gray-600">Gerenciar solicitações de orçamento e leads</p>
         </div>
+
+        <section aria-labelledby="seguranca-conta-titulo" className="mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle id="seguranca-conta-titulo" className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-[#253c7e]" />Segurança da conta</CardTitle>
+              <CardDescription>Adicione uma segunda etapa ao login com o aplicativo Google Authenticator.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {totpStatus.isLoading ? <div className="flex items-center gap-2 text-sm text-slate-600"><Loader2 className="h-4 w-4 animate-spin" />Consultando proteção da conta…</div> : totpStatus.data?.enabled ? (
+                <div className="grid gap-4 md:grid-cols-[1fr_260px] md:items-end">
+                  <div><Badge className="bg-emerald-100 text-emerald-800">Google Authenticator ativo</Badge><p className="mt-2 text-sm text-slate-600">O código de seis dígitos será solicitado após a senha em cada novo acesso administrativo.</p></div>
+                  <div className="space-y-2"><Input inputMode="numeric" maxLength={6} value={totpCode} onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Código atual para desativar" /><Button variant="outline" disabled={disableAdminTotp.isPending || totpCode.length !== 6} onClick={() => disableAdminTotp.mutate({ code: totpCode })} className="w-full border-red-300 text-red-700 hover:bg-red-50">Desativar proteção</Button></div>
+                </div>
+              ) : totpSetup ? (
+                <div className="grid gap-6 md:grid-cols-[180px_1fr] md:items-center">
+                  <div className="mx-auto bg-white p-3"><QRCode value={totpSetup.otpauthUrl} size={156} /></div>
+                  <div className="space-y-3"><p className="text-sm text-slate-700">Abra o Google Authenticator, escaneie o QR code e informe o código exibido para confirmar.</p><p className="break-all rounded-lg bg-slate-100 p-3 font-mono text-xs text-slate-700">Chave manual: {totpSetup.manualKey}</p><Input inputMode="numeric" maxLength={6} value={totpCode} onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Código de 6 dígitos" /><Button disabled={confirmAdminTotp.isPending || totpCode.length !== 6} onClick={() => confirmAdminTotp.mutate({ code: totpCode })} className="w-full bg-[#ff6900] hover:bg-[#e35e00]">Confirmar Google Authenticator</Button></div>
+                </div>
+              ) : <Button disabled={setupAdminTotp.isPending} onClick={() => setupAdminTotp.mutate()} className="bg-[#253c7e] hover:bg-[#1b2d61]">{setupAdminTotp.isPending ? "Gerando configuração…" : "Configurar Google Authenticator"}</Button>}
+              {totpFeedback ? <p className="mt-4 text-sm text-[#253c7e]" role="status">{totpFeedback}</p> : null}
+            </CardContent>
+          </Card>
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Budgets List */}
@@ -330,11 +405,11 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <section className="mt-8">
+        <section id="moderacao-avaliacoes" aria-labelledby="moderacao-avaliacoes-titulo" className="mt-8">
           <Card>
             <CardHeader>
-              <CardTitle>Avaliações pendentes</CardTitle>
-              <CardDescription>Somente avaliações aprovadas são exibidas no site. {pendingReviewPage?.total ?? 0} encontrada(s).</CardDescription>
+              <CardTitle id="moderacao-avaliacoes-titulo">Central de moderação de avaliações</CardTitle>
+              <CardDescription>Revise depoimentos pendentes, aprove ou rejeite o conteúdo e use “Verificar e aprovar” somente após confirmar que a cliente é real. {pendingReviewPage?.total ?? 0} encontrada(s).</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-5 grid gap-3 md:grid-cols-[1fr_220px]">

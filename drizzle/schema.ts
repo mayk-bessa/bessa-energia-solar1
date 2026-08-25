@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, unique, varchar } from "drizzle-orm/mysql-core";
+import { index, int, mysqlEnum, mysqlTable, text, timestamp, unique, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -34,12 +34,27 @@ export const localAccounts = mysqlTable("localAccounts", {
   userId: int("userId").notNull().unique().references(() => users.id),
   passwordHash: varchar("passwordHash", { length: 255 }).notNull(),
   isActive: int("isActive").default(1).notNull(),
+  totpSecretEncrypted: varchar("totpSecretEncrypted", { length: 512 }),
+  totpPendingSecretEncrypted: varchar("totpPendingSecretEncrypted", { length: 512 }),
+  totpEnabledAt: timestamp("totpEnabledAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export type LocalAccount = typeof localAccounts.$inferSelect;
 export type InsertLocalAccount = typeof localAccounts.$inferInsert;
+
+/** Tokens de uso único para redefinição segura de senha de contas locais administrativas. */
+export const passwordResetTokens = mysqlTable("passwordResetTokens", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  tokenHash: varchar("tokenHash", { length: 128 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [index("passwordResetTokens_userId_idx").on(table.userId)]);
+
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 
 /**
  * Files table for storing file metadata and S3 references
