@@ -75,5 +75,7 @@ describe('Coverage map and legitimate reviews', () => {
     expect(adminSource).toContain('trpc.auth.localLogin.useMutation');
     expect(adminSource).toContain('Entrar no painel');
     expect(adminSource).toContain('Acesso não autorizado');
+    expect(adminSource).toContain('Entrar com uma conta administradora');
+    expect(adminSource).toContain('handleSwitchToAdminAccount');
   });
 });

@@ -603,6 +603,7 @@
 - [x] Corrigir o acesso ao painel administrativo de avaliações no site publicado
 - [x] Identificar a porta ativa do processo PM2 no VPS para validar a rota administrativa
 - [x] Corrigir o redirecionamento de /admin para a página inicial quando a sessão administrativa local não for reconhecida
+- [x] Adicionar botão para encerrar a sessão atual e entrar com uma conta administradora válida no painel de moderação
 
 ## Novo padrão visual de proposta comercial
 

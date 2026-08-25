@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronRight, LockKeyhole, Search } from "lucide-react";
+import { Loader2, ChevronRight, LockKeyhole, LogOut, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const statusColors: Record<string, string> = {
@@ -25,7 +25,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function AdminDashboard() {
-  const { user, loading, refresh } = useAuth();
+  const { user, loading, refresh, logout } = useAuth();
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
@@ -35,6 +35,8 @@ export default function AdminDashboard() {
   const [reviewPage, setReviewPage] = useState(1);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [switchAccountError, setSwitchAccountError] = useState<string | null>(null);
+  const [isSwitchingAccount, setIsSwitchingAccount] = useState(false);
   const hasAdminAccess = user?.role === "admin";
 
   const { data: budgets, isLoading, refetch } = trpc.admin.budgets.list.useQuery({
@@ -83,6 +85,20 @@ export default function AdminDashboard() {
     });
   };
 
+  const handleSwitchToAdminAccount = async () => {
+    try {
+      setSwitchAccountError(null);
+      setIsSwitchingAccount(true);
+      await logout();
+      setLoginEmail("");
+      setLoginPassword("");
+    } catch (error: any) {
+      setSwitchAccountError(error?.message || "Não foi possível encerrar a conta atual. Tente novamente.");
+    } finally {
+      setIsSwitchingAccount(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex min-h-screen items-center justify-center bg-slate-100 text-[#253c7e]">Verificando acesso administrativo…</div>;
   }
@@ -116,7 +132,12 @@ export default function AdminDashboard() {
           <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-100 text-[#ff6900]"><LockKeyhole className="h-6 w-6" /></div>
           <h1 className="text-2xl font-bold text-[#253c7e]">Acesso não autorizado</h1>
           <p className="mt-3 text-slate-600">Sua conta está autenticada, mas não possui perfil de administrador para moderar avaliações.</p>
-          <a href="/"><Button variant="outline" className="mt-6 border-[#253c7e] text-[#253c7e]">Voltar ao site</Button></a>
+          <Button onClick={handleSwitchToAdminAccount} disabled={isSwitchingAccount} className="mt-6 w-full bg-[#ff6900] hover:bg-[#e35e00]">
+            {isSwitchingAccount ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
+            {isSwitchingAccount ? "Encerrando sessão…" : "Entrar com uma conta administradora"}
+          </Button>
+          {switchAccountError ? <p className="mt-3 text-sm text-red-600">{switchAccountError}</p> : null}
+          <a href="/"><Button variant="outline" className="mt-3 border-[#253c7e] text-[#253c7e]">Voltar ao site</Button></a>
         </section>
       </div>
     );
