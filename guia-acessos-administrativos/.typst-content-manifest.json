@@ -1,0 +1,11 @@
+{
+  "task_kind": "new-document",
+  "output": "pdf",
+  "signals": [],
+  "hard_constraints": ["Português do Brasil", "guia operacional conciso", "incluir URLs e procedimentos de recuperação de acesso"],
+  "content_features": {
+    "code_blocks": 0,
+    "defined_terms": 3,
+    "portrait_images": 0
+  }
+}

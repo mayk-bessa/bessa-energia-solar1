@@ -27,7 +27,7 @@ const statusLabels: Record<string, string> = {
 
 export default function AdminDashboard() {
   const { user, loading, refresh, logout } = useAuth();
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedBudget, setSelectedBudget] = useState<number | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
   const hasAdminAccess = user?.role === "admin";
 
   const { data: budgets, isLoading, refetch } = trpc.admin.budgets.list.useQuery({
-    status: selectedStatus || undefined,
+    status: selectedStatus === "all" ? undefined : selectedStatus,
     limit: 50,
   }, { enabled: hasAdminAccess });
 
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                       <SelectValue placeholder="Filtrar por status..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos os status</SelectItem>
+                      <SelectItem value="all">Todos os status</SelectItem>
                       <SelectItem value="new">Novo</SelectItem>
                       <SelectItem value="contacted">Contatado</SelectItem>
                       <SelectItem value="proposal_sent">Proposta Enviada</SelectItem>

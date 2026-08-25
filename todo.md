@@ -608,6 +608,8 @@
 - [x] Criar uma seção dedicada para moderar avaliações pendentes no painel administrativo
 - [x] Exibir um indicador visual de carregamento durante o encerramento e a troca de conta administrativa
 - [x] Implementar autenticação em duas etapas com Google Authenticator para contas administrativas locais
+- [x] Corrigir o valor vazio no componente Select que interrompe o painel administrativo durante o login
+- [x] Criar guia em PDF para acesso aos painéis administrativos de bessaenergia.com.br e subdomínios
 
 ## Novo padrão visual de proposta comercial
 

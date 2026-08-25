@@ -80,6 +80,7 @@ describe('Coverage map and legitimate reviews', () => {
     expect(adminSource).toContain('Esqueci minha senha');
     expect(adminSource).toContain('Google Authenticator');
     expect(adminSource).toContain('Central de moderação de avaliações');
+    expect(adminSource).toContain('SelectItem value="all"');
     expect(routerSource).toContain('requestAdminPasswordReset');
     expect(routerSource).toContain('resetLocalAdminPassword');
     expect(routerSource).toContain('setupAdminTotp');
