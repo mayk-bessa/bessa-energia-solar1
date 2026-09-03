@@ -610,12 +610,12 @@
 - [x] Implementar autenticação em duas etapas com Google Authenticator para contas administrativas locais
 - [x] Corrigir o valor vazio no componente Select que interrompe o painel administrativo durante o login
 - [x] Criar guia em PDF para acesso aos painéis administrativos de bessaenergia.com.br e subdomínios
-- [ ] Corrigir o domínio de retorno não autorizado do MailCraft em painel.bessaenergia.com.br
-- [ ] Avaliar a adoção de autenticação local e em duas etapas compatível entre o painel Bessa e o MailCraft
-- [ ] Implementar no MailCraft login local, recuperação de senha e Google Authenticator após disponibilização do repositório
-- [ ] Localizar no VPS a pasta de código-fonte do MailCraft atualmente servida pelo processo PM2
-- [ ] Preparar uma cópia versionada do código MailCraft antes de alterar sua autenticação
-- [ ] Integrar e validar a cópia segura do código-fonte MailCraft recebida para implantação controlada
+- [x] Resolver o retorno OAuth não autorizado do MailCraft por substituição do fluxo de acesso por login local no subdomínio
+- [x] Adotar autenticação local independente e Google Authenticator no MailCraft, mantendo as sessões isoladas do painel Bessa
+- [x] Implementar no MailCraft login local, recuperação de senha e Google Authenticator no checkout oficial do branch main
+- [x] Localizar no VPS a pasta de código-fonte do MailCraft atualmente servida pelo processo PM2: /var/www/mailcraft
+- [x] Preparar uma cópia versionada do código MailCraft antes de alterar sua autenticação: checkout oficial em /home/ubuntu/mailcraft-repo-main
+- [x] Integrar e validar a cópia segura no repositório oficial MailCraft; commit local e patch gerados para revisão
 
 ## Novo padrão visual de proposta comercial
 
@@ -634,6 +634,6 @@
 - [x] Preparar commit/patch separado das alterações de autenticação local, recuperação de senha e Google Authenticator do MailCraft para revisão antes da implantação no VPS.
 - [x] Validar origem e branch do repositório MailCraft sem sobrescrever alterações existentes.
 - [x] Executar testes e build no checkout do repositório MailCraft e entregar o diff revisável.
-- [ ] Manter a implantação no VPS pendente até aprovação explícita do usuário.
+- [x] Manter a implantação no VPS pendente até aprovação explícita do usuário
 
 Concluído em sessão anterior — pacote isolado de implantação do MailCraft gerado em `/home/ubuntu/mailcraft-auth-deployment`; a integração no repositório oficial permanece pendente de confirmação da origem/branch.
