@@ -610,6 +610,12 @@
 - [x] Implementar autenticação em duas etapas com Google Authenticator para contas administrativas locais
 - [x] Corrigir o valor vazio no componente Select que interrompe o painel administrativo durante o login
 - [x] Criar guia em PDF para acesso aos painéis administrativos de bessaenergia.com.br e subdomínios
+- [ ] Corrigir o domínio de retorno não autorizado do MailCraft em painel.bessaenergia.com.br
+- [ ] Avaliar a adoção de autenticação local e em duas etapas compatível entre o painel Bessa e o MailCraft
+- [ ] Implementar no MailCraft login local, recuperação de senha e Google Authenticator após disponibilização do repositório
+- [ ] Localizar no VPS a pasta de código-fonte do MailCraft atualmente servida pelo processo PM2
+- [ ] Preparar uma cópia versionada do código MailCraft antes de alterar sua autenticação
+- [ ] Integrar e validar a cópia segura do código-fonte MailCraft recebida para implantação controlada
 
 ## Novo padrão visual de proposta comercial
 
@@ -624,3 +630,10 @@
 - [x] Submeter a prévia visual para aprovação antes de alterar a geração oficial de PDFs (aprovado pelo usuário)
 - [x] Aplicar o padrão aprovado Bessa Energia e Intelbras ao gerador oficial de PDFs de propostas
 - [x] Validar a emissão de proposta oficial com logo, faixa de parceria e componentes reais
+
+- [x] Preparar commit/patch separado das alterações de autenticação local, recuperação de senha e Google Authenticator do MailCraft para revisão antes da implantação no VPS.
+- [x] Validar origem e branch do repositório MailCraft sem sobrescrever alterações existentes.
+- [x] Executar testes e build no checkout do repositório MailCraft e entregar o diff revisável.
+- [ ] Manter a implantação no VPS pendente até aprovação explícita do usuário.
+
+Concluído em sessão anterior — pacote isolado de implantação do MailCraft gerado em `/home/ubuntu/mailcraft-auth-deployment`; a integração no repositório oficial permanece pendente de confirmação da origem/branch.
