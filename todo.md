@@ -637,3 +637,8 @@
 - [x] Manter a implantação no VPS pendente até aprovação explícita do usuário
 
 Concluído em sessão anterior — pacote isolado de implantação do MailCraft gerado em `/home/ubuntu/mailcraft-auth-deployment`; a integração no repositório oficial permanece pendente de confirmação da origem/branch.
+
+- [x] Diagnosticar por que o MailCraft ainda redirecionava usuários ao login Manus: o hook global useAuth e o DashboardLayout mantinham o fallback OAuth.
+- [x] Corrigir todos os redirecionamentos automáticos OAuth no checkout oficial sem remover a autenticação local.
+- [x] Validar login, recuperação de senha, TOTP e ausência de navegação automática para Manus; gerar novo patch para revisão.
+- [x] Manter a implantação no VPS pendente até aprovação explícita do usuário.
